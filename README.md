@@ -2,7 +2,7 @@
 
 ## Group Members
 * [Bahadır ÖNCEL](https://github.com/bounswe/bounswe2018group5/wiki/bahadir-oncel) (Communicator)
-* [Alp Kaan USEN](https://github.com/bounswe/bounswe2018group5/wiki/bahadir-oncel)
+* [Alp Kaan USEN](https://github.com/bounswe/bounswe2018group5/wiki/alp-kaan-usen)
 * [Muhammed Emin AYAR](https://github.com/bounswe/bounswe2018group5/wiki/muhammed-emin-ayar)
 * [İhsan Berkan BALABAN](https://github.com/bounswe/bounswe2018group5/wiki/ihsan-berkan-balaban)
 * [Batuhan Enes ÇAĞLAYAN](https://github.com/bounswe/bounswe2018group5/wiki/batuhan-enes-caglayan)
