@@ -9,7 +9,7 @@
 * [Alp Kaan USEN](https://github.com/bounswe/bounswe2018group5/wiki/alp-kaan-usen)
 * [Muhammed Emin AYAR](https://github.com/bounswe/bounswe2018group5/wiki/muhammed-emin-ayar)
 * [İhsan Berkan BALABAN](https://github.com/bounswe/bounswe2018group5/wiki/ihsan-berkan-balaban)
-* [Batuhan Enes ÇAĞLAYAN](https://github.com/bounswe/bounswe2018group5/wiki/batuhan-enes-caglayan)
+* [Batuhan Enes ÇAĞLAYAN](https://github.com/bounswe/bounswe2018group5/wiki/batuhan-enes-çağlayan)
 * [Güliz İrem GÖKÇELER](https://github.com/bounswe/bounswe2018group5/wiki/guliz-irem-gokceler)
 * [Muhammed Emin GÜRE](https://github.com/bounswe/bounswe2018group5/wiki/muhammed-emin-gure)
 * [Oğuzhan KIRLAR](https://github.com/bounswe/bounswe2018group5/wiki/oguzhan-kirlar)
