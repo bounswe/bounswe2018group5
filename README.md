@@ -11,7 +11,7 @@
 * [İhsan Berkan Balaban](https://github.com/bounswe/bounswe2018group5/wiki/ihsan-berkan-balaban)
 * [Batuhan Enes Çağlayan](https://github.com/bounswe/bounswe2018group5/wiki/batuhan-enes-çağlayan)
 * [Güliz İrem Gökçeler](https://github.com/bounswe/bounswe2018group5/wiki/guliz-irem-gokceler)
-* [Muhammed Emin Güre](https://github.com/bounswe/bounswe2018group5/wiki/muhammed-emin-gure)
+* [Muhammed Emin Güre](https://github.com/bounswe/bounswe2018group5/wiki/muhammed-emin-güre)
 * [Oğuzhan Kırlar](https://github.com/bounswe/bounswe2018group5/wiki/oguzhan-kirlar)
 * [Utku Alhan](https://github.com/bounswe/bounswe2018group5/wiki/utku-alhan)
 * [Enis Simsar](https://github.com/bounswe/bounswe2018group5/wiki/enis-simsar)
