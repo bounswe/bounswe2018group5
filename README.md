@@ -2,7 +2,9 @@
 
 ## Freshest freelance job platform ever 🍉
 
-![](https://i.imgur.com/FzJCYnC.png)
+<div style="text-align:center">
+<img height="500px" align="center" hspace="10px" src="https://i.imgur.com/td9AXrp.png">
+  </div>
 
 ### Karpuz is a platform for lean entreprenurs & agile developers to meet and match for small to middle scale projects. 
 
