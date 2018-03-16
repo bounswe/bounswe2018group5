@@ -1,6 +1,6 @@
 # Karpuz
 
-## Freshest freelance job platform ever
+## Freshest freelance job platform ever 🍉
 
 ![](https://i.imgur.com/FzJCYnC.png)
 
