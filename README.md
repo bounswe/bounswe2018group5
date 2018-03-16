@@ -2,7 +2,7 @@
 
 ## Freshest freelance job platform ever 🍉
 
-<div style="text-align:center">
+<p align="center">
 <img height="500px" align="center" hspace="10px" src="https://i.imgur.com/td9AXrp.png">
   </div>
 
