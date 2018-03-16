@@ -9,11 +9,13 @@
 #### Got an idea? This is the place to find a rockstar developer.
 #### Need to put your skills to use? Earn money while you do what you enjoy.
 
+---
+
 *We're under development!* 👩‍💻👨‍💻
 
 *Check our [wiki](https://github.com/bounswe/bounswe2018group5/wiki) page for project updates.*
 
-
+---
 
 ## :balloon: Karpuz Team 
 [<img height="75px" align="center" hspace="40" src="https://avatars3.githubusercontent.com/u/770464?s=400&v=4">](https://github.com/b-onc) | [<img height="75px" align="center" hspace="40" src="https://avatars1.githubusercontent.com/u/31032657?s=400&v=4">](https://github.com/alpkaanusen) | [<img height="75px" align="center" hspace="40" src="https://avatars1.githubusercontent.com/u/32845642?s=400&v=4">](https://github.com/eminayar ) | [<img height="75px" align="center" hspace="40" src="https://avatars2.githubusercontent.com/u/32296741?s=400&v=4">](https://github.com/berkan20) | [<img height="75px" align="center" hspace="40" src="https://avatars0.githubusercontent.com/u/20903868?s=400&v=4">](https://github.com/benescaglayan)
