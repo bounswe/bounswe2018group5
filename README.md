@@ -3,7 +3,7 @@
 ## Freshest freelance job platform ever 🍉
 
 <p align="center">
-<img height="500px" align="center" hspace="10px" src="https://i.imgur.com/td9AXrp.png">
+<img height="350px" align="center" hspace="10px" src="https://raw.githubusercontent.com/bounswe/bounswe2018group5/master/logo.png">
   </div>
 
 ### Karpuz is a platform for lean entreprenurs & agile developers to meet and match for small to middle scale projects. 
