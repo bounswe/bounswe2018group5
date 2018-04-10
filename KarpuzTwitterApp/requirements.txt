@@ -1,0 +1,3 @@
+tweepy
+python-decouple
+tornado
