@@ -5,68 +5,95 @@
             <button type="button" class="btn btn-primary btn-sm" data-toggle="offcanvas">Toggle nav</button>
         </p>
         <div class="jumbotron">
-            <h1>Hello, world!</h1>
-            <p>This is an example to show the potential of an offcanvas layout pattern in Bootstrap. Try some
-                responsive-range viewport sizes to see it in action.</p>
+            <h1>Karpuz Twitter App</h1>
+            <p>In this application, we examine the twitter api.</p>
         </div>
         <div class="row">
             <div id="1" class="col-12">
-                <h2>Enis Simsar</h2>
-                <p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor
-                    mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna
-                    mollis euismod. Donec sed odio dui. </p>
-                <p><a class="btn btn-secondary" href="#" role="button">View details »</a></p>
+                <h2>Get Tweets with Given Location and Search Query</h2>
+                <p>This cell opens a new page with tweets which contains query and in the given location. You can set
+                the tweet count and restul type.</p>
+                <div class="row">
+                    <div class="col-6" id="map" style="width: 100%; height: 300px"></div>
+                    <div class="col-6" align="center">
+                        <form action="/location-tweets">
+                            <div class="form-group">
+                                <label for="query"><b>Search Query:</b></label>
+                                <input type="text" style="text-align: center" class="form-control" name="query" id="query"
+                                       placeholder="nasa">
+                            </div>
+                            <div class="form-group">
+                                <label for="result_type"><b>Result Type:</b></label>
+                                <select class="form-control" name="result_type" id="result_type">
+                                    <option value="popular">Popular</option>
+                                    <option value="recent">Recent</option>
+                                    <option value="mixed" selected>Mixed</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="count"><b>Tweet Count:</b></label>
+                                <select class="form-control" name="count" id="count">
+                                    <option value="25" selected>25</option>
+                                    <option value="50">50</option>
+                                    <option value="100">100</option>
+                                </select>
+                            </div>
+                            <input type="hidden" name="geocode" value="">
+                            <button type="submit" class="btn btn-primary mb-2">Show Tweets</button>
+                        </form>
+                    </div>
+                </div>
             </div><!--/span-->
-             <div id="2" class="col-12">
+            <div id="2" class="col-12">
                 <h2>Alp Kaan Usen</h2>
                 <p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor
                     mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna
                     mollis euismod. Donec sed odio dui. </p>
                 <p><a class="btn btn-secondary" href="#" role="button">View details »</a></p>
             </div><!--/span-->
-             <div id="3" class="col-12">
+            <div id="3" class="col-12">
                 <h2>Muhammed Emin Ayar</h2>
                 <p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor
                     mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna
                     mollis euismod. Donec sed odio dui. </p>
                 <p><a class="btn btn-secondary" href="#" role="button">View details »</a></p>
             </div><!--/span-->
-             <div id="4" class="col-12">
+            <div id="4" class="col-12">
                 <h2>Muhammed Emin Güre</h2>
                 <p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor
                     mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna
                     mollis euismod. Donec sed odio dui. </p>
                 <p><a class="btn btn-secondary" href="#" role="button">View details »</a></p>
             </div><!--/span-->
-             <div id="5" class="col-12">
+            <div id="5" class="col-12">
                 <h2>Bahadır Öncel</h2>
                 <p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor
                     mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna
                     mollis euismod. Donec sed odio dui. </p>
                 <p><a class="btn btn-secondary" href="#" role="button">View details »</a></p>
             </div><!--/span-->
-             <div id="6" class="col-12">
+            <div id="6" class="col-12">
                 <h2>Ihsan Berkan Balaban</h2>
                 <p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor
                     mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna
                     mollis euismod. Donec sed odio dui. </p>
                 <p><a class="btn btn-secondary" href="#" role="button">View details »</a></p>
             </div><!--/span-->
-             <div id="7" class="col-12">
+            <div id="7" class="col-12">
                 <h2>Batuhan Enes Çağlayan</h2>
                 <p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor
                     mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna
                     mollis euismod. Donec sed odio dui. </p>
                 <p><a class="btn btn-secondary" href="#" role="button">View details »</a></p>
             </div><!--/span-->
-             <div id="8" class="col-12">
+            <div id="8" class="col-12">
                 <h2>Güliz Irem Gökçeler</h2>
                 <p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor
                     mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna
                     mollis euismod. Donec sed odio dui. </p>
                 <p><a class="btn btn-secondary" href="#" role="button">View details »</a></p>
             </div><!--/span-->
-             <div id="9" class="col-12">
+            <div id="9" class="col-12">
                 <h2>Oğuzhan Kırlar</h2>
                 <p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor
                     mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna
@@ -85,7 +112,7 @@
 
     <div class="col-6 col-md-3 sidebar-offcanvas" id="sidebar">
         <div class="list-group">
-            <a href="#1" class="list-group-item">Enis Simsar</a>
+            <a href="#1" class="list-group-item">Get Tweets with Given Location and Search Query</a>
             <a href="#2" class="list-group-item">Alp Kaan Usen</a>
             <a href="#3" class="list-group-item">Muhammed Emin Ayar</a>
             <a href="#4" class="list-group-item">Muhammed Emin Güre</a>

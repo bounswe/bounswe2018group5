@@ -13,6 +13,55 @@
     <!-- Custom styles for this template -->
     <link href="/static/css/offcanvas.css" rel="stylesheet">
     <link rel="icon" type="image/png" sizes="96x96" href="/static/favicon.ico">
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js"></script>
+    <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.12.0/mapbox-gl.js'></script>
+    <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.12.0/mapbox-gl.css' rel='stylesheet'/>
+
+    <script src="/static/js/selector.js"></script>
+
+    <style>
+        body {
+            margin: 0;
+            position: fixed;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+        }
+
+        svg {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+
+        nav {
+            position: absolute;
+            top: 40px;
+            left: 20px;
+            z-index: 1;
+        }
+
+        #circle {
+            background-color: rgba(20, 20, 20, 0.1);
+            font-family: Helvetica, sans-serif;
+            color: #3b83bd;
+            padding: 5px 8px;
+            border-radius: 3px;
+            cursor: pointer;
+            border: 1px solid #111;
+        }
+
+        #circle.active {
+            background-color: rgba(250, 250, 250, 0.9);
+        }
+
+        select {
+            text-align-last: center;
+        }
+    </style>
+
     <title>{{ title }}</title>
 </head>
 <body data-gr-c-s-loaded="true" style="">
@@ -38,7 +87,11 @@
 <div class="container">
 
     {% if type == "home" %}
-        {% include 'main.html' %}
+    {% include 'main.html' %}
+    {% endif %}
+
+    {% if type == "locationtweets" %}
+    {% include 'locationtweets.html' %}
     {% endif %}
 
     <hr>
@@ -59,10 +112,59 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js"
         integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb"
         crossorigin="anonymous"></script>
-<script src="/static/js/bootstrap.min.js"></script>
+<script src="/static/js/helper.js"></script>
+<script src="/static/js/selector.js"></script>
+<script src="/static/js/offcanvas.js"></script>
+<script>
+
+    mapboxgl.accessToken = '{{ mapbox_token }}';
+
+    //Setup mapbox-gl map
+    var map = new mapboxgl.Map({
+        container: 'map', // container id
+        style: 'mapbox://styles/mapbox/satellite-v9',
+        center: [28.979530, 41.015137],
+        zoom: 10,
+    })
+    map.dragPan.disable();
+    map.scrollZoom.disable();
+
+    // Setup our svg layer that we can manipulate with d3
+    var container = map.getCanvasContainer();
+    var svg = d3.select(container).append("svg");
+
+    var active = true;
+    var circleControl = new circleSelector(svg)
+        .projection(project)
+        .inverseProjection(function (a) {
+            return map.unproject({x: a[0], y: a[1]});
+        })
+        .activate(active);
+
+    d3.select("#circle").on("click", function () {
+        active = !active;
+        circleControl.activate(active);
+        if (active) {
+            map.dragPan.disable();
+        } else {
+            map.dragPan.enable();
+        }
+        d3.select(this).classed("active", active)
+    });
+
+    // Add zoom and rotation controls to the map.
+    map.addControl(new mapboxgl.Navigation());
+
+    function project(d) {
+        return map.project(getLL(d));
+    }
+
+    function getLL(d) {
+        return new mapboxgl.LngLat(+d.lng, +d.lat)
+    }
+</script>
 <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
 <script src="/static/js/ie10-viewport-bug-workaround.js"></script>
-<script src="/static/js/offcanvas.js"></script>
 
 </body>
 </html>
