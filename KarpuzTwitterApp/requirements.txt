@@ -1,3 +1,4 @@
+requests
 tweepy
 python-decouple
 tornado
