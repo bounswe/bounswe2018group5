@@ -17,3 +17,20 @@ def get_tweets_with_location_and_query(search_params):
     tweets = tweet_data['statuses']
 
     return {'response': True, 'tweets': tweets}
+
+def get_user_timeline(screen_name):
+    user_timeline_url = '{}1.1/statuses/user_timeline.json'.format(TwitterService().get_base_url())
+
+    user_timeline_params = {
+        'screen_name' : screen_name,
+        'count': 25,
+        'exclude_replies': True,
+        'include_rts': False
+    }
+
+    user_timeline_response = get(user_timeline_url, headers=TwitterService().get_request_headers(), params=user_timeline_params)
+
+    if user_timeline_response.status_code != 200:
+        return {'response': False, 'errors': user_timeline_response.json()['errors']}
+
+    tweets = user_timeline_response.json()
