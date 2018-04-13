@@ -37,5 +37,4 @@ def get_user_timeline(screen_name):
 
     # API directly returns tweets
     tweets = user_timeline_response.json()
-
-    return tweets
+    return {'response': True, 'tweets': tweets}
