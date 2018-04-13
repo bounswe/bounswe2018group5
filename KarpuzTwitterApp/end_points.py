@@ -16,6 +16,7 @@ end_point_list = [
     (r"/location-tweets", LocationTweetsLocationHandler),
     (r"/favorite-tweets", FavoriteTweetsHandler),
     (r"/user-timeline", UserTimelineHandler),
+    (r"/common-followings", CommonFollowingsHandler),
     (r"/common-followers", CommonFollowersHandler),
     (r"/search-users", SearchUsersHandler),
     (r"/search-tweets", SearchTweetHandler),
