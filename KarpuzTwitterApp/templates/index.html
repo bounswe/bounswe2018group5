@@ -94,8 +94,12 @@
     {% include 'locationtweets.html' %}
     {% endif %}
 
+    {% if type == "favoritetweets" %}
+    {% include 'favoritetweets.html' %}
+  
     {% if type == "usertimeline" %}
     {% include 'usertimeline.html' %}
+  
     {% endif %}
 
     {% if type == "commonfollowings" %}
