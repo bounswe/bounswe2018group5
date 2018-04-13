@@ -1,6 +1,8 @@
 from requests import get
 from utils.TwitterService import TwitterService
-
+import tweepy
+from decouple import config
+from pprint import pprint
 
 def get_tweets_with_location_and_query(search_params):
     """ Searches all tweets that are in the given location and contains a query string. """
@@ -62,8 +64,8 @@ def get_common_followers_of_two_users(search_params):
 
 def get_user_timeline(screen_name):
     user_timeline_url = '{}1.1/statuses/user_timeline.json'.format(TwitterService().get_base_url())
-    
-    
+
+
     #Get the screen_name from the user, other parameters are set to default values
     user_timeline_params = {
         'screen_name' : screen_name,
@@ -127,7 +129,20 @@ def get_common_followings_of_two_user(search_params):
 
     return get_user_details({'user_id': common_followings})
 
+  
+def search_users(query):
+    auth = tweepy.OAuthHandler(config("CUSTOMER_KEY"), config("CUSTOMER_SECRET_KEY"))
+    auth.set_access_token(config("ACCESS_TOKEN"), config("ACCESS_TOKEN_SECRET"))
 
+    api = tweepy.API(auth)
+
+    search_response = list(api.search_users(query, 18))
+
+    print(search_response)
+
+    return search_response
+
+  
 def search_tweets(query):
     """ Searches all tweets that are in the given location and contains a query string. """
     search_url = '{}1.1/search/tweets.json'.format(TwitterService().get_base_url())
@@ -146,4 +161,3 @@ def search_tweets(query):
     tweets = tweet_data['statuses']
 
     return {'response': True, 'tweets': tweets}
-
