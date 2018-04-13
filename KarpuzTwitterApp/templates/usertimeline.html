@@ -1,0 +1,9 @@
+{% if error_message != "" %} <p>{{ error_message }}</p> {% endif %}
+{% if tweets|length < 1 %} <p>There is no tweet for these search parameters.</p> {% endif %}
+{% for tweet in tweets %}
+<blockquote class="twitter-tweet tw-align-center" data-cards="hidden" lang="en">
+    <a href="http://twitter.com/{{ tweet['user']['screen_name'] }}/statuses/{{ tweet['id'] }}"></a>
+</blockquote>
+{% endfor %}
+
+<script src="https://platform.twitter.com/widgets.js"/>
