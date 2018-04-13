@@ -77,8 +77,8 @@
     <div class="collapse navbar-collapse" id="navbarsExampleDefault">
         <ul class="navbar-nav mr-auto">
             <li class="nav-item active">
-                <a class="nav-link" href="/">Home {% if type == "home" %}<span class="sr-only">(current)</span>{% endif
-                    %}</a>
+                <a class="nav-link" href="/">Home {% if type == "home" %}
+                    <span class="sr-only">(current)</span>{% endif %}</a>
             </li>
         </ul>
     </div>
@@ -87,31 +87,35 @@
 <div class="container">
 
     {% if type == "home" %}
-    {% include 'main.html' %}
+        {% include 'main.html' %}
     {% endif %}
 
     {% if type == "locationtweets" %}
-    {% include 'locationtweets.html' %}
+        {% include 'locationtweets.html' %}
     {% endif %}
 
     {% if type == "favoritetweets" %}
-    {% include 'favoritetweets.html' %}
+        {% include 'favoritetweets.html' %}
     {% endif %}
-  
+
     {% if type == "usertimeline" %}
-    {% include 'usertimeline.html' %}
+        {% include 'usertimeline.html' %}
     {% endif %}
 
     {% if type == "commonfollowings" %}
-    {% include 'commonfollowings.html' %}
+        {% include 'commonfollowings.html' %}
     {% endif %}
-    
+
     {% if type == "commonfollowers" %}
-    {% include 'commonfollowers.html' %}
+        {% include 'commonfollowers.html' %}
     {% endif %}
 
     {% if type == "searchtweets" %}
-    {% include 'searchtweets.html' %}
+        {% include 'searchtweets.html' %}
+    {% endif %}
+
+    {% if type == "searchusers" %}
+        {% include 'searchusers.html' %}
     {% endif %}
 
     <hr>
@@ -136,53 +140,53 @@
 <script src="/static/js/selector.js"></script>
 <script src="/static/js/offcanvas.js"></script>
 {% if type == "home" %}
-<script>
+    <script>
 
-    mapboxgl.accessToken = '{{ mapbox_token }}';
+        mapboxgl.accessToken = '{{ mapbox_token }}';
 
-    //Setup mapbox-gl map
-    var map = new mapboxgl.Map({
-        container: 'map', // container id
-        style: 'mapbox://styles/mapbox/satellite-v9',
-        center: [28.979530, 41.015137],
-        zoom: 10,
-    })
-    map.scrollZoom.disable();
-
-    // Setup our svg layer that we can manipulate with d3
-    var container = map.getCanvasContainer();
-    var svg = d3.select(container).append("svg");
-
-    var active = true;
-    var circleControl = new circleSelector(svg)
-        .projection(project)
-        .inverseProjection(function (a) {
-            return map.unproject({x: a[0], y: a[1]});
+        //Setup mapbox-gl map
+        var map = new mapboxgl.Map({
+            container: 'map', // container id
+            style: 'mapbox://styles/mapbox/satellite-v9',
+            center: [28.979530, 41.015137],
+            zoom: 10,
         })
-        .activate(active);
+        map.scrollZoom.disable();
 
-    d3.select("#circle").on("click", function () {
-        active = !active;
-        circleControl.activate(active);
-        if (active) {
-            map.dragPan.disable();
-        } else {
-            map.dragPan.enable();
+        // Setup our svg layer that we can manipulate with d3
+        var container = map.getCanvasContainer();
+        var svg = d3.select(container).append("svg");
+
+        var active = true;
+        var circleControl = new circleSelector(svg)
+            .projection(project)
+            .inverseProjection(function (a) {
+                return map.unproject({x: a[0], y: a[1]});
+            })
+            .activate(active);
+
+        d3.select("#circle").on("click", function () {
+            active = !active;
+            circleControl.activate(active);
+            if (active) {
+                map.dragPan.disable();
+            } else {
+                map.dragPan.enable();
+            }
+            d3.select(this).classed("active", active)
+        });
+
+        // Add zoom and rotation controls to the map.
+        map.addControl(new mapboxgl.Navigation());
+
+        function project(d) {
+            return map.project(getLL(d));
         }
-        d3.select(this).classed("active", active)
-    });
 
-    // Add zoom and rotation controls to the map.
-    map.addControl(new mapboxgl.Navigation());
-
-    function project(d) {
-        return map.project(getLL(d));
-    }
-
-    function getLL(d) {
-        return new mapboxgl.LngLat(+d.lng, +d.lat)
-    }
-</script>
+        function getLL(d) {
+            return new mapboxgl.LngLat(+d.lng, +d.lat)
+        }
+    </script>
 {% endif %}
 <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
 <script src="/static/js/ie10-viewport-bug-workaround.js"></script>

@@ -138,6 +138,8 @@ def search_users(query):
 
     search_response = list(api.search_users(query, 18))
 
+    print(search_response)
+
     return search_response
 
   
