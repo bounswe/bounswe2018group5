@@ -39,3 +39,47 @@ def get_user_timeline(screen_name):
     # API directly returns tweets
     tweets = user_timeline_response.json()
     return {'response': True, 'tweets': tweets}
+
+def get_followings_of_user(search_params):
+    search_url = '{}1.1/friends/ids.json'.format(TwitterService().get_base_url())
+
+    followings_response = get(search_url, headers=TwitterService().get_request_headers(), params=search_params)
+
+    # If response code different than 200 (means success), then return the error.
+    if followings_response.status_code != 200:
+        return {'response': False, 'errors': followings_response.json()}
+
+    data = followings_response.json()
+    followings = set(data['ids'])
+
+    return {'response': True, 'followings': followings}
+
+
+def get_user_details(search_params):
+    search_url = '{}1.1/users/lookup.json'.format(TwitterService().get_base_url())
+
+    user_details_response = get(search_url, headers=TwitterService().get_request_headers(), params=search_params)
+
+    # If response code different than 200 (means success), then return the error.
+    if user_details_response.status_code != 200:
+        return {'response': False, 'errors': user_details_response.json()['errors']}
+
+    return {'response': True, 'data': user_details_response.json()}
+
+
+def get_common_followings_of_two_user(search_params):
+    params={}
+    params['screen_name'] = search_params['user_one']
+    response_user_one = get_followings_of_user(params)
+    if not response_user_one['response']:
+        return {'response': False, 'errors': response_user_one['errors']}
+    followings_user_one = response_user_one['followings']
+    params['screen_name'] = search_params['user_two']
+    response_user_two = get_followings_of_user(params)
+    if not response_user_two['response']:
+        return {'response': False, 'errors': response_user_two['errors']}
+    followings_user_two = response_user_two['followings']
+
+    common_followings = followings_user_one.intersection(followings_user_two)
+
+    return get_user_details({'user_id': common_followings})

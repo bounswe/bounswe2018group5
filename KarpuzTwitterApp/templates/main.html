@@ -77,11 +77,27 @@
                 </div>
             </div><!--/span-->
             <div id="4" class="col-12">
-                <h2>Muhammed Emin Güre</h2>
-                <p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor
-                    mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna
-                    mollis euismod. Donec sed odio dui. </p>
-                <p><a class="btn btn-secondary" href="#" role="button">View details »</a></p>
+                <h2>Get Common Followings of Two User</h2>
+                <p>This cell opens a new page with the user details that two specified users are following. This feature works only for users that follows less than 5000 due to Twitter API's rate limits</p>
+                <div class="row">
+
+                    <div class="col-12" >
+                        <form action="/common-followings">
+                            <div class="form-group">
+                                <label for="query"><b>User 1:</b></label>
+                                <input type="text" class="form-control" name="user_one" id="user_one"
+                                       placeholder="Only user name">
+                            </div>
+                            <div class="form-group">
+                                <label for="query"><b>User 2:</b></label>
+                                <input type="text" class="form-control" name="user_two" id="user_two"
+                                       placeholder="Only user name">
+                            </div>
+
+                            <button type="submit" class="btn btn-primary mb-2">Submit</button>
+                        </form>
+                    </div>
+                </div>
             </div><!--/span-->
             <div id="5" class="col-12">
                 <h2>Bahadır Öncel</h2>
@@ -133,7 +149,7 @@
             <a href="#1" class="list-group-item">Get Tweets with Given Location and Search Query</a>
             <a href="#2" class="list-group-item">Get the Timeline of a User with Given Screen Name</a>
             <a href="#3" class="list-group-item">Get most recent liked tweets of a user</a>
-            <a href="#4" class="list-group-item">Muhammed Emin Güre</a>
+            <a href="#4" class="list-group-item">Get Common Followings of Two User</a>
             <a href="#5" class="list-group-item">Bahadır Öncel</a>
             <a href="#6" class="list-group-item">Ihsan Berkan Balaban</a>
             <a href="#7" class="list-group-item">Batuhan Enes Çağlayan</a>
