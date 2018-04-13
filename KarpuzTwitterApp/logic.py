@@ -21,6 +21,7 @@ def get_tweets_with_location_and_query(search_params):
 def get_user_timeline(screen_name):
     user_timeline_url = '{}1.1/statuses/user_timeline.json'.format(TwitterService().get_base_url())
 
+
     #Get the screen_name from the user, other parameters are set to default values
     user_timeline_params = {
         'screen_name' : screen_name,

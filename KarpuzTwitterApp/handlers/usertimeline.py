@@ -23,3 +23,4 @@ class UserTimelineHandler(BaseHandler, TemplateRendering):
         }
         content = self.render_template(template, variables)
         self.write(content)
+
