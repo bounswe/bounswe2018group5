@@ -13,6 +13,14 @@
 
 ---
 
+### Karpuz Twitter App
+
+We created some cool features with Twitter API.
+
+You can try them via [http://206.189.48.182](http://206.189.48.182/) or check the code from [KarpuzTwiiterApp](https://github.com/bounswe/bounswe2018group5/tree/master/KarpuzTwitterApp) folder above. 
+
+---
+
 *We're under development!* 👩‍💻👨‍💻
 
 *Check our [wiki](https://github.com/bounswe/bounswe2018group5/wiki) page for project updates.*
