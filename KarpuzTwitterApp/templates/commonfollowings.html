@@ -95,10 +95,12 @@ ul.twPc-Arrange {
 <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
 
 
+
 <p>The users that both {{ params['user_one'] }} and {{ params['user_two'] }} are following:</p>
 {% if error_message != "" %} <p>{{ error_message }}</p>
 {% elif users|length < 1 %} <p>There is no common followings for these two users.</p> {% endif %}
 
+<div class="row">
 {% for user in users %}
 
 
@@ -152,3 +154,4 @@ ul.twPc-Arrange {
 	</div>
 </div>
 {% endfor %}
+</div>

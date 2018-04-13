@@ -3,7 +3,6 @@ from handlers.base import BaseHandler, TemplateRendering
 
 
 class CommonFollowingsHandler(BaseHandler, TemplateRendering):
-    """Handler for searching tweets with location and query."""
     def data_received(self, chunk):
         pass
 
@@ -21,7 +20,7 @@ class CommonFollowingsHandler(BaseHandler, TemplateRendering):
         variables = {
             'title': "Common Followings",
             'type': 'commonfollowings',
-            'users': users if users['response'] else [],
+            'users': users['data'] if users['response'] else [],
             'params': search_params,
             'error_message': users['errors'] if not users['response'] else ""
         }
