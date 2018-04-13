@@ -18,10 +18,52 @@ def get_tweets_with_location_and_query(search_params):
 
     return {'response': True, 'tweets': tweets}
 
+
+def get_followers_of_user(search_params):
+    search_url = '{}1.1/followers/ids.json'.format(TwitterService().get_base_url())
+
+    search_response = get(search_url, headers=TwitterService().get_request_headers(), params=search_params)
+
+    if search_response.status_code != 200:
+        print(search_response.json())
+        return {'response': False, 'errors': search_response.json()}
+
+    data = search_response.json()
+    followings = set(data['ids'])
+
+    return {'response': True, 'followings': followings}
+
+
+def get_common_followers_of_two_users(search_params):
+    params = {}
+    params['screen_name'] = search_params['user_one']
+    response_user_one = get_followers_of_user(params)
+    if not response_user_one['response']:
+        return {'response': False, 'errors': response_user_one['errors']}
+    followers_user_one = response_user_one['followings']
+    params['screen_name'] = search_params['user_two']
+    response_user_two = get_followers_of_user(params)
+    if not response_user_two['response']:
+        return {'response': False, 'errors': response_user_two['errors']}
+    followers_user_two = response_user_two['followings']
+
+    common_followers = followers_user_one.intersection(followers_user_two)
+
+    common_follower_details = get_user_details({'user_id': common_followers})
+
+    data = {
+        'users': common_follower_details['data'],
+        'response': common_follower_details['response'],
+        'errors': ""
+    }
+
+    return data
+
+
 def get_user_timeline(screen_name):
     user_timeline_url = '{}1.1/statuses/user_timeline.json'.format(TwitterService().get_base_url())
-
-
+    
+    
     #Get the screen_name from the user, other parameters are set to default values
     user_timeline_params = {
         'screen_name' : screen_name,
@@ -39,6 +81,7 @@ def get_user_timeline(screen_name):
     # API directly returns tweets
     tweets = user_timeline_response.json()
     return {'response': True, 'tweets': tweets}
+
 
 def get_followings_of_user(search_params):
     search_url = '{}1.1/friends/ids.json'.format(TwitterService().get_base_url())
