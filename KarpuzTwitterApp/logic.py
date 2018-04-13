@@ -19,21 +19,6 @@ def get_tweets_with_location_and_query(search_params):
     return {'response': True, 'tweets': tweets}
 
 
-def get_user_details(search_params):
-    search_url = '{}1.1/users/lookup.json'.format(TwitterService().get_base_url())
-
-    search_response = get(search_url, headers=TwitterService().get_request_headers(), params=search_params)
-
-    # If response code different than 200 (means success), then return the error.
-    if search_response.status_code != 200:
-        return {'response': False, 'errors': search_response.json()['errors']}
-
-    # Subtracts the tweets from the twitter response
-    data = search_response.json()
-
-    return data
-
-
 def get_followers_of_user(search_params):
     search_url = '{}1.1/followers/ids.json'.format(TwitterService().get_base_url())
 
@@ -67,8 +52,8 @@ def get_common_followers_of_two_users(search_params):
     common_follower_details = get_user_details({'user_id': common_followers})
 
     data = {
-        'users': common_follower_details,
-        'response': True,
+        'users': common_follower_details['data'],
+        'response': common_follower_details['response'],
         'errors': ""
     }
 
@@ -96,6 +81,7 @@ def get_user_timeline(screen_name):
     # API directly returns tweets
     tweets = user_timeline_response.json()
     return {'response': True, 'tweets': tweets}
+
 
 def get_followings_of_user(search_params):
     search_url = '{}1.1/friends/ids.json'.format(TwitterService().get_base_url())

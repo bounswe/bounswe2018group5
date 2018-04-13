@@ -99,6 +99,7 @@ ul.twPc-Arrange {
 {% if error_message != "" %} <p>{{ error_message }}</p>
 {% elif users|length < 1 %} <p>There is no common followings for these two users.</p> {% endif %}
 
+<div class="row">
 {% for user in users %}
 
 
@@ -152,3 +153,4 @@ ul.twPc-Arrange {
 	</div>
 </div>
 {% endfor %}
+</div>
