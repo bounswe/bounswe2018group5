@@ -98,6 +98,9 @@
     {% include 'usertimeline.html' %}
     {% endif %}
 
+    {% if type == "commonfollowings" %}
+    {% include 'commonfollowings.html' %}
+    {% endif %}
     <hr>
 
     <footer>
