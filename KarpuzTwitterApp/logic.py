@@ -129,7 +129,7 @@ def get_common_followings_of_two_user(search_params):
 
     return get_user_details({'user_id': common_followings})
 
-
+  
 def search_users(query):
     auth = tweepy.OAuthHandler(config("CUSTOMER_KEY"), config("CUSTOMER_SECRET_KEY"))
     auth.set_access_token(config("ACCESS_TOKEN"), config("ACCESS_TOKEN_SECRET"))
@@ -139,3 +139,23 @@ def search_users(query):
     search_response = list(api.search_users(query, 18))
 
     return search_response
+
+  
+def search_tweets(query):
+    """ Searches all tweets that are in the given location and contains a query string. """
+    search_url = '{}1.1/search/tweets.json'.format(TwitterService().get_base_url())
+    search_params = {
+        'q' : query,
+        'count' : 20
+    }
+    search_response = get(search_url, headers=TwitterService().get_request_headers(), params=search_params)
+
+    # If response code different than 200 (means success), then return the error.
+    if search_response.status_code != 200:
+        return {'response': False, 'errors': search_response.json()['errors']}
+
+    # Subtracts the tweets from the twitter response
+    tweet_data = search_response.json()
+    tweets = tweet_data['statuses']
+
+    return {'response': True, 'tweets': tweets}
