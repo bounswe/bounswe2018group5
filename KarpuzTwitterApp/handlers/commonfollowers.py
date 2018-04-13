@@ -15,14 +15,14 @@ class CommonFollowersHandler(BaseHandler, TemplateRendering):
                          'user_two': user_two}
 
         # Gets users from logic.
-        users = logic.get_common_followers_of_two_user(search_params)
+        common_follower_data = logic.get_common_followers_of_two_users(search_params)
         template = 'index.html'
         variables = {
             'title': "Common Followers",
             'type': 'commonfollowers',
-            'users': users if users['response'] else [],
+            'users': common_follower_data['users'] if common_follower_data['response'] else [],
             'params': search_params,
-            'error_message': users['errors'] if not users['response'] else ""
+            'error_message': common_follower_data['errors'] if not common_follower_data['response'] else ""
         }
         content = self.render_template(template, variables)
         self.write(content)
