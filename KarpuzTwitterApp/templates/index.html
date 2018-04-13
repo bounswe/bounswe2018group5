@@ -96,6 +96,10 @@
 
     {% if type == "favoritetweets" %}
     {% include 'favoritetweets.html' %}
+  
+    {% if type == "usertimeline" %}
+    {% include 'usertimeline.html' %}
+  
     {% endif %}
 
     <hr>
@@ -131,7 +135,6 @@
         center: [28.979530, 41.015137],
         zoom: 10,
     })
-    map.dragPan.disable();
     map.scrollZoom.disable();
 
     // Setup our svg layer that we can manipulate with d3

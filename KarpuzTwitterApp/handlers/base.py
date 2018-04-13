@@ -13,11 +13,6 @@ class JinjaCustomFilter:
         return
 
 
-class BaseHandler(tornado.web.RequestHandler):
-    def write_error(self, status_code, **kwargs):
-        self.write(json.dumps({'error': "Unexpected Error!"}))
-
-
 class TemplateRendering:
     @classmethod
     def render_template(cls, template_name, variables={}):
@@ -31,3 +26,14 @@ class TemplateRendering:
 
         content = template.render(variables)
         return content
+
+
+class BaseHandler(tornado.web.RequestHandler, TemplateRendering):
+    def data_received(self, chunk):
+        pass
+
+    def write_error(self, status_code, **kwargs):
+        template = 'HTTP500.html'
+        variables = {}
+        content = self.render_template(template, variables)
+        self.write(content)
