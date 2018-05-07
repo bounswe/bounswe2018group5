@@ -17,7 +17,8 @@
 
 We created some cool features with Twitter API.
 
-** Please, disable your ad blocker first. **
+Note: Please, disable your ad blocker first.
+
 You can try them via [http://167.99.40.187/](http://167.99.40.187/) or check the code from [KarpuzTwitterApp](https://github.com/bounswe/bounswe2018group5/tree/master/KarpuzTwitterApp) folder above. 
 
 ---
