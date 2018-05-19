@@ -2,10 +2,48 @@ from requests import get
 from utils.TwitterService import TwitterService
 import tweepy
 from decouple import config
-from pprint import pprint
+
 
 def get_tweets_with_location_and_query(search_params):
     """ Searches all tweets that are in the given location and contains a query string. """
+    if 'geocode' not in search_params:
+        return {'response': False, 'errors': 'Parameter must contain geocode'}
+    if 'result_type' not in search_params:
+        return {'response': False, 'errors': 'Parameter must contain result_type'}
+    if 'q' not in search_params:
+        return {'response': False, 'errors': 'Parameter must containe query(q)'}
+    if 'count' not in search_params:
+        return {'response': False, 'errors': 'Parameter must containe count'}
+
+    geocode = search_params['geocode']
+    result_type = search_params['result_type']
+    count = search_params['count']
+
+    if geocode == '' or len(geocode.split(',')) < 3 or 'km' not in geocode.split(',')[2]:
+        return {
+            'response': False,
+            'errors': "GeoCode must include three values lat/long/distance. Distance must include km."
+        }
+
+    try:
+        float(geocode.split(',')[0])
+        float(geocode.split(',')[1])
+    except ValueError:
+        return {
+            'response': False,
+            'errors': "GeoCode must include three values lat/long/distance. Distance must include km."
+        }
+
+    if result_type not in ['popular', 'recent', 'mixed']:
+        return {'response': False, 'errors': "Result type must be in ['popular', 'recent', 'mixed']."}
+
+    if type(count) is not int and not count.isdigit():
+        return {'response': False, 'errors': "Count must be integer."}
+    else:
+        count = int(count)
+        if count not in [25, 50, 100]:
+            return {'response': False, 'errors': "Count type must be in [25, 50, 100]."}
+
     search_url = '{}1.1/search/tweets.json'.format(TwitterService().get_base_url())
 
     search_response = get(search_url, headers=TwitterService().get_request_headers(), params=search_params)
