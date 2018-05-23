@@ -15,7 +15,7 @@
 
 ### Karpuz Twitter App
 
-We created some cool features with Twitter API.
+We created some cool features with Twitter API. We used [PyCharm](https://www.jetbrains.com/pycharm/) for coding and it provides a standard which is called [PEP 8](https://www.python.org/dev/peps/pep-0008/).
 
 Note: Please, disable your ad blocker first.
 
