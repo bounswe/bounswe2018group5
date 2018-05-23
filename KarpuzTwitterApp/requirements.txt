@@ -3,3 +3,4 @@ tweepy
 python-decouple
 tornado
 jinja2
+pytest
