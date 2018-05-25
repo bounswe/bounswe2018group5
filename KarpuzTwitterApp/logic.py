@@ -19,19 +19,39 @@ def get_tweets_with_location_and_query(search_params):
     result_type = search_params['result_type']
     count = search_params['count']
 
-    if geocode == '' or len(geocode.split(',')) < 3 or 'km' not in geocode.split(',')[2]:
+    if geocode == '' or len(geocode.split(',')) != 3:
         return {
             'response': False,
             'errors': "GeoCode must include three values lat/long/distance. Distance must include km."
         }
 
+    lat = geocode.split(',')[0]
+    long = geocode.split(',')[1]
+    perimeter = geocode.split(',')[2]
+
+    if 'km' != perimeter[-2:]:
+        return {
+            'response': False,
+            'errors': "Distance must include km."
+        }
+
     try:
-        float(geocode.split(',')[0])
-        float(geocode.split(',')[1])
+        perimeter_float = float(perimeter[:-2])
+        if perimeter_float <= 0:
+            raise ValueError
     except ValueError:
         return {
             'response': False,
-            'errors': "GeoCode must include three values lat/long/distance. Distance must include km."
+            'errors': "Distance must be positive float."
+        }
+
+    try:
+        float(lat)
+        float(long)
+    except ValueError:
+        return {
+            'response': False,
+            'errors': "Lat and Long must be float."
         }
 
     if result_type not in ['popular', 'recent', 'mixed']:
