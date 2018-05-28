@@ -89,23 +89,27 @@ def get_followers_of_user(search_params):
         return {'response': False, 'errors': search_response.json()}
 
     data = search_response.json()
-    followings = set(data['ids'])
+    followers = set(data['ids'])
 
-    return {'response': True, 'followings': followings}
+    return {'response': True, 'followers': followers}
 
 
 def get_common_followers_of_two_users(search_params):
-    params = {}
+    if 'user_one' not in search_params:
+        return {'response': False, 'errors': 'Params must contain user_one'}
+    if 'user_two' not in search_params:
+        return {'response': False, 'errors': 'Params must contain user_two'}
+    params = dict()
     params['screen_name'] = search_params['user_one']
     response_user_one = get_followers_of_user(params)
     if not response_user_one['response']:
         return {'response': False, 'errors': response_user_one['errors']}
-    followers_user_one = response_user_one['followings']
+    followers_user_one = response_user_one['followers']
     params['screen_name'] = search_params['user_two']
     response_user_two = get_followers_of_user(params)
     if not response_user_two['response']:
         return {'response': False, 'errors': response_user_two['errors']}
-    followers_user_two = response_user_two['followings']
+    followers_user_two = response_user_two['followers']
 
     common_followers = followers_user_one.intersection(followers_user_two)
 
