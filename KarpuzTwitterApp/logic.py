@@ -95,7 +95,11 @@ def get_followers_of_user(search_params):
 
 
 def get_common_followers_of_two_users(search_params):
-    params = {}
+    if 'user_one' not in search_params:
+        return {'response': False, 'errors': 'Params must contain user_one'}
+    if 'user_two' not in search_params:
+        return {'response': False, 'errors': 'Params must contain user_two'}
+    params = dict()
     params['screen_name'] = search_params['user_one']
     response_user_one = get_followers_of_user(params)
     if not response_user_one['response']:

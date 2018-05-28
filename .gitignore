@@ -6,3 +6,4 @@ __pycache__/
 *$py.class
 KarpuzTwitterApp/env
 .cache/
+KarpuzTwitterApp/.pytest_cache
