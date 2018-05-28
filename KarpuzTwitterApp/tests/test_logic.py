@@ -30,3 +30,21 @@ def test_location_and_query(given_input, expected_output):
         assert response['response'] == expected_output
     else:
         assert False
+
+
+common_followers_parameters = [
+    ({}, False), # Empty input
+    ({'user_one': 'jeffdean'}, False), # Missing user_two parameter
+    ({'user_two': 'jeffdean'}, False), # Missing user_one parameter
+    ({'user_one': 'jeffdean', 'user_two': 'jack'}, True), # Pass
+]
+
+
+@pytest.mark.parametrize("given_input, expected_output", common_followers_parameters)
+def test_common_followers(given_input, expected_output):
+    """ Tests get common followers functionality in the logic file """
+    response = logic.get_common_followers_of_two_users(given_input)
+    if 'response' in response:
+        assert response['response'] == expected_output
+    else:
+        assert False
