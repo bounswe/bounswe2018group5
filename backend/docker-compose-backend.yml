@@ -14,3 +14,14 @@ services:
             - "${MONGODB_PORT}:${MONGODB_PORT}"
         command: --auth
         restart: always
+    
+    server:
+      container_name: karpuz_backend_server
+      tty: true
+      volumes:
+          - "./:/root/karpuz_backend"
+      build:
+          context: ./
+          dockerfile: ./.docker/backend_server.docker
+      ports:
+        - "${BACKEND_SERVER_PORT}:${BACKEND_SERVER_PORT}"
