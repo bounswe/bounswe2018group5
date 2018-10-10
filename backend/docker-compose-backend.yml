@@ -25,3 +25,5 @@ services:
           dockerfile: ./.docker/backend_server.docker
       ports:
         - "${BACKEND_SERVER_PORT}:${BACKEND_SERVER_PORT}"
+      links:
+        - "mongodb"
