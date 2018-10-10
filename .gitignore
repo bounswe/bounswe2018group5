@@ -7,3 +7,8 @@ __pycache__/
 KarpuzTwitterApp/env
 .cache/
 KarpuzTwitterApp/.pytest_cache
+
+.data
+.data/
+
+.env
