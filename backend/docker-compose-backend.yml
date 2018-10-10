@@ -1,0 +1,16 @@
+version: '3'
+services:
+    mongodb:
+        container_name: karpuz_mongodb
+        build:
+            context: ./
+            dockerfile: ./.docker/mongodb.docker
+        volumes:
+            - "${MONGODB_PATH}:/data/db"
+        environment:
+            MONGO_INITDB_ROOT_USERNAME: ${MONGODB_USER}
+            MONGO_INITDB_ROOT_PASSWORD: ${MONGODB_PASSWORD}
+        ports:
+            - "${MONGODB_PORT}:${MONGODB_PORT}"
+        command: --auth
+        restart: always
