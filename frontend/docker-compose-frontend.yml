@@ -1,0 +1,15 @@
+version: '3'
+services:
+  frontend:
+    container_name: karpuz_frontend_server
+    build:
+      context: .
+      dockerfile: ./.docker/frontend_server.docker
+    volumes:
+    - '.:/usr/src/app'
+    - '/usr/src/app/node_modules'
+    ports:
+    - '3000:3000'
+    environment:
+    - NODE_ENV=development
+        
