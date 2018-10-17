@@ -19,4 +19,4 @@ RUN pip3 install -r /root/karpuz_backend/requirements.txt
 
 ENV PATH="/root/karpuz_backend:${PATH}"
 
-CMD ["python3", "./app.py"]
+CMD ["python3", "./manage.py", "runserver", "0.0.0.0:8000"]
