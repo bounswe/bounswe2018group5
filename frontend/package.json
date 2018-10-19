@@ -9,7 +9,10 @@
     "material-kit-react": "1.3.0",
     "react": "16.5.2",
     "react-dom": "16.5.2",
-    "react-scripts": "2.0.5"
+    "react-scripts": "2.0.5",
+    "react-router-dom": "latest",
+    "classnames": "latest",
+    "prop-types": "latest"
   },
   "scripts": {
     "start": "react-scripts start",
