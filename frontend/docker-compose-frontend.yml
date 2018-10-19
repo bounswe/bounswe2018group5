@@ -13,4 +13,5 @@ services:
     environment:
     - NODE_ENV=development
     - CHOKIDAR_USEPOLLING=true
+    - SKIP_PREFLIGHT_CHECK=true
         
