@@ -5,7 +5,7 @@
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".WelcomeActivity">
+        tools:context=".Activity.WelcomeActivity">
 
     <TextView
             android:layout_width="379dp"
@@ -27,16 +27,18 @@
             android:text="Login"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/button_login" android:layout_marginTop="52dp"
-            app:layout_constraintTop_toBottomOf="@+id/textView" app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintHorizontal_bias="0.5" app:layout_constraintEnd_toEndOf="parent"
-            android:onClick="loginClicked"/>
+            android:id="@+id/button_welcome_login"
+            android:onClick="loginClicked"
+            app:layout_constraintStart_toStartOf="parent" app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintEnd_toEndOf="parent" android:layout_marginTop="52dp"
+            app:layout_constraintTop_toBottomOf="@+id/textView"/>
     <Button
             android:text="Signup"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/button_signup" android:layout_marginTop="16dp"
-            app:layout_constraintTop_toBottomOf="@+id/button_login" app:layout_constraintStart_toStartOf="parent"
+            android:id="@+id/button_welcome_signup" android:layout_marginTop="16dp"
+            app:layout_constraintTop_toBottomOf="@+id/button_welcome_login"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintHorizontal_bias="0.5" app:layout_constraintEnd_toEndOf="parent"
             android:onClick="signupClicked"/>
 
