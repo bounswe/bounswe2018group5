@@ -1,7 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import classNames from "classnames";
-import { List, ListItem, withStyles } from "@material-ui/core";
+import { withStyles } from "@material-ui/core";
 
 // @material-ui/icons
 import Favorite from "@material-ui/icons/Favorite";
@@ -28,6 +28,7 @@ function Footer({ ...props }) {
                         href="https://github.com/bounswe/bounswe2018group5/wiki"
                         className={aClasses}
                         target="_blank"
+                        rel="noopener noreferrer"
                     >
                         Group 5
                     </a>{" "}

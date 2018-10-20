@@ -68,7 +68,7 @@ function HeaderLinks({...props}) {
     const {classes} = props;
     return (
         <List className={classes.list}>
-            <ListItem className={classes.listItem} alignSelf='center'>
+            <ListItem className={classes.listItem} alignself='center'>
                 <div className={classes.search}>
                     <div className={classes.searchIcon}>
                         <SearchIcon/>
@@ -82,9 +82,9 @@ function HeaderLinks({...props}) {
                     />
                 </div>
             </ListItem>
-            <ListItem className={classes.listItem} alignSelf='center'>
+            <ListItem className={classes.listItem} alignself='center'>
                 <Link to="login" className={classes.link}>
-                    <Button color="rose" size="small" round>
+                    <Button color="rose" round>
                         Login
                     </Button>
                 </Link>

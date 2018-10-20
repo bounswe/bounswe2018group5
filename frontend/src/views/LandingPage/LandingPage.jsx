@@ -58,7 +58,7 @@ class LandingPage extends Component {
                                 <br/>
                                 <Link to="sign-up" className={classes.link}>
                                     <Button color="rose" size="lg" round>
-                                        Sign Up!
+                                        Register Now!
                                     </Button>
                                 </Link>
                             </GridItem>
