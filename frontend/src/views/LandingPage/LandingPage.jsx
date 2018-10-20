@@ -63,8 +63,8 @@ class LandingPage extends Component {
                 <div className={classNames(classes.main, classes.mainRaised)}>
                     <div className={classes.container}>
                         <StatSection/>
-                        <TestimonialSection/>
                         <ProjectSection/>
+                        <TestimonialSection/>
                     </div>
                 </div>
                 <Footer/>

@@ -19,37 +19,20 @@ class TestimonialSection extends Component {
                 <h2 className={classes.title}>Here is our testimonials</h2>
                 <div>
                     <GridContainer>
-                        <GridItem xs={12} sm={12} md={4}>
+                        <GridItem xs={12} sm={12} md={6}>
                             <TestimonialCard
                                 imageSrc={testimonial1}
-                                testimonialName="John Doe"
-                                testimonialOccupation="Model"
-                                description="You can write here details about one of your team members.
-                                            You can give more details about what they do. Feel free to
-                                            add some <a href='#pablo'>links</a> for people to be able to
-                                            follow them outside the site."
+                                testimonialName="Elon Musk"
+                                testimonialOccupation="CEO"
+                                description="I found a project that suited my skills in less than 10 minutes. This is insane"
                             />
                         </GridItem>
-                        <GridItem xs={12} sm={12} md={4}>
+                        <GridItem xs={12} sm={12} md={6}>
                             <TestimonialCard
                                 imageSrc={testimonial1}
-                                testimonialName="John Doe"
-                                testimonialOccupation="Model"
-                                description="You can write here details about one of your team members.
-                                            You can give more details about what they do. Feel free to
-                                            add some <a href='#pablo'>links</a> for people to be able to
-                                            follow them outside the site."
-                            />
-                        </GridItem>
-                        <GridItem xs={12} sm={12} md={4}>
-                            <TestimonialCard
-                                imageSrc={testimonial1}
-                                testimonialName="John Doe"
-                                testimonialOccupation="Model"
-                                description="You can write here details about one of your team members.
-                                            You can give more details about what they do. Feel free to
-                                            add some <a href='#pablo'>links</a> for people to be able to
-                                            follow them outside the site."
+                                testimonialName="Mark Zuckerberg"
+                                testimonialOccupation="CEO"
+                                description="I found a developer for my dreams, now I'm a unicorn CEO!"
                             />
                         </GridItem>
                     </GridContainer>
