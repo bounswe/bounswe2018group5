@@ -13,6 +13,7 @@ import Header from "material-kit-react/components/Header/Header";
 import GridContainer from "material-kit-react/components/Grid/GridContainer";
 import GridItem from "material-kit-react/components/Grid/GridItem";
 import Parallax from "material-kit-react/components/Parallax/Parallax";
+import Helmet from 'react-helmet';
 
 import landingPageStyle from "material-kit-react/assets/jss/material-kit-react/views/landingPage.js";
 
@@ -25,9 +26,13 @@ const dashboardRoutes = [];
 class LandingPage extends Component {
     render() {
         const {classes, ...rest} = this.props;
-        document.title = 'Freelancer Platform';
         return (
             <div>
+                <Helmet
+                    title='Freelancer Platform'
+                    meta={[
+                        {property: 'og:title', content: 'Freelancer Platform'},
+                    ]} />
                 <Header
                     color="transparent"
                     routes={dashboardRoutes}
