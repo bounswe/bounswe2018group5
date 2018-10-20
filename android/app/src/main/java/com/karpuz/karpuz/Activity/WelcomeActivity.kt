@@ -1,5 +1,6 @@
 package com.karpuz.karpuz.Activity
 
+import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
@@ -13,10 +14,12 @@ class WelcomeActivity : AppCompatActivity() {
     }
 
     fun loginClicked(button: View) {
-
+        val loginIntent = Intent(this, LoginActivity::class.java)
+        startActivity(loginIntent)
     }
 
     fun signupClicked(button: View) {
-
+        val signupIntent = Intent(this, SignupActivity::class.java)
+        startActivity(signupIntent)
     }
 }
