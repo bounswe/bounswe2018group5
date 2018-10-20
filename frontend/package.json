@@ -12,7 +12,8 @@
     "react-scripts": "2.0.5",
     "react-router-dom": "latest",
     "classnames": "latest",
-    "prop-types": "latest"
+    "prop-types": "latest",
+    "react-helmet": "latest"
   },
   "scripts": {
     "start": "react-scripts start",
