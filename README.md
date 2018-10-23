@@ -19,7 +19,7 @@ We created some cool features with Twitter API. We used [PyCharm](https://www.je
 
 Note: Please, disable your ad blocker first.
 
-You can try them via [http://167.99.40.187/](http://167.99.40.187/) or check the code from [KarpuzTwitterApp](https://github.com/bounswe/bounswe2018group5/tree/master/KarpuzTwitterApp) folder above. 
+You can check the code from [KarpuzTwitterApp](https://github.com/bounswe/bounswe2018group5/tree/master/KarpuzTwitterApp) folder above. 
 
 ---
 
@@ -36,7 +36,7 @@ You can try them via [http://167.99.40.187/](http://167.99.40.187/) or check the
   
 [<img height="75px" align="center" hspace="40" src="https://avatars2.githubusercontent.com/u/36156287?s=400&v=4">](https://github.com/iremgokceler) | [<img height="75px" align="center" hspace="40" src="https://avatars3.githubusercontent.com/u/10131120?s=400&v=4">](https://github.com/emingure)  | [<img height="75px" align="center" hspace="40" src="https://avatars0.githubusercontent.com/u/23276683?s=400&v=4">](https://github.com/Oguzhan09) | [<img height="75px" align="center" hspace="40" src="https://avatars0.githubusercontent.com/u/8034884?s=400&v=4">](https://github.com/goflb) | [<img height="75px" align="center" hspace="40" src="https://avatars1.githubusercontent.com/u/10683524?s=400&v=4">](https://github.com/enisimsar)
 ---|---|---|---|---|
-[<div align="center">Güliz İrem</div><div align="center">Gökçeler</div>](https://github.com/bounswe/bounswe2018group5/wiki/guliz-irem-gokceler) | [<div align="center">Muhammed</div><div align="center">Emin Güre</div>](https://github.com/bounswe/bounswe2018group5/wiki/muhammed-emin-g%C3%BCre) | [<div align="center">Oğuzhan</div><div align="center">Kırlar</div>](https://github.com/bounswe/bounswe2018group5/wiki/oguzhan-kirlar)  | [<div align="center">Utku</div><div align="center">Alhan</div>](https://github.com/bounswe/bounswe2018group5/wiki/utku-alhan) | [<div align="center">Enis</div><div align="center">Simsar</div>](https://github.com/bounswe/bounswe2018group5/wiki/enis-simsar) 
+[<div align="center">Güliz İrem</div><div align="center">Gökçeler</div>](https://github.com/bounswe/bounswe2018group5/wiki/guliz-irem-gokceler) | [<div align="center">Muhammed</div><div align="center">Emin Güre</div>](https://github.com/bounswe/bounswe2018group5/wiki/muhammed-emin-g%C3%BCre) | [<div align="center">Oğuzhan</div><div align="center">Kırlar</div>](https://github.com/bounswe/bounswe2018group5/wiki/oguzhan-kirlar)  | [<div align="center">Enis</div><div align="center">Simsar</div>](https://github.com/bounswe/bounswe2018group5/wiki/enis-simsar) |
 
 ## License
 
