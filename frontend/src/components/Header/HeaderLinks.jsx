@@ -65,7 +65,7 @@ const newHeaderLinksStyle = theme => ({
 });
 
 function HeaderLinks({...props}) {
-    const {classes} = props;
+    const {classes, rightButton} = props;
     return (
         <List className={classes.list}>
             <ListItem className={classes.listItem} alignself='center'>
@@ -83,9 +83,9 @@ function HeaderLinks({...props}) {
                 </div>
             </ListItem>
             <ListItem className={classes.listItem} alignself='center'>
-                <Link to="login" className={classes.link}>
+                <Link to={rightButton} className={classes.link}>
                     <Button color="rose" round>
-                        Login
+                        {rightButton}
                     </Button>
                 </Link>
             </ListItem>

@@ -9,7 +9,7 @@ import HeaderLinks from "components/Header/HeaderLinks";
 import Footer from "components/Footer/Footer";
 // core components
 import Button from 'material-kit-react/components/CustomButtons/Button';
-import Header from "material-kit-react/components/Header/Header";
+import Header from "components/Header/Header";
 import GridContainer from "material-kit-react/components/Grid/GridContainer";
 import GridItem from "material-kit-react/components/Grid/GridItem";
 import Parallax from "material-kit-react/components/Parallax/Parallax";
@@ -37,7 +37,7 @@ class LandingPage extends Component {
                     color="transparent"
                     routes={dashboardRoutes}
                     brand="Freelancer"
-                    rightLinks={<HeaderLinks />}
+                    rightLinks={<HeaderLinks rightButton={'login'} />}
                     fixed
                     changeColorOnScroll={{
                         height: 400,
@@ -56,7 +56,7 @@ class LandingPage extends Component {
                                     developer.Need to put your skills to use? Earn money while you do what you enjoy.
                                 </h4>
                                 <br />
-                                <Link to="sign-up" className={classes.link}>
+                                <Link to="register" className={classes.link}>
                                     <Button color="rose" size="lg" round>
                                         Register Now!
                                     </Button>

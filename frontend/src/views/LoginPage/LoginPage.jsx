@@ -6,7 +6,7 @@ import withStyles from "@material-ui/core/styles/withStyles";
 import HeaderLinks from "components/Header/HeaderLinks";
 import Footer from "components/Footer/Footer";
 // core components
-import RegisterForm from 'components/Form/RegisterForm';
+import LoginForm from 'components/Form/LoginForm';
 import Header from "components/Header/Header";
 import Helmet from 'react-helmet';
 
@@ -15,21 +15,21 @@ import signupPageStyle from "material-kit-react/assets/jss/material-kit-react/vi
 
 const dashboardRoutes = [];
 
-class RegisterPage extends Component {
+class LoginPage extends Component {
     render() {
         const { classes, ...rest } = this.props;
         return (
             <div>
                 <Helmet
-                    title='Register'
+                    title='Login'
                     meta={[
-                        { property: 'og:title', content: 'Register' },
+                        { property: 'og:title', content: 'Login' },
                     ]} />
                 <Header
                     color="transparent"
                     routes={dashboardRoutes}
                     brand="Freelancer"
-                    rightLinks={<HeaderLinks rightButton='login' />}
+                    rightLinks={<HeaderLinks rightButton='register' />}
                     fixed
                     changeColorOnScroll={{
                         height: 400,
@@ -37,11 +37,11 @@ class RegisterPage extends Component {
                     }}
                     {...rest}
                 />
-                <RegisterForm></RegisterForm>
+                <LoginForm></LoginForm>
                 <Footer />
             </div>
         );
     }
 }
 
-export default withStyles(signupPageStyle)(RegisterPage);
+export default withStyles(signupPageStyle)(LoginPage);
