@@ -136,8 +136,8 @@ class RegisterForm extends React.Component {
                     }}
                 >
                     <div className={classes.container}>
-                        <GridContainer justify="right">
-                            <GridItem xs={12} sm={12} md={4}>
+                        <GridContainer justify="center">
+                            <GridItem xs={12} sm={12} md={6}>
                                 <Card className={classes[this.state.cardAnimaton]}>
                                     <form className={classes.form} onSubmit={this.handleFormSubmit}>
                                         <CardHeader color="primary" className={classes.cardHeader}>
