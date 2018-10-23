@@ -7,7 +7,7 @@ import GridContainer from "material-kit-react/components/Grid/GridContainer";
 import GridItem from "material-kit-react/components/Grid/GridItem";
 
 import statStyle from "material-kit-react/assets/jss/material-kit-react/views/landingPageSections/productStyle";
-import StatCard from "../../../components/Card/StatCard";
+import StatCard from "components/Card/StatCard";
 
 class StatSection extends Component {
     render() {

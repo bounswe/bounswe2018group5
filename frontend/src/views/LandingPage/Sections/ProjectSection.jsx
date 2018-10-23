@@ -7,7 +7,7 @@ import GridContainer from "material-kit-react/components/Grid/GridContainer";
 import GridItem from "material-kit-react/components/Grid/GridItem";
 
 import statStyle from "material-kit-react/assets/jss/material-kit-react/views/landingPageSections/productStyle";
-import SummaryProjectCard from "../../../components/Card/SummaryProjectCard";
+import SummaryProjectCard from "components/Card/SummaryProjectCard";
 
 class ProjectSection extends Component {
     render() {

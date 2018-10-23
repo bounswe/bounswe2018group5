@@ -14,4 +14,5 @@ services:
     - NODE_ENV=development
     - CHOKIDAR_USEPOLLING=true
     - SKIP_PREFLIGHT_CHECK=true
+    - NODE_PATH=src
         
