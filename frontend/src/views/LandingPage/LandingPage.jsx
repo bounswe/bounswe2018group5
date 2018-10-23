@@ -1,5 +1,5 @@
-import React, {Component} from "react";
-import {Link} from "react-router-dom";
+import React, { Component } from "react";
+import { Link } from "react-router-dom";
 import classNames from "classnames";
 import withStyles from "@material-ui/core/styles/withStyles";
 
@@ -25,19 +25,19 @@ const dashboardRoutes = [];
 
 class LandingPage extends Component {
     render() {
-        const {classes, ...rest} = this.props;
+        const { classes, ...rest } = this.props;
         return (
             <div>
                 <Helmet
                     title='Freelancer Platform'
                     meta={[
-                        {property: 'og:title', content: 'Freelancer Platform'},
+                        { property: 'og:title', content: 'Freelancer Platform' },
                     ]} />
                 <Header
                     color="transparent"
                     routes={dashboardRoutes}
                     brand="Freelancer"
-                    rightLinks={<HeaderLinks/>}
+                    rightLinks={<HeaderLinks />}
                     fixed
                     changeColorOnScroll={{
                         height: 400,
@@ -55,7 +55,7 @@ class LandingPage extends Component {
                                     small to middle scale projects.Got an idea? This is the place to find a rock star
                                     developer.Need to put your skills to use? Earn money while you do what you enjoy.
                                 </h4>
-                                <br/>
+                                <br />
                                 <Link to="sign-up" className={classes.link}>
                                     <Button color="rose" size="lg" round>
                                         Register Now!
@@ -67,12 +67,12 @@ class LandingPage extends Component {
                 </Parallax>
                 <div className={classNames(classes.main, classes.mainRaised)}>
                     <div className={classes.container}>
-                        <StatSection/>
-                        <ProjectSection/>
-                        <TestimonialSection/>
+                        <StatSection />
+                        <ProjectSection />
+                        <TestimonialSection />
                     </div>
                 </div>
-                <Footer/>
+                <Footer />
             </div>
         );
     }
