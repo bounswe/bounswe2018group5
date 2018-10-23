@@ -5,11 +5,11 @@ import withStyles from "@material-ui/core/styles/withStyles";
 // core components
 import GridContainer from "material-kit-react/components/Grid/GridContainer";
 import GridItem from "material-kit-react/components/Grid/GridItem";
-import TestimonialCard from "../../../components/Card/TestimonialCard";
+import TestimonialCard from "components/Card/TestimonialCard";
 
 import testimonialStyle from "material-kit-react/assets/jss/material-kit-react/views/landingPageSections/teamStyle";
 
-import testimonial1 from "../../../assets/img/faces/christian.jpg"
+import testimonial1 from "assets/img/faces/christian.jpg"
 
 class TestimonialSection extends Component {
     render() {

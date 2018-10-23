@@ -5,8 +5,8 @@ import withStyles from "@material-ui/core/styles/withStyles";
 
 // @material-ui/icons
 
-import HeaderLinks from "../../components/Header/HeaderLinks";
-import Footer from "../../components/Footer/Footer";
+import HeaderLinks from "components/Header/HeaderLinks";
+import Footer from "components/Footer/Footer";
 // core components
 import Button from 'material-kit-react/components/CustomButtons/Button';
 import Header from "material-kit-react/components/Header/Header";
@@ -45,7 +45,7 @@ class LandingPage extends Component {
                     }}
                     {...rest}
                 />
-                <Parallax filter image={require("../../assets/img/landing-bg.jpg")}>
+                <Parallax filter image={require("assets/img/landing-bg.jpg")}>
                     <div className={classes.container}>
                         <GridContainer>
                             <GridItem xs={12} sm={12} md={6}>
