@@ -6,7 +6,6 @@ import { BrowserRouter, Route, Switch } from "react-router-dom";
 import LandingPage from "views/LandingPage/LandingPage.jsx";
 import HomePage from "layouts/Home/Home.jsx";
 
-import indexRoutes from "./routes/index.jsx";
 
 import "material-kit-react/material-kit-react.css";
 

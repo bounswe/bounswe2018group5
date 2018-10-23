@@ -11,12 +11,12 @@ import Header from "material-dashboard-react/dist/components/Header/Header";
 import Footer from "material-dashboard-react/dist/components/Footer/Footer";
 import Sidebar from "material-dashboard-react/dist/components/Sidebar/Sidebar";
 
-import dashboardRoutes from "routes/home.jsx";
-
 import dashboardStyle from "material-dashboard-react/dist/assets/jss/material-dashboard-react/layouts/dashboardStyle";
 
 import image from "assets/img/landing-bg.jpg";
 import logo from "assets/img/favicon.ico";
+
+var dashboardRoutes = []; 
 
 const switchRoutes = (
     <Switch>
