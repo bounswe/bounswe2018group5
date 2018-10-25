@@ -10,8 +10,11 @@ import CardBody from "material-kit-react/components/Card/CardBody";
 import CardHeader from "material-kit-react/components/Card/CardHeader";
 import CardFooter from "material-kit-react/components/Card/CardFooter";
 import signupPageStyle from "material-kit-react/assets/jss/material-kit-react/views/loginPage.js";
+import People from "@material-ui/icons/People";
+import InputAdornment from "@material-ui/core/InputAdornment";
 import image from "../../sign.jpg";
-import { ValidatorForm, TextValidator } from 'react-material-ui-form-validator';
+import { ValidatorForm } from 'react-material-ui-form-validator';
+import TextValidator from 'components/Input';
 
 class RegisterForm extends React.Component {
     constructor(props) {
@@ -110,6 +113,17 @@ class RegisterForm extends React.Component {
                                                     value={formData.email}
                                                     validators={['required', 'isEmail']}
                                                     errorMessages={['this field is required', 'email is not valid']}
+                                                    formControlProps={{
+                                                        fullWidth: true
+                                                    }}
+                                                    inputProps={{
+                                                        type: "text",
+                                                        endAdornment: (
+                                                            <InputAdornment position="end">
+                                                                <People className={classes.inputIconsColor} />
+                                                            </InputAdornment>
+                                                        )
+                                                    }}
                                                 />
                                                 <br />
                                                 <br />
