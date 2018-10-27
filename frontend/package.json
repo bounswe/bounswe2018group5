@@ -19,14 +19,13 @@
     "react": "16.5.2",
     "react-dom": "16.5.2",
     "react-helmet": "latest",
-    "react-material-ui-form-validator": "2.0.2",
+    "react-redux": "5.0.7",
     "react-router-dom": "latest",
     "react-scripts": "2.0.5",
     "redux": "4.0.1",
     "redux-saga": "0.16.2",
     "universal-cookie": "^3.0.4",
-    "validator": "10.8.0",
-    "react-redux": "5.0.7"
+    "validator": "10.8.0"
   },
   "scripts": {
     "start": "react-scripts start",
