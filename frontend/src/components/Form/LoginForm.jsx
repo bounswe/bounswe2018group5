@@ -1,6 +1,10 @@
-import React from "react";
+import React, {Component} from "react";
 // @material-ui/core components
 import withStyles from "@material-ui/core/styles/withStyles";
+import InputAdornment from "@material-ui/core/InputAdornment";
+import Icon from "@material-ui/core/Icon";
+// @material-ui/icons
+import People from "@material-ui/icons/People";
 // core components
 import GridContainer from "material-kit-react/components/Grid/GridContainer";
 import GridItem from "material-kit-react/components/Grid/GridItem";
@@ -9,134 +13,144 @@ import Card from "material-kit-react/components/Card/Card";
 import CardBody from "material-kit-react/components/Card/CardBody";
 import CardHeader from "material-kit-react/components/Card/CardHeader";
 import CardFooter from "material-kit-react/components/Card/CardFooter";
-import signupPageStyle from "material-kit-react/assets/jss/material-kit-react/views/loginPage.js";
-import image from "../../sign.jpg";
-import { ValidatorForm, TextValidator } from 'react-material-ui-form-validator';
+import CustomInput from "components/CustomInput/CustomInput";
+import { tryLogin, loginReset } from "redux/auth/Actions.js";
+import {connect} from "react-redux";
 
-class LoginForm extends React.Component {
+import { setCookie, getCookie, LOGGEDIN_COOKIE, TOKEN_COOKIE } from "services/cookies.js";
+
+import loginPageStyle from "material-kit-react/assets/jss/material-kit-react/views/loginPage";
+
+class LoginForm extends Component {
     constructor(props) {
         super(props);
         // we use this to make the card to appear after the page has been rendered
         this.state = {
             cardAnimaton: "cardHidden",
-            formData: {
-                fullname: '',
-                email: '',
-                password: '',
-                password_confirmation: '',
-            },
-            submitted: false,
-
+            username: "",
+            password: "",
         };
-
-        this.submitted = false;
-
-        this.handleChange = this.handleChange.bind(this);
-        this.handleSubmit = this.handleSubmit.bind(this);
     }
 
-    componentWillMount() {
-        // custom rule will have name 'isPasswordMatch'
-        ValidatorForm.addValidationRule('isPasswordMatch', (value) => {
-            if (value !== this.state.formData.password) {
-                return false;
-            }
-            return true;
-        });
-    }
-
-    handleChange(event) {
-        const { formData } = this.state;
-        formData[event.target.name] = event.target.value;
-        this.setState({ formData });
-    }
-
-    handleSubmit() {
-        this.setState({ submitted: true }, () => {
-            setTimeout(() => this.setState({ submitted: false }), 5000);
-        });
+    handleSubmit(event) {
+        const { username, password } = this.state;
+        this.props.tryLogin(username, password);
+        event.preventDefault();
     }
 
     componentDidMount() {
+        const { history } = this.props;
+
+        const loggedIn = getCookie(LOGGEDIN_COOKIE);
+        if (loggedIn) return history.push("/home");
         // we add a hidden class to the card and after 700 ms we delete it and the transition appears
         setTimeout(
             function () {
-                this.setState({ cardAnimaton: "" });
+                this.setState({cardAnimaton: ""});
             }.bind(this),
             700
         );
     }
+
+    componentDidUpdate(prevProps, prevState) {
+        const { history } = this.props;
+        const { loginInProgress, loginHasError, loginCompleted, api_token, loggedIn } = this.props.auth;
+
+        if (loginInProgress && !loginHasError && !loginCompleted) {
+        } else if (!loginInProgress && !loginHasError && loginCompleted) {
+            setCookie(TOKEN_COOKIE, api_token, { path: "/" });
+            setCookie(LOGGEDIN_COOKIE, loggedIn, { path: "/" });
+            this.props.loginReset();
+            history.push("/home");
+        } else if (!loginInProgress && loginHasError && loginCompleted) {
+            this.props.loginReset();
+        }
+    }
+
     render() {
-        const { formData, submitted } = this.state;
-        const { classes, ...rest } = this.props;
-
+        const {classes} = this.props;
         return (
-            <ValidatorForm
-                ref="form"
-                onSubmit={this.handleSubmit}
-            >
-                <div>
-                    <div
-                        className={classes.pageHeader}
-                        style={{
-                            backgroundImage: "url(" + image + ")",
-                            backgroundSize: "cover",
-                            backgroundPosition: "top center"
-                        }}
-                    >
-                        <div className={classes.container}>
-                            <GridContainer justify="center">
-                                <GridItem xs={12} sm={12} md={6}>
-                                    <Card className={classes[this.state.cardAnimaton]}>
-                                        <form className={classes.form} >
-                                            <CardHeader color="primary" className={classes.cardHeader}>
-                                                <h4>LOGIN</h4>
-                                            </CardHeader>
-                                            <CardBody>
-                                                <TextValidator
-                                                    label="Email..."
-                                                    onChange={this.handleChange}
-                                                    name="email"
-                                                    value={formData.email}
-                                                    validators={['required', 'isEmail']}
-                                                    errorMessages={['this field is required', 'email is not valid']}
-                                                />
-                                                <br />
-                                                <br />
-                                                <TextValidator
-                                                    label="Password..."
-                                                    onChange={this.handleChange}
-                                                    name="password"
-                                                    type="password"
-                                                    validators={['required']}
-                                                    errorMessages={['this field is required']}
-                                                    value={formData.password}
-                                                />
-                                                <br />
-                                                <br />
-                                            </CardBody>
-                                            <CardFooter className={classes.cardFooter}>
-                                                <Button
-                                                    raised
-                                                    type="submit"
-                                                    disabled={submitted}
-                                                >
-                                                    {
-                                                        (submitted && 'Your form is submitted!') ||
-                                                        (!submitted && 'Login')
-                                                    }
-                                                </Button>
-                                            </CardFooter>
-                                        </form>
-                                    </Card>
-                                </GridItem>
-                            </GridContainer>
-                        </div>
-
+            <div>
+                <div
+                    className={classes.pageHeader}
+                    style={{
+                        backgroundImage: "url(" + require("assets/img/bg7.jpg") + ")",
+                        backgroundSize: "cover",
+                        backgroundPosition: "top center"
+                    }}
+                >
+                    <div className={classes.container}>
+                        <GridContainer justify="center">
+                            <GridItem xs={12} sm={12} md={6}>
+                                <Card className={classes[this.state.cardAnimaton]}>
+                                    <form className={classes.form}>
+                                        <CardHeader color="primary" className={classes.cardHeader}>
+                                            <h4>Login</h4>
+                                        </CardHeader>
+                                        <CardBody>
+                                            <CustomInput
+                                                labelText="Username"
+                                                id="username"
+                                                formControlProps={{
+                                                    fullWidth: true
+                                                }}
+                                                inputProps={{
+                                                    type: "text",
+                                                    endAdornment: (
+                                                        <InputAdornment position="end">
+                                                            <People className={classes.inputIconsColor}/>
+                                                        </InputAdornment>
+                                                    ),
+                                                    onChange: event => this.setState({ username: event.target.value })
+                                                }}
+                                            />
+                                            <CustomInput
+                                                labelText="Password"
+                                                id="pass"
+                                                formControlProps={{
+                                                    fullWidth: true
+                                                }}
+                                                inputProps={{
+                                                    type: "password",
+                                                    endAdornment: (
+                                                        <InputAdornment position="end">
+                                                            <Icon className={classes.inputIconsColor}>
+                                                                lock_outline
+                                                            </Icon>
+                                                        </InputAdornment>
+                                                    ),
+                                                    onChange: event => this.setState({ password: event.target.value })
+                                                }}
+                                            />
+                                        </CardBody>
+                                        <CardFooter className={classes.cardFooter}>
+                                            <Button simple color="primary" size="lg" onClick={event => this.handleSubmit(event)}>
+                                                Login
+                                            </Button>
+                                        </CardFooter>
+                                    </form>
+                                </Card>
+                            </GridItem>
+                        </GridContainer>
                     </div>
                 </div>
-            </ValidatorForm>
+            </div>
         );
     }
 }
-export default withStyles(signupPageStyle)(LoginForm);
+
+function bindAction(dispatch) {
+    return {
+        tryLogin: (username, password) => dispatch(tryLogin(username, password)),
+        loginReset: () => dispatch(loginReset())
+    };
+}
+
+const mapStateToProps = state => ({
+    auth: state.auth
+});
+
+export default connect(
+    mapStateToProps,
+    bindAction
+)(withStyles(loginPageStyle)(LoginForm));

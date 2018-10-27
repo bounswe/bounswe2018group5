@@ -1,6 +1,11 @@
-import React from "react";
+import React, {Component} from "react";
 // @material-ui/core components
 import withStyles from "@material-ui/core/styles/withStyles";
+import InputAdornment from "@material-ui/core/InputAdornment";
+import Icon from "@material-ui/core/Icon";
+// @material-ui/icons
+import Email from "@material-ui/icons/Email";
+import People from "@material-ui/icons/People";
 // core components
 import GridContainer from "material-kit-react/components/Grid/GridContainer";
 import GridItem from "material-kit-react/components/Grid/GridItem";
@@ -9,169 +14,189 @@ import Card from "material-kit-react/components/Card/Card";
 import CardBody from "material-kit-react/components/Card/CardBody";
 import CardHeader from "material-kit-react/components/Card/CardHeader";
 import CardFooter from "material-kit-react/components/Card/CardFooter";
-import signupPageStyle from "material-kit-react/assets/jss/material-kit-react/views/loginPage.js";
-import People from "@material-ui/icons/People";
-import InputAdornment from "@material-ui/core/InputAdornment";
-import image from "../../sign.jpg";
-import { ValidatorForm } from 'react-material-ui-form-validator';
-import TextValidator from 'components/Input';
+import CustomInput from "components/CustomInput/CustomInput";
+import { tryRegister, registerReset } from "redux/auth/Actions.js";
+import {connect} from "react-redux";
 
-class RegisterForm extends React.Component {
+import registerFormStyle from "material-kit-react/assets/jss/material-kit-react/views/loginPage";
+
+class RegisterForm extends Component {
     constructor(props) {
         super(props);
         // we use this to make the card to appear after the page has been rendered
         this.state = {
             cardAnimaton: "cardHidden",
-            formData: {
-                fullname: '',
-                email: '',
-                password: '',
-                password_confirmation: '',
-            },
-            submitted: false,
-
+            full_name: "",
+            username: "",
+            email: "",
+            password: "",
+            password_confirmation: ""
         };
-
-        this.submitted = false;
-
-        this.handleChange = this.handleChange.bind(this);
-        this.handleSubmit = this.handleSubmit.bind(this);
     }
 
-    componentWillMount() {
-        // custom rule will have name 'isPasswordMatch'
-        ValidatorForm.addValidationRule('isPasswordMatch', (value) => {
-            if (value !== this.state.formData.password) {
-                return false;
-            }
-            return true;
-        });
-    }
-
-    handleChange(event) {
-        const { formData } = this.state;
-        formData[event.target.name] = event.target.value;
-        this.setState({ formData });
-    }
-
-    handleSubmit() {
-        this.setState({ submitted: true }, () => {
-            setTimeout(() => this.setState({ submitted: false }), 5000);
-        });
+    handleSubmit(event) {
+        const { full_name, username, password, email } = this.state;
+        this.props.tryRegister(username, email, password, full_name);
+        event.preventDefault();
     }
 
     componentDidMount() {
         // we add a hidden class to the card and after 700 ms we delete it and the transition appears
         setTimeout(
             function () {
-                this.setState({ cardAnimaton: "" });
+                this.setState({cardAnimaton: ""});
             }.bind(this),
             700
         );
     }
+
+    componentDidUpdate(prevProps, prevState) {
+        const { history } = this.props;
+        const { registerInProgress, registerHasError, registerCompleted } = this.props.auth;
+
+        if (registerInProgress && !registerHasError && !registerCompleted) {
+        } else if (!registerInProgress && !registerHasError && registerCompleted) {
+            this.props.registerReset();
+            history.push("/login");
+        } else if (!registerInProgress && registerHasError && registerCompleted) {
+            this.props.registerReset();
+        }
+    }
+
     render() {
-        const { formData, submitted } = this.state;
-        const { classes, ...rest } = this.props;
-
+        const {classes} = this.props;
         return (
-            <ValidatorForm
-                ref="form"
-                onSubmit={this.handleSubmit}
-            >
-                <div>
-                    <div
-                        className={classes.pageHeader}
-                        style={{
-                            backgroundImage: "url(" + image + ")",
-                            backgroundSize: "cover",
-                            backgroundPosition: "top center"
-                        }}
-                    >
-                        <div className={classes.container}>
-                            <GridContainer justify="center">
-                                <GridItem xs={12} sm={12} md={6}>
-                                    <Card className={classes[this.state.cardAnimaton]}>
-                                        <form className={classes.form} >
-                                            <CardHeader color="primary" className={classes.cardHeader}>
-                                                <h4>REGISTER</h4>
-                                            </CardHeader>
-                                            <CardBody>
-                                                <TextValidator
-                                                    label="Full Name..."
-                                                    onChange={this.handleChange}
-                                                    name="fullname"
-                                                    value={formData.fullname}
-                                                    validators={['required']}
-                                                    errorMessages={['this field is required']}
-                                                />
-                                                <br />
-                                                <br />
-                                                <TextValidator
-                                                    label="Email..."
-                                                    onChange={this.handleChange}
-                                                    name="email"
-                                                    value={formData.email}
-                                                    validators={['required', 'isEmail']}
-                                                    errorMessages={['this field is required', 'email is not valid']}
-                                                    formControlProps={{
-                                                        fullWidth: true
-                                                    }}
-                                                    inputProps={{
-                                                        type: "text",
-                                                        endAdornment: (
-                                                            <InputAdornment position="end">
-                                                                <People className={classes.inputIconsColor} />
-                                                            </InputAdornment>
-                                                        )
-                                                    }}
-                                                />
-                                                <br />
-                                                <br />
-                                                <TextValidator
-                                                    label="Password..."
-                                                    onChange={this.handleChange}
-                                                    name="password"
-                                                    type="password"
-                                                    validators={['required']}
-                                                    errorMessages={['this field is required']}
-                                                    value={formData.password}
-                                                />
-                                                <br />
-                                                <br />
-                                                <TextValidator
-                                                    label="Re-enter Password..."
-                                                    onChange={this.handleChange}
-                                                    name="password_confirmation"
-                                                    type="password"
-                                                    validators={['isPasswordMatch', 'required']}
-                                                    errorMessages={['password mismatch', 'this field is required']}
-                                                    value={formData.password_confirmation}
-                                                />
-                                                <br />
-                                                <br />
-                                            </CardBody>
-                                            <CardFooter className={classes.cardFooter}>
-                                                <Button
-                                                    raised
-                                                    type="submit"
-                                                    disabled={submitted}
-                                                >
-                                                    {
-                                                        (submitted && 'Your form is submitted!') ||
-                                                        (!submitted && 'Register')
-                                                    }
-                                                </Button>
-                                            </CardFooter>
-                                        </form>
-                                    </Card>
-                                </GridItem>
-                            </GridContainer>
-                        </div>
-
+            <div>
+                <div
+                    className={classes.pageHeader}
+                    style={{
+                        backgroundImage: "url(" + require("assets/img/bg7.jpg") + ")",
+                        backgroundSize: "cover",
+                        backgroundPosition: "top center"
+                    }}
+                >
+                    <div className={classes.container}>
+                        <GridContainer justify="center">
+                            <GridItem xs={12} sm={12} md={6}>
+                                <Card className={classes[this.state.cardAnimaton]}>
+                                    <form className={classes.form}>
+                                        <CardHeader color="primary" className={classes.cardHeader}>
+                                            <h4>Register</h4>
+                                        </CardHeader>
+                                        <CardBody>
+                                            <CustomInput
+                                                labelText="Full Name"
+                                                id="full_name"
+                                                formControlProps={{
+                                                    fullWidth: true
+                                                }}
+                                                inputProps={{
+                                                    type: "text",
+                                                    endAdornment: (
+                                                        <InputAdornment position="end">
+                                                            <People className={classes.inputIconsColor}/>
+                                                        </InputAdornment>
+                                                    ),
+                                                    onChange: event => this.setState({ full_name: event.target.value })
+                                                }}
+                                            />
+                                            <CustomInput
+                                                labelText="Username"
+                                                id="username"
+                                                formControlProps={{
+                                                    fullWidth: true
+                                                }}
+                                                inputProps={{
+                                                    type: "text",
+                                                    endAdornment: (
+                                                        <InputAdornment position="end">
+                                                            <People className={classes.inputIconsColor}/>
+                                                        </InputAdornment>
+                                                    ),
+                                                    onChange: event => this.setState({ username: event.target.value })
+                                                }}
+                                            />
+                                            <CustomInput
+                                                labelText="Email"
+                                                id="email"
+                                                formControlProps={{
+                                                    fullWidth: true
+                                                }}
+                                                inputProps={{
+                                                    type: "email",
+                                                    endAdornment: (
+                                                        <InputAdornment position="end">
+                                                            <Email className={classes.inputIconsColor}/>
+                                                        </InputAdornment>
+                                                    ),
+                                                    onChange: event => this.setState({ email: event.target.value })
+                                                }}
+                                            />
+                                            <CustomInput
+                                                labelText="Password"
+                                                id="pass"
+                                                formControlProps={{
+                                                    fullWidth: true
+                                                }}
+                                                inputProps={{
+                                                    type: "password",
+                                                    endAdornment: (
+                                                        <InputAdornment position="end">
+                                                            <Icon className={classes.inputIconsColor}>
+                                                                lock_outline
+                                                            </Icon>
+                                                        </InputAdornment>
+                                                    ),
+                                                    onChange: event => this.setState({ password: event.target.value })
+                                                }}
+                                            />
+                                            <CustomInput
+                                                labelText="Password Confirmation"
+                                                id="pass_conf"
+                                                formControlProps={{
+                                                    fullWidth: true
+                                                }}
+                                                inputProps={{
+                                                    type: "password",
+                                                    endAdornment: (
+                                                        <InputAdornment position="end">
+                                                            <Icon className={classes.inputIconsColor}>
+                                                                lock_outline
+                                                            </Icon>
+                                                        </InputAdornment>
+                                                    ),
+                                                    onChange: event => this.setState({ password_confirmation: event.target.value })
+                                                }}
+                                            />
+                                        </CardBody>
+                                        <CardFooter className={classes.cardFooter}>
+                                            <Button simple color="primary" size="lg" onClick={event => this.handleSubmit(event)}>
+                                                Register
+                                            </Button>
+                                        </CardFooter>
+                                    </form>
+                                </Card>
+                            </GridItem>
+                        </GridContainer>
                     </div>
                 </div>
-            </ValidatorForm>
+            </div>
         );
     }
 }
-export default withStyles(signupPageStyle)(RegisterForm);
+
+function bindAction(dispatch) {
+    return {
+        tryRegister: (username, email, password, full_name) => dispatch(tryRegister(username, email, password, full_name)),
+        registerReset: () => dispatch(registerReset())
+    };
+}
+
+const mapStateToProps = state => ({
+    auth: state.auth
+});
+
+export default connect(
+    mapStateToProps,
+    bindAction
+)(withStyles(registerFormStyle)(RegisterForm));
