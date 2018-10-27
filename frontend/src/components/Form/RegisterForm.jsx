@@ -13,8 +13,7 @@ import signupPageStyle from "material-kit-react/assets/jss/material-kit-react/vi
 import People from "@material-ui/icons/People";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import image from "../../sign.jpg";
-import { ValidatorForm } from 'react-material-ui-form-validator';
-import TextValidator from 'components/Input';
+import { TextValidator, ValidatorForm } from 'react-material-ui-form-validator';
 
 class RegisterForm extends React.Component {
     constructor(props) {
