@@ -48,7 +48,7 @@ const tryRegisterSaga = function*(action) {
                 console.log("Something wrong! Got a status 400", registerResponse.responseBody);
                 yield put(registerFailure(registerResponse.responseBody));
             } else {
-                console.log("Something wrong! Got an unknown status. API BOZUK!!!", registerResponse);
+                console.log("Something wrong! Got an unknown status.", registerResponse);
                 yield put(registerFailure({ detail: ["Unknown status. Check console!"] }));
             }
         } else {

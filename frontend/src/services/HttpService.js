@@ -1,10 +1,8 @@
 import { getCookie, TOKEN_COOKIE } from "./cookies.js";
 
-require('dotenv').config();
-
 const Configuration = {
-    API_URL: process.env.API_URL,
-    STATIC_HOST: process.env.API_STATIC_URL,
+    API_URL: process.env.REACT_APP_API_URL,
+    STATIC_HOST: process.env.REACT_APP_API_STATIC_URL,
     HTTP_TIMEOUT_MS: 40000 /* 40 sec */
 };
 
@@ -27,7 +25,7 @@ class HttpService {
                             : "JWT " + getCookie(TOKEN_COOKIE),
                     ...overriddenHeaders
                 },
-                timeout: Configuration.HTTP_TIMEOUT_MS
+                timeout: Configuration.HTTP_TIMEOUT_MS,
             };
 
             let fetchStatus = null;
@@ -45,7 +43,7 @@ class HttpService {
                     resolve(response);
                 })
                 .catch(err => {
-                    console.log("HttpService.js de hata:", err);
+                    console.log("HttpService.js:", err);
                     reject({
                         detail: "Something wrong happened when try to fetch data. Code-API"
                     });
