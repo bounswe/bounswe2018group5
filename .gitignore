@@ -11,4 +11,6 @@ KarpuzTwitterApp/.pytest_cache
 .data
 .data/
 
+db.*
+
 .env
