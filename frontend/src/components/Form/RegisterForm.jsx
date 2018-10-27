@@ -15,6 +15,8 @@ import CardBody from "material-kit-react/components/Card/CardBody";
 import CardHeader from "material-kit-react/components/Card/CardHeader";
 import CardFooter from "material-kit-react/components/Card/CardFooter";
 import CustomInput from "components/CustomInput/CustomInput";
+import { tryRegister, registerReset } from "redux/auth/Actions.js";
+import {connect} from "react-redux";
 
 import registerFormStyle from "material-kit-react/assets/jss/material-kit-react/views/loginPage";
 
@@ -23,8 +25,19 @@ class RegisterForm extends Component {
         super(props);
         // we use this to make the card to appear after the page has been rendered
         this.state = {
-            cardAnimaton: "cardHidden"
+            cardAnimaton: "cardHidden",
+            full_name: "",
+            username: "",
+            email: "",
+            password: "",
+            password_confirmation: ""
         };
+    }
+
+    handleSubmit(event) {
+        const { full_name, username, password, email } = this.state;
+        this.props.tryRegister(username, email, password, full_name);
+        event.preventDefault();
     }
 
     componentDidMount() {
@@ -35,6 +48,19 @@ class RegisterForm extends Component {
             }.bind(this),
             700
         );
+    }
+
+    componentDidUpdate(prevProps, prevState) {
+        const { history } = this.props;
+        const { registerInProgress, registerHasError, registerCompleted } = this.props.auth;
+
+        if (registerInProgress && !registerHasError && !registerCompleted) {
+        } else if (!registerInProgress && !registerHasError && registerCompleted) {
+            this.props.registerReset();
+            history.push("/login");
+        } else if (!registerInProgress && registerHasError && registerCompleted) {
+            this.props.registerReset();
+        }
     }
 
     render() {
@@ -70,7 +96,8 @@ class RegisterForm extends Component {
                                                         <InputAdornment position="end">
                                                             <People className={classes.inputIconsColor}/>
                                                         </InputAdornment>
-                                                    )
+                                                    ),
+                                                    onChange: event => this.setState({ full_name: event.target.value })
                                                 }}
                                             />
                                             <CustomInput
@@ -85,7 +112,8 @@ class RegisterForm extends Component {
                                                         <InputAdornment position="end">
                                                             <People className={classes.inputIconsColor}/>
                                                         </InputAdornment>
-                                                    )
+                                                    ),
+                                                    onChange: event => this.setState({ username: event.target.value })
                                                 }}
                                             />
                                             <CustomInput
@@ -100,9 +128,9 @@ class RegisterForm extends Component {
                                                         <InputAdornment position="end">
                                                             <Email className={classes.inputIconsColor}/>
                                                         </InputAdornment>
-                                                    )
+                                                    ),
+                                                    onChange: event => this.setState({ email: event.target.value })
                                                 }}
-                                                input_validator={this.validator.message('email', this.state.email, 'required|email', 'text-danger')}
                                             />
                                             <CustomInput
                                                 labelText="Password"
@@ -118,7 +146,8 @@ class RegisterForm extends Component {
                                                                 lock_outline
                                                             </Icon>
                                                         </InputAdornment>
-                                                    )
+                                                    ),
+                                                    onChange: event => this.setState({ password: event.target.value })
                                                 }}
                                             />
                                             <CustomInput
@@ -135,12 +164,13 @@ class RegisterForm extends Component {
                                                                 lock_outline
                                                             </Icon>
                                                         </InputAdornment>
-                                                    )
+                                                    ),
+                                                    onChange: event => this.setState({ password_confirmation: event.target.value })
                                                 }}
                                             />
                                         </CardBody>
                                         <CardFooter className={classes.cardFooter}>
-                                            <Button simple color="primary" size="lg">
+                                            <Button simple color="primary" size="lg" onClick={event => this.handleSubmit(event)}>
                                                 Register
                                             </Button>
                                         </CardFooter>
@@ -155,4 +185,18 @@ class RegisterForm extends Component {
     }
 }
 
-export default withStyles(registerFormStyle)(RegisterForm);
+function bindAction(dispatch) {
+    return {
+        tryRegister: (username, email, password, full_name) => dispatch(tryRegister(username, email, password, full_name)),
+        registerReset: () => dispatch(registerReset())
+    };
+}
+
+const mapStateToProps = state => ({
+    auth: state.auth
+});
+
+export default connect(
+    mapStateToProps,
+    bindAction
+)(withStyles(registerFormStyle)(RegisterForm));

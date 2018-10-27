@@ -11,10 +11,10 @@ import {
     AUTO_LOGIN
 } from "./actionTypes";
 
-export const tryLogin = (email, password) => ({
+export const tryLogin = (username, password) => ({
     type: LOGIN_REQUEST,
     payload: {
-        email,
+        username,
         password
     }
 });
@@ -30,13 +30,12 @@ export const loginReset = () => ({
     type: LOGIN_RESET
 });
 
-export const tryRegister = (username, email, password, password_confirmation, full_name) => ({
+export const tryRegister = (username, email, password, full_name) => ({
     type: REGISTER_REQUEST,
     payload: {
         username,
         email,
         password,
-        password_confirmation,
         full_name
     }
 });

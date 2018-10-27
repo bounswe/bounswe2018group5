@@ -1,30 +1,32 @@
 import httpService from "services/HttpService";
 
 class api {
-    doLogin = (email, password) => {
+    doLogin = (username, password) => {
         return httpService.fetch({
-            path: "api/v1/login/",
+            path: "api/user/auth/login",
             method: "POST",
             body: {
-                email,
+                username,
                 password
             },
             sendToken: false
         });
     };
-    doRegister = (username, email, password, password_confirmation, full_name) => {
+    doRegister = (username, email, password, full_name) => {
         return httpService.fetch({
-            path: "api/v1/register/",
+            path: "api/user/auth/register",
             method: "POST",
             body: {
                 username,
                 email,
                 password,
-                password_confirmation,
                 full_name
             },
             sendToken: false
         });
+    };
+    sendFavorite = (id) => {
+        return httpService.fetch({path: "/relations/" + parseInt(id) + "/favorite", method: "GET", sendToken: true});
     };
 }
 

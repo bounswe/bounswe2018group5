@@ -23,7 +23,6 @@ function CustomInput({ ...props }) {
         white,
         inputRootCustomClasses,
         success,
-        input_validator
     } = props;
 
     const labelClasses = classNames({
@@ -73,7 +72,6 @@ function CustomInput({ ...props }) {
                 id={id}
                 {...inputProps}
             />
-            {input_validator}
         </FormControl>
     );
 }
