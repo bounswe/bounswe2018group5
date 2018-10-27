@@ -14,6 +14,10 @@ import CardBody from "material-kit-react/components/Card/CardBody";
 import CardHeader from "material-kit-react/components/Card/CardHeader";
 import CardFooter from "material-kit-react/components/Card/CardFooter";
 import CustomInput from "components/CustomInput/CustomInput";
+import { tryLogin, loginReset } from "redux/auth/Actions.js";
+import {connect} from "react-redux";
+
+import { setCookie, getCookie, LOGGEDIN_COOKIE, TOKEN_COOKIE } from "services/cookies.js";
 
 import loginPageStyle from "material-kit-react/assets/jss/material-kit-react/views/loginPage";
 
@@ -22,11 +26,23 @@ class LoginForm extends Component {
         super(props);
         // we use this to make the card to appear after the page has been rendered
         this.state = {
-            cardAnimaton: "cardHidden"
+            cardAnimaton: "cardHidden",
+            username: "",
+            password: "",
         };
     }
 
+    handleSubmit(event) {
+        const { username, password } = this.state;
+        this.props.tryLogin(username, password);
+        event.preventDefault();
+    }
+
     componentDidMount() {
+        const { history } = this.props;
+
+        const loggedIn = getCookie(LOGGEDIN_COOKIE);
+        if (loggedIn) return history.push("/home");
         // we add a hidden class to the card and after 700 ms we delete it and the transition appears
         setTimeout(
             function () {
@@ -34,6 +50,21 @@ class LoginForm extends Component {
             }.bind(this),
             700
         );
+    }
+
+    componentDidUpdate(prevProps, prevState) {
+        const { history } = this.props;
+        const { loginInProgress, loginHasError, loginCompleted, api_token, loggedIn } = this.props.auth;
+
+        if (loginInProgress && !loginHasError && !loginCompleted) {
+        } else if (!loginInProgress && !loginHasError && loginCompleted) {
+            setCookie(TOKEN_COOKIE, api_token, { path: "/" });
+            setCookie(LOGGEDIN_COOKIE, loggedIn, { path: "/" });
+            this.props.loginReset();
+            history.push("/home");
+        } else if (!loginInProgress && loginHasError && loginCompleted) {
+            this.props.loginReset();
+        }
     }
 
     render() {
@@ -69,7 +100,8 @@ class LoginForm extends Component {
                                                         <InputAdornment position="end">
                                                             <People className={classes.inputIconsColor}/>
                                                         </InputAdornment>
-                                                    )
+                                                    ),
+                                                    onChange: event => this.setState({ username: event.target.value })
                                                 }}
                                             />
                                             <CustomInput
@@ -86,12 +118,13 @@ class LoginForm extends Component {
                                                                 lock_outline
                                                             </Icon>
                                                         </InputAdornment>
-                                                    )
+                                                    ),
+                                                    onChange: event => this.setState({ password: event.target.value })
                                                 }}
                                             />
                                         </CardBody>
                                         <CardFooter className={classes.cardFooter}>
-                                            <Button simple color="primary" size="lg">
+                                            <Button simple color="primary" size="lg" onClick={event => this.handleSubmit(event)}>
                                                 Login
                                             </Button>
                                         </CardFooter>
@@ -106,4 +139,18 @@ class LoginForm extends Component {
     }
 }
 
-export default withStyles(loginPageStyle)(LoginForm);
+function bindAction(dispatch) {
+    return {
+        tryLogin: (username, password) => dispatch(tryLogin(username, password)),
+        loginReset: () => dispatch(loginReset())
+    };
+}
+
+const mapStateToProps = state => ({
+    auth: state.auth
+});
+
+export default connect(
+    mapStateToProps,
+    bindAction
+)(withStyles(loginPageStyle)(LoginForm));

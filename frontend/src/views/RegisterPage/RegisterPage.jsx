@@ -17,7 +17,7 @@ const dashboardRoutes = [];
 
 class RegisterPage extends Component {
     render() {
-        const { classes, ...rest } = this.props;
+        const { classes, history, ...rest } = this.props;
         return (
             <div>
                 <Helmet
@@ -37,7 +37,7 @@ class RegisterPage extends Component {
                     }}
                     {...rest}
                 />
-                <RegisterForm></RegisterForm>
+                <RegisterForm history={history}></RegisterForm>
                 <Footer />
             </div>
         );

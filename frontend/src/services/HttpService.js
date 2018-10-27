@@ -41,6 +41,7 @@ class HttpService {
                         responseBody: res
                     };
                     resolve(response);
+                    return response;
                 })
                 .catch(err => {
                     console.log("HttpService.js:", err);

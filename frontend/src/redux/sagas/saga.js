@@ -6,10 +6,10 @@ import { loginSuccess, loginFailure, registerFailure, registerSuccess } from "..
 import api from "./api";
 
 const tryLoginSaga = function*(action) {
-    const { email, password } = action.payload;
+    const { username, password } = action.payload;
 
     try {
-        const loginResponse = yield call(api.doLogin, email, password);
+        const loginResponse = yield call(api.doLogin, username, password);
 
         if (loginResponse) {
             console.log("​loginResponse", loginResponse);
@@ -34,10 +34,10 @@ const tryLoginSaga = function*(action) {
 };
 
 const tryRegisterSaga = function*(action) {
-    const { username, email, password, password_confirmation, full_name } = action.payload;
+    const { username, email, password, full_name } = action.payload;
 
     try {
-        const registerResponse = yield call(api.doRegister, username, email, password, password_confirmation, full_name);
+        const registerResponse = yield call(api.doRegister, username, email, password, full_name);
 
         if (registerResponse) {
             console.log("registerResponse", registerResponse);

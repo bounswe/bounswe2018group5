@@ -12,12 +12,11 @@ import Helmet from 'react-helmet';
 
 import signupPageStyle from "material-kit-react/assets/jss/material-kit-react/views/loginPage.js";
 
-
 const dashboardRoutes = [];
 
 class LoginPage extends Component {
     render() {
-        const { classes, ...rest } = this.props;
+        const { classes, history,...rest } = this.props;
         return (
             <div>
                 <Helmet
@@ -37,7 +36,7 @@ class LoginPage extends Component {
                     }}
                     {...rest}
                 />
-                <LoginForm></LoginForm>
+                <LoginForm history={history}></LoginForm>
                 <Footer />
             </div>
         );

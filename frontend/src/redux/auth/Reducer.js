@@ -12,8 +12,7 @@ import {
 } from "./actionTypes";
 
 const initialState = {
-    user: {},
-    token: "",
+    api_token: "",
 
     loggedIn: false,
 
@@ -40,9 +39,8 @@ export default function(state = initialState, action) {
     } else if (action.type === LOGIN_SUCCESS) {
         return {
             ...state,
-            user: payload.user,
-            token: payload.auth_token,
-            loggedIn: true,
+            api_token: payload.api_token,
+            loggedIn: payload.response,
             loginInProgress: false,
             loginHasError: false,
             loginCompleted: true

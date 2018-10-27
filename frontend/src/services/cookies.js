@@ -3,7 +3,6 @@ import Cookies from "universal-cookie";
 const cookies = new Cookies();
 
 export const TOKEN_COOKIE = "TOKEN_COOKIE";
-export const USER_COOKIE = "USER_COOKIE";
 export const LOGGEDIN_COOKIE = "LOGGEDIN_COOKIE";
 
 export const setCookie = (key, value) => {
