@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { Switch, Route, Redirect } from "react-router-dom";
 // creates a beautiful scrollbar
-import PerfectScrollbar from "perfect-scrollbar";
+// import PerfectScrollbar from "perfect-scrollbar";
 //import "material-dashboard-react/dist/perfect-scrollbar/css/perfect-scrollbar.css";
 // @material-ui/core components
 import withStyles from "@material-ui/core/styles/withStyles";
@@ -47,12 +47,7 @@ class App extends Component {
             this.setState({ mobileOpen: false });
         }
     }
-    componentDidMount() {
-        if (navigator.platform.indexOf("Win") > -1) {
-            const ps = new PerfectScrollbar(this.refs.mainPanel);
-        }
-        window.addEventListener("resize", this.resizeFunction);
-    }
+
     componentDidUpdate(e) {
         if (e.history.location.pathname !== e.location.pathname) {
             this.refs.mainPanel.scrollTop = 0;
@@ -61,9 +56,7 @@ class App extends Component {
             }
         }
     }
-    componentWillUnmount() {
-        window.removeEventListener("resize", this.resizeFunction);
-    }
+
     render() {
         const { classes, ...rest } = this.props;
         return (
