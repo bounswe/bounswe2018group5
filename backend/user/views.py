@@ -1,7 +1,6 @@
 import hashlib
 import uuid
 
-from django.shortcuts import render
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from . import authentication
@@ -10,7 +9,6 @@ from user.models import User, DoesNotExist
 
 
 def hash_password(password):
-    # uuid is used to generate a random number
     salt = uuid.uuid4().hex
     return hashlib.sha256(salt.encode() + password.encode()).hexdigest() + ':' + salt
 
@@ -23,7 +21,6 @@ def check_password(hashed_password, user_password):
 @csrf_exempt
 def login(request):
     if request.method == 'POST':
-        # return JsonResponse({"ans": request.META.get('HTTP_AUTHORIZATION')})
         body = json.loads(request.body.decode('utf-8'))
         try:
             user = User.objects.get(username=body['username'])
@@ -33,12 +30,13 @@ def login(request):
             return JsonResponse({'response': False, 'error': 'Credentials are not correct!'})
         except Exception as e:
             return JsonResponse({'response': False, 'error': str(e)})
-        return JsonResponse({'response': True, 'api_token': authentication.generate_token(user).decode('utf-8')})
+        return JsonResponse({'response': True, 'api_token': authentication.generate_token(user)})
 
     return JsonResponse({
         "response": False,
         "error": "wrong request method"
     })
+
 
 @csrf_exempt
 def register(request):
@@ -55,3 +53,13 @@ def register(request):
         "response": False,
         "error": "wrong request method"
     })
+
+
+@csrf_exempt
+def logout(request):
+    token = request.META.get('HTTP_AUTHORIZATION', None)
+    if token and authentication.is_authenticated(token):
+        authentication.logout(token)
+        return JsonResponse({'response': True})
+    return JsonResponse({'response': False})
+
