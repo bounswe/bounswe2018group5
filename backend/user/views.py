@@ -43,10 +43,13 @@ def register(request):
     if request.method == 'POST':
         body = json.loads(request.body.decode('utf-8'))
         new_user = User()
-        new_user.username = body['username']
-        new_user.password = hash_password(body['password'])
-        new_user.full_name = body['full_name']
-        new_user.email = body['email']
+        try:
+            new_user.username = body['username']
+            new_user.password = hash_password(body['password'])
+            new_user.full_name = body['full_name']
+            new_user.email = body['email']
+        except Exception as e:
+            return JsonResponse({'response': False, 'error': str(e)})
         new_user.save()
         return JsonResponse({"response": True})
     return JsonResponse({
