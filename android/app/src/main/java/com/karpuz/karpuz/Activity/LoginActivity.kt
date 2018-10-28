@@ -22,7 +22,7 @@ class LoginActivity : AppCompatActivity() {
             return
         }
         editText_login_email.clearErrorState()
-        //TODO login
+        TODO("to be implemented")
     }
 
     fun forgotPasswordClicked(button: View) {
@@ -33,6 +33,6 @@ class LoginActivity : AppCompatActivity() {
         }
         editText_login_email.clearErrorState()
         longToast("Password reset email sent to $email")
-        //TODO send reset password email
+        TODO("to be implemented")
     }
 }
