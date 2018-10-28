@@ -60,7 +60,6 @@ class UserProfile extends Component {
 
     handleUpdateProfile(event) {
         const {full_name, bio, gender, type} = this.state;
-        console.log(full_name);
         this.props.tryUpdateProfile(full_name, gender, bio, type);
         event.preventDefault();
     }
