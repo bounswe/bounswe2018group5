@@ -33,7 +33,7 @@ class User(BaseDocument):
     username = StringField(unique=True)
     email = EmailField(unique=True)
     password = StringField()
-    type = BinaryField() #0 for freelancer, 1 for client
+    type = IntField(min_value=0, max_value=1) #0 for freelancer, 1 for client
     profile_image = StringField()
     gender = StringField()
     bio = StringField(max_length=400)
