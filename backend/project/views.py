@@ -66,12 +66,12 @@ def get_all_projects(request):
     })
 
 @csrf_exempt
-def get_projects(request):
-    if request.method == 'POST':
+def get_projects(request, ids):
+    if request.method == 'GET':
+        ids = ids.split(',')
         token = request.META.get('HTTP_AUTHORIZATION', None)
         if token and authentication.is_authenticated(token):
-            body = json.loads(request.body.decode('utf-8'))
-            projects = Project.objects.filter(id__in=body['project_ids']) # TODO: order as given id list
+            projects = Project.objects.filter(id__in=ids) # TODO: order as given id list
             res = []
             for project in projects:
                 res.append(project_json(project))
