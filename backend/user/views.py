@@ -41,7 +41,7 @@ def modify_user(json, user):
     user.type = json['type'] if 'type' in json else user.type
     user.gender = json['gender'] if 'gender' in json else user.gender
     user.bio = json['bio'] if 'bio' in json else user.bio
-    user.profile_image = json['profile_image'] if 'profile_image' in json else user.bio
+    user.profile_image = json['profile_image'] if 'profile_image' in json else user.profile_image
     user.updated_at = datetime.now()
     return user
 
