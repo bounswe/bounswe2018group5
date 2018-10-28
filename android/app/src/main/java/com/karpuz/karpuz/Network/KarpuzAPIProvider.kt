@@ -24,5 +24,4 @@ class KarpuzAPIProvider(
     override fun login(loginBody: KarpuzAPIModels.LoginBody): Observable<KarpuzAPIModels.LoginResponse> {
         return karpuzAPI.login(loginBody)
     }
-
 }

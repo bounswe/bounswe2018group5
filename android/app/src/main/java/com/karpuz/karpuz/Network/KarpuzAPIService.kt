@@ -17,6 +17,4 @@ class KarpuzAPIService(private val authToken: String, private val provider: Karp
             return provider.login(loginBody)
         }
     }
-
-
 }

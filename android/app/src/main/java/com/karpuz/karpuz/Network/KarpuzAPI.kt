@@ -5,9 +5,9 @@ import retrofit2.http.*
 
 interface KarpuzAPI {
 
-    @POST
+    @POST("user/auth/register")
     fun register(@Body register: KarpuzAPIModels.RegisterBody): Observable<Void>
 
-    @POST
+    @POST("user/auth/login")
     fun login(@Body user: KarpuzAPIModels.LoginBody): Observable<KarpuzAPIModels.LoginResponse>
 }
