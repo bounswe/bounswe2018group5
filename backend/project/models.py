@@ -1,6 +1,7 @@
 from mongoengine import *
 from datetime import datetime
 
+
 class BaseDocument(Document):
     meta = {
         'abstract': True
@@ -35,7 +36,6 @@ class Project(BaseDocument):
     title = StringField(max_length=50)
     budget = FloatField(min_value=0)
     project_deadline = DateTimeField()
-    status = IntField() #0 bidding period, 1 project awarded to a freelancer, 2 project completed, -1 project discarded
-
+    status = IntField()  # 0 bidding period, 1 project awarded to a freelancer, 2 project completed, -1 project discarded
 
     meta = {'collection': 'projects'}
