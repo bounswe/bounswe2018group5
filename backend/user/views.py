@@ -24,7 +24,6 @@ def user_json(user):
     obj['full_name'] = user.full_name
     obj['username'] = user.username
     obj['email'] = user.email
-    obj['password'] = hash_password(user.password)
     obj['type'] = user.type
     obj['gender'] = user.gender
     obj['bio'] = user.bio

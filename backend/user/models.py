@@ -35,7 +35,7 @@ class User(BaseDocument):
     password = StringField()
     type = BinaryField() #0 for freelancer, 1 for client
     profile_image = StringField()
-    gender = LongField(min_value=-1, max_value=1)
+    gender = StringField()
     bio = StringField(max_length=400)
 
     meta = {'collection': 'users'}
