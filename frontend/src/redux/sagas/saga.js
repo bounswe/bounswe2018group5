@@ -1,14 +1,21 @@
-import { call, put, takeLatest } from "redux-saga/effects";
+import {call, put, takeLatest} from "redux-saga/effects";
 
 import {LOGIN_REQUEST, LOGOUT_REQUEST, REGISTER_REQUEST} from "../auth/actionTypes";
-import {GET_PROFILE_REQUEST} from "../user/actionTypes";
-import { loginSuccess, loginFailure, registerFailure, registerSuccess } from "../auth/Actions";
-import { profileSuccess, profileFailure } from "../user/Actions";
+import {CHANGE_PASSWORD_REQUEST, GET_PROFILE_REQUEST, UPDATE_PROFILE_REQUEST} from "../user/actionTypes";
+import {loginSuccess, loginFailure, registerFailure, registerSuccess} from "../auth/Actions";
+import {
+    profileSuccess,
+    profileFailure,
+    changePasswordSuccess,
+    changePasswordFailure,
+    updateProfileFailure,
+    updateProfileSuccess
+} from "../user/Actions";
 
 import api from "./api";
 
-const tryLoginSaga = function*(action) {
-    const { username, password } = action.payload;
+const tryLoginSaga = function* (action) {
+    const {username, password} = action.payload;
 
     try {
         const loginResponse = yield call(api.doLogin, username, password);
@@ -23,20 +30,20 @@ const tryLoginSaga = function*(action) {
                 yield put(loginFailure(loginResponse.responseBody));
             } else {
                 console.log("Something wrong! Got an unknown status.", loginResponse);
-                yield put(loginFailure({ detail: ["Unknown status. Check console!"] }));
+                yield put(loginFailure({detail: ["Unknown status. Check console!"]}));
             }
         } else {
             console.log("Login failed by api. No response !");
-            yield put(loginFailure({ detail: ["No response fetched. Please contact the API team!"] }));
+            yield put(loginFailure({detail: ["No response fetched. Please contact the API team!"]}));
         }
     } catch (err) {
         console.log("Login failed by api. Error => ", err);
-        yield put(loginFailure({ detail: [err.detail] }));
+        yield put(loginFailure({detail: [err.detail]}));
     }
 };
 
-const tryRegisterSaga = function*(action) {
-    const { username, email, password, full_name } = action.payload;
+const tryRegisterSaga = function* (action) {
+    const {username, email, password, full_name} = action.payload;
 
     try {
         const registerResponse = yield call(api.doRegister, username, email, password, full_name);
@@ -51,19 +58,19 @@ const tryRegisterSaga = function*(action) {
                 yield put(registerFailure(registerResponse.responseBody));
             } else {
                 console.log("Something wrong! Got an unknown status.", registerResponse);
-                yield put(registerFailure({ detail: ["Unknown status. Check console!"] }));
+                yield put(registerFailure({detail: ["Unknown status. Check console!"]}));
             }
         } else {
             console.log("Register failed by api. No response !");
-            yield put(registerFailure({ detail: ["No response fetched. Please contact the API team!"] }));
+            yield put(registerFailure({detail: ["No response fetched. Please contact the API team!"]}));
         }
     } catch (err) {
         console.log("Register failed by api. Error => ", err);
-        yield put(registerFailure({ detail: [err.detail] }));
+        yield put(registerFailure({detail: [err.detail]}));
     }
 };
 
-const tryLogout = function*() {
+const tryLogout = function* () {
     try {
         const logoutResponse = yield call(api.doLogout);
 
@@ -77,7 +84,7 @@ const tryLogout = function*() {
     }
 };
 
-const tryGetProfileSaga = function*() {
+const tryGetProfileSaga = function* () {
     try {
         const getProfileResponse = yield call(api.getProfile);
 
@@ -91,19 +98,75 @@ const tryGetProfileSaga = function*() {
                 yield put(profileFailure(getProfileResponse.responseBody));
             } else {
                 console.log("Something wrong! Got an unknown status.", getProfileResponse);
-                yield put(profileFailure({ detail: ["Unknown status. Check console!"] }));
+                yield put(profileFailure({detail: ["Unknown status. Check console!"]}));
             }
         } else {
             console.log("Get Profile failed by api. No response !");
-            yield put(profileFailure({ detail: ["No response fetched. Please contact the API team!"] }));
+            yield put(profileFailure({detail: ["No response fetched. Please contact the API team!"]}));
         }
     } catch (err) {
         console.log("Get Profile failed by api. Error => ", err);
-        yield put(profileFailure({ detail: [err.detail] }));
+        yield put(profileFailure({detail: [err.detail]}));
     }
 };
 
-const saga = function*() {
+const tryUpdateProfileSaga = function* (action) {
+    try {
+        const {full_name, gender, bio, type} = action.payload;
+
+        const updateProfileResponse = yield call(api.updateProfile, full_name, gender, bio, type);
+
+        if (updateProfileResponse) {
+            console.log("updateProfileResponse", updateProfileResponse);
+
+            if (updateProfileResponse.status === 200) {
+                yield put(updateProfileSuccess(updateProfileResponse.responseBody));
+            } else if (updateProfileResponse.status === 400) {
+                console.log("Something wrong! Got a status 400", updateProfileResponse.responseBody);
+                yield put(updateProfileFailure(updateProfileResponse.responseBody));
+            } else {
+                console.log("Something wrong! Got an unknown status.", updateProfileResponse);
+                yield put(updateProfileFailure({detail: ["Unknown status. Check console!"]}));
+            }
+        } else {
+            console.log("Update Profile failed by api. No response !");
+            yield put(updateProfileFailure({detail: ["No response fetched. Please contact the API team!"]}));
+        }
+    } catch (err) {
+        console.log("Update Profile failed by api. Error => ", err);
+        yield put(updateProfileFailure({detail: [err.detail]}));
+    }
+};
+
+const tryChangePasswordSaga = function* (action) {
+    try {
+        const {password} = action.payload;
+
+        const changePasswordResponse = yield call(api.changePassword, password);
+
+        if (changePasswordResponse) {
+            console.log("changePasswordResponse", changePasswordResponse);
+
+            if (changePasswordResponse.status === 200) {
+                yield put(changePasswordSuccess(changePasswordResponse.responseBody));
+            } else if (changePasswordResponse.status === 400) {
+                console.log("Something wrong! Got a status 400", changePasswordResponse.responseBody);
+                yield put(changePasswordFailure(changePasswordResponse.responseBody));
+            } else {
+                console.log("Something wrong! Got an unknown status.", changePasswordResponse);
+                yield put(changePasswordFailure({detail: ["Unknown status. Check console!"]}));
+            }
+        } else {
+            console.log("Change Password failed by api. No response !");
+            yield put(changePasswordFailure({detail: ["No response fetched. Please contact the API team!"]}));
+        }
+    } catch (err) {
+        console.log("Change Password failed by api. Error => ", err);
+        yield put(changePasswordFailure({detail: [err.detail]}));
+    }
+};
+
+const saga = function* () {
     // AUTH
     yield takeLatest(LOGIN_REQUEST, tryLoginSaga);
     yield takeLatest(REGISTER_REQUEST, tryRegisterSaga);
@@ -111,6 +174,8 @@ const saga = function*() {
 
     // USER
     yield takeLatest(GET_PROFILE_REQUEST, tryGetProfileSaga);
+    yield takeLatest(UPDATE_PROFILE_REQUEST, tryUpdateProfileSaga);
+    yield takeLatest(CHANGE_PASSWORD_REQUEST, tryChangePasswordSaga);
 };
 
 export default saga;

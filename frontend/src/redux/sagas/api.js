@@ -39,6 +39,29 @@ class api {
             sendToken: true
         });
     };
+    changePassword = (password) => {
+        return httpService.fetch({
+            path: "api/user/profile/update",
+            method: "POST",
+            body: {
+                password
+            },
+            sendToken: true
+        });
+    };
+    updateProfile = (full_name, gender, bio, type) => {
+        return httpService.fetch({
+            path: "api/user/profile/update",
+            method: "POST",
+            body: {
+                full_name,
+                gender,
+                bio,
+                type
+            },
+            sendToken: true
+        });
+    };
 }
 
 export default new api();

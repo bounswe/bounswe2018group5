@@ -2,7 +2,8 @@ import React, {Component} from "react";
 import Helmet from "react-helmet";
 // @material-ui/core components
 import withStyles from "@material-ui/core/styles/withStyles";
-import InputLabel from "@material-ui/core/InputLabel";
+import AddAlert from "@material-ui/icons/AddAlert";
+import {Select, MenuItem, FormControl, InputLabel, FilledInput} from '@material-ui/core';
 // core components
 import GridItem from "material-dashboard-react/dist/components/Grid/GridItem";
 import GridContainer from "material-dashboard-react/dist/components/Grid/GridContainer";
@@ -13,7 +14,8 @@ import CardHeader from "material-dashboard-react/dist/components/Card/CardHeader
 import CardAvatar from "material-dashboard-react/dist/components/Card/CardAvatar";
 import CardBody from "material-dashboard-react/dist/components/Card/CardBody";
 import CardFooter from "material-dashboard-react/dist/components/Card/CardFooter";
-import { tryGetProfile, profileReset } from "redux/user/Actions.js";
+import Snackbar from "material-dashboard-react/dist/components/Snackbar/Snackbar";
+import {tryGetProfile, profileReset, tryChangePassword, changePasswordReset, tryUpdateProfile, updateProfileReset} from "redux/user/Actions.js";
 
 import avatar from "assets/img/faces/christian.jpg";
 import connect from "react-redux/es/connect/connect";
@@ -38,13 +40,97 @@ const styles = {
 };
 
 class UserProfile extends Component {
+    constructor(props) {
+        super(props);
+        // we use this to make the card to appear after the page has been rendered
+        this.state = {
+            cardAnimaton: "cardHidden",
+            user: {},
+            open: false,
+            place: 'tr',
+            notification_message: ''
+        };
+    }
+
+    handleChangePassword(event) {
+        const {password, password_confirmation} = this.state;
+        this.props.tryChangePassword(password);
+        event.preventDefault();
+    }
+
+    handleUpdateProfile(event) {
+        const {full_name, bio, gender, type} = this.state;
+        console.log(full_name);
+        this.props.tryUpdateProfile(full_name, gender, bio, type);
+        event.preventDefault();
+    }
 
     componentDidMount() {
         this.props.tryGetProfile();
     }
 
+    componentDidUpdate(prevProps, prevState) {
+        const {getProfileInProgress, getProfileHasError, getProfileCompleted, user} = this.props.user;
+
+        if (!getProfileInProgress && !getProfileHasError && getProfileCompleted) {
+            this.setState({user: user, full_name: user.full_name, bio: user.bio, gender: user.gender, type: user.type});
+            this.props.profileReset();
+        }
+
+        const {changePasswordInProgress, changePasswordHasError, changePasswordCompleted, response} = this.props.user;
+
+        if (!changePasswordInProgress && !changePasswordHasError && changePasswordCompleted) {
+            if (response) {
+                this.setState({
+                    open: true,
+                    color: 'success',
+                    notification_message: 'Your Password is successfully changed!'
+                });
+                setTimeout(function () {
+                    this.setState({open: false});
+                }.bind(this), 6000);
+            } else {
+                this.setState({
+                    open: true,
+                    color: 'danger',
+                    notification_message: 'Your Password is not changed!'
+                });
+                setTimeout(function () {
+                    this.setState({open: false});
+                }.bind(this), 6000);
+            }
+            this.props.changePasswordReset();
+        }
+
+        const {updateProfileInProgress, updateProfileHasError, updateProfileCompleted} = this.props.user;
+
+        if (!updateProfileInProgress && !updateProfileHasError && updateProfileCompleted) {
+            if (response) {
+                this.setState({
+                    open: true,
+                    color: 'success',
+                    notification_message: 'Your Profile is successfully changed!'
+                });
+                setTimeout(function () {
+                    this.setState({open: false});
+                }.bind(this), 6000);
+            } else {
+                this.setState({
+                    open: true,
+                    color: 'danger',
+                    notification_message: 'Your Profile is not changed!'
+                });
+                setTimeout(function () {
+                    this.setState({open: false});
+                }.bind(this), 6000);
+            }
+            this.props.updateProfileReset();
+        }
+    }
+
     render() {
         const {classes} = this.props;
+        const user = this.state.user;
         return (
             <div>
                 <div>
@@ -55,7 +141,7 @@ class UserProfile extends Component {
                         ]}/>
                 </div>
                 <GridContainer>
-                    <GridItem xs={12} sm={12} md={8}>
+                    <GridItem xs={12} sm={12} md={4}>
                         <Card>
                             <CardHeader color="primary">
                                 <h4 className={classes.cardTitleWhite}>Edit Profile</h4>
@@ -63,130 +149,148 @@ class UserProfile extends Component {
                             </CardHeader>
                             <CardBody>
                                 <GridContainer>
-                                    <GridItem xs={12} sm={12} md={5}>
+                                    <GridItem xs={12} sm={12} md={4}>
                                         <CustomInput
-                                            labelText="Company (disabled)"
-                                            id="company-disabled"
+                                            labelText="Full Name"
+                                            id="full_name"
                                             formControlProps={{
                                                 fullWidth: true
                                             }}
                                             inputProps={{
-                                                disabled: true
-                                            }}
-                                        />
-                                    </GridItem>
-                                    <GridItem xs={12} sm={12} md={3}>
-                                        <CustomInput
-                                            labelText="Username"
-                                            id="username"
-                                            formControlProps={{
-                                                fullWidth: true
+                                                onChange: event => this.setState({full_name: event.target.value}),
+                                                value: this.state.full_name
                                             }}
                                         />
                                     </GridItem>
                                     <GridItem xs={12} sm={12} md={4}>
-                                        <CustomInput
-                                            labelText="Email address"
-                                            id="email-address"
-                                            formControlProps={{
-                                                fullWidth: true
-                                            }}
-                                        />
-                                    </GridItem>
-                                </GridContainer>
-                                <GridContainer>
-                                    <GridItem xs={12} sm={12} md={6}>
-                                        <CustomInput
-                                            labelText="First Name"
-                                            id="first-name"
-                                            formControlProps={{
-                                                fullWidth: true
-                                            }}
-                                        />
-                                    </GridItem>
-                                    <GridItem xs={12} sm={12} md={6}>
-                                        <CustomInput
-                                            labelText="Last Name"
-                                            id="last-name"
-                                            formControlProps={{
-                                                fullWidth: true
-                                            }}
-                                        />
-                                    </GridItem>
-                                </GridContainer>
-                                <GridContainer>
-                                    <GridItem xs={12} sm={12} md={4}>
-                                        <CustomInput
-                                            labelText="City"
-                                            id="city"
-                                            formControlProps={{
-                                                fullWidth: true
-                                            }}
-                                        />
+                                        <FormControl fullWidth={true} variant="filled" className={classes.formControl}>
+                                            <InputLabel htmlFor="outlined-age-simple">Gender</InputLabel>
+                                            <Select
+                                                value={this.state.gender ? this.state.gender : -2}
+                                                onChange={event => this.setState({gender: event.target.value})}
+                                                input={
+                                                    <FilledInput name="gender"/>
+                                                }
+                                            >
+                                                <MenuItem value={-1}>Male</MenuItem>
+                                                <MenuItem value={0}>Other</MenuItem>
+                                                <MenuItem value={1}>Female</MenuItem>
+                                            </Select>
+                                        </FormControl>
                                     </GridItem>
                                     <GridItem xs={12} sm={12} md={4}>
-                                        <CustomInput
-                                            labelText="Country"
-                                            id="country"
-                                            formControlProps={{
-                                                fullWidth: true
-                                            }}
-                                        />
-                                    </GridItem>
-                                    <GridItem xs={12} sm={12} md={4}>
-                                        <CustomInput
-                                            labelText="Postal Code"
-                                            id="postal-code"
-                                            formControlProps={{
-                                                fullWidth: true
-                                            }}
-                                        />
+                                        <FormControl fullWidth={true} variant="filled" className={classes.formControl}>
+                                            <InputLabel htmlFor="outlined-age-simple">User Type</InputLabel>
+                                            <Select
+                                                value={this.state.type ? this.state.type : -1}
+                                                onChange={event => this.setState({type: event.target.value})}
+                                                input={
+                                                    <FilledInput name="type"/>
+                                                }
+                                            >
+                                                <MenuItem value={1}>Client</MenuItem>
+                                                <MenuItem value={0}>Freelancer</MenuItem>
+                                            </Select>
+                                        </FormControl>
                                     </GridItem>
                                 </GridContainer>
                                 <GridContainer>
                                     <GridItem xs={12} sm={12} md={12}>
-                                        <InputLabel style={{color: "#AAAAAA"}}>About me</InputLabel>
                                         <CustomInput
-                                            labelText="Lamborghini Mercy, Your chick she so thirsty, I'm in that two seat Lambo."
-                                            id="about-me"
+                                            labelText="Biography"
+                                            id="bio"
                                             formControlProps={{
                                                 fullWidth: true
                                             }}
                                             inputProps={{
                                                 multiline: true,
-                                                rows: 5
+                                                rows: 3,
+                                                onChange: event => this.setState({bio: event.target.value}),
+                                                value: this.state.bio
                                             }}
                                         />
                                     </GridItem>
                                 </GridContainer>
                             </CardBody>
                             <CardFooter>
-                                <Button color="primary">Update Profile</Button>
+                                <Button color="primary" onClick={event => this.handleUpdateProfile(event)}>Update
+                                    Profile</Button>
+                            </CardFooter>
+                        </Card>
+                    </GridItem>
+                    <GridItem xs={12} sm={12} md={4}>
+                        <Card>
+                            <CardHeader color="primary">
+                                <h4 className={classes.cardTitleWhite}>Edit Password</h4>
+                                <p className={classes.cardCategoryWhite}>Change your password</p>
+                            </CardHeader>
+                            <CardBody>
+                                <GridContainer>
+                                    <GridItem xs={12} sm={12} md={12}>
+                                        <CustomInput
+                                            labelText="Password"
+                                            id="password"
+                                            formControlProps={{
+                                                fullWidth: true
+                                            }}
+                                            inputProps={{
+                                                type: "password",
+                                                onChange: event => this.setState({password: event.target.value})
+                                            }}
+                                        />
+                                    </GridItem>
+                                    <GridItem xs={12} sm={12} md={12}>
+                                        <CustomInput
+                                            labelText="Password Confirmation"
+                                            id="pass_conf"
+                                            formControlProps={{
+                                                fullWidth: true
+                                            }}
+                                            inputProps={{
+                                                type: "password",
+                                                onChange: event => this.setState({password_confirmation: event.target.value})
+                                            }}
+                                        />
+                                    </GridItem>
+                                </GridContainer>
+                            </CardBody>
+                            <CardFooter>
+                                <Button color="primary" onClick={event => this.handleChangePassword(event)}>
+                                    Update Password
+                                </Button>
                             </CardFooter>
                         </Card>
                     </GridItem>
                     <GridItem xs={12} sm={12} md={4}>
                         <Card profile>
                             <CardAvatar profile>
-                                <a href="#pablo" onClick={e => e.preventDefault()}>
-                                    <img src={avatar} alt="..."/>
-                                </a>
+                                <img src={avatar} alt="..."/>
                             </CardAvatar>
                             <CardBody profile>
-                                <h6 className={classes.cardCategory}>CEO / CO-FOUNDER</h6>
-                                <h4 className={classes.cardTitle}>Alec Thompson</h4>
+                                <h6 className={classes.cardCategory}>
+                                    {typeof user.type === "undefined" || user.type === null ? "User Type Not Set" : user.type ? "Client" : "Freelancer"}
+                                </h6>
+                                <h4 className={classes.cardTitle}>
+                                    {user.full_name ? user.full_name : ""}
+                                    <br/>
+                                    {user.email ? user.email : ""}
+                                </h4>
                                 <p className={classes.description}>
-                                    Don't be scared of the truth because we need to restart the
-                                    human foundation in truth And I love you like Kanye loves Kanye
-                                    I love Rick Owens’ bed design but the back is...
+                                    {user.bio ? user.bio : ""}
                                 </p>
-                                <Button color="primary" round>
-                                    Follow
-                                </Button>
                             </CardBody>
                         </Card>
                     </GridItem>
                 </GridContainer>
+                <Snackbar
+                    place={this.state.place}
+                    icon={AddAlert}
+                    color={this.state.color}
+                    message={this.state.notification_message}
+                    open={this.state.open}
+                    closeNotification={() => this.setState({open: false})}
+                    close
+                />
             </div>
         );
     }
@@ -195,7 +299,11 @@ class UserProfile extends Component {
 function bindAction(dispatch) {
     return {
         tryGetProfile: () => dispatch(tryGetProfile()),
-        profileReset: () => dispatch(profileReset())
+        profileReset: () => dispatch(profileReset()),
+        tryChangePassword: (password) => dispatch(tryChangePassword(password)),
+        changePasswordReset: () => dispatch(changePasswordReset()),
+        tryUpdateProfile: (full_name, gender, bio, type) => dispatch(tryUpdateProfile(full_name, gender, bio, type)),
+        updateProfileReset: () => dispatch(updateProfileReset())
     };
 }
 
