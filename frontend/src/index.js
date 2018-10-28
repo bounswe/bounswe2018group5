@@ -11,15 +11,18 @@ import RegisterPage from "views/RegisterPage/RegisterPage.jsx";
 import LoginPage from "views/LoginPage/LoginPage.jsx";
 
 import "material-kit-react/material-kit-react.css";
+import PrivateRoute from "routes/PrivateRoute";
 
 class App extends React.Component {
     render() {
         return (
             <Switch>
                 <Route path='/' exact component={LandingPage} />;
-                <Route path='/home' exact component={HomePage} />;
                 <Route path='/register' exact component={RegisterPage} />;
                 <Route path='/login' exact component={LoginPage} />;
+
+
+                <PrivateRoute path='/home' exact component={HomePage} />;
             </Switch>
         );
     }
