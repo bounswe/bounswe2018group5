@@ -25,8 +25,19 @@ class api {
             sendToken: false
         });
     };
-    sendFavorite = (id) => {
-        return httpService.fetch({path: "/relations/" + parseInt(id) + "/favorite", method: "GET", sendToken: true});
+    doLogout = () => {
+        return httpService.fetch({
+            path: "api/user/auth/logout",
+            method: "GET",
+            sendToken: true
+        });
+    };
+    getProfile = () => {
+        return httpService.fetch({
+            path: "api/user/profile",
+            method: "GET",
+            sendToken: true
+        });
     };
 }
 

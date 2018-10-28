@@ -8,7 +8,6 @@ import {
     REGISTER_SUCCESS,
     REGISTER_FAILURE,
     REGISTER_RESET,
-    AUTO_LOGIN
 } from "./actionTypes";
 
 const initialState = {
@@ -24,7 +23,8 @@ const initialState = {
     registerInProgress: false,
     registerHasError: false,
     registerCompleted: false,
-    registerError: ""
+    registerError: "",
+    logout: false
 };
 
 export default function(state = initialState, action) {
@@ -71,9 +71,7 @@ export default function(state = initialState, action) {
     } else if (action.type === REGISTER_SUCCESS) {
         return {
             ...state,
-            user: payload.user,
-            token: payload.auth_token,
-            loggedIn: true,
+            loggedIn: false,
             registerInProgress: false,
             registerHasError: false,
             registerCompleted: true
@@ -93,26 +91,18 @@ export default function(state = initialState, action) {
             registerHasError: false,
             registerCompleted: false
         };
-    } else if (action.type === AUTO_LOGIN) {
-        const { user, token } = payload;
-        return {
-            ...state,
-            user,
-            token,
-            loggedIn: true
-        };
     } else if (action.type === LOGOUT_REQUEST) {
         return {
             ...state,
-            user: {},
-            token: "",
+            api_token: "",
 
             loggedIn: false,
 
             loginInProgress: false,
             loginHasError: false,
             loginCompleted: false,
-            loginError: ""
+            loginError: "",
+            logout: true
         };
     }
 

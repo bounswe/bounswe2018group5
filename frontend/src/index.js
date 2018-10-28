@@ -21,7 +21,7 @@ class App extends React.Component {
                 <Route path='/register' exact component={RegisterPage} />;
                 <Route path='/login' exact component={LoginPage} />;
 
-                <PrivateRoute path='/home' component={HomeLayout} />
+                <PrivateRoute history={history} path='/home' component={HomeLayout} />
             </Switch>
         );
     }

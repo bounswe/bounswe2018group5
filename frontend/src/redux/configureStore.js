@@ -5,6 +5,7 @@ import createBrowserHistory from "history/createBrowserHistory";
 import createSagaMiddleware from "redux-saga";
 
 import authReducer from "./auth/Reducer";
+import userReducer from "./user/Reducer";
 
 import saga from "./sagas/saga";
 
@@ -12,6 +13,7 @@ export const history = createBrowserHistory();
 
 const reducers = combineReducers({
     auth: authReducer,
+    user: userReducer,
 });
 
 const sagaMiddleware = createSagaMiddleware();
