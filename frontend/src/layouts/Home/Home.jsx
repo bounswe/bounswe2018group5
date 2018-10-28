@@ -66,7 +66,6 @@ class HomeLayout extends Component {
     }
 
     componentDidMount() {
-        console.log(this.props.children);
         if (navigator.platform.indexOf("Win") > -1) {
             const ps = new PerfectScrollbar(this.refs.mainPanel);
         }
@@ -88,7 +87,6 @@ class HomeLayout extends Component {
 
     render() {
         const {classes, ...rest} = this.props;
-        console.log(this.props);
         return (
             <div className={classes.wrapper}>
                 <Sidebar
@@ -97,6 +95,7 @@ class HomeLayout extends Component {
                     handleDrawerToggle={this.handleDrawerToggle}
                     open={this.state.mobileOpen}
                     color="blue"
+                    history={this.props.history}
                     {...rest}
                 />
                 <div className={classes.mainPanel} ref="mainPanel">
