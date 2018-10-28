@@ -6,7 +6,6 @@ import ListItem from "@material-ui/core/ListItem";
 import List from "@material-ui/core/List";
 // core components
 import footerStyle from "material-dashboard-react/dist/assets/jss/material-dashboard-react/components/footerStyle";
-import Favorite from "@material-ui/core/SvgIcon/SvgIcon";
 
 function LoggedInFooter({ ...props }) {
     const { classes } = props;
@@ -14,28 +13,6 @@ function LoggedInFooter({ ...props }) {
         <footer className={classes.footer}>
             <div className={classes.container}>
                 <div className={classes.left}>
-                    <List className={classes.list}>
-                        <ListItem className={classes.inlineBlock}>
-                            <a href="#home" className={classes.block}>
-                                Home
-                            </a>
-                        </ListItem>
-                        <ListItem className={classes.inlineBlock}>
-                            <a href="#company" className={classes.block}>
-                                Company
-                            </a>
-                        </ListItem>
-                        <ListItem className={classes.inlineBlock}>
-                            <a href="#portfolio" className={classes.block}>
-                                Portfolio
-                            </a>
-                        </ListItem>
-                        <ListItem className={classes.inlineBlock}>
-                            <a href="#blog" className={classes.block}>
-                                Blog
-                            </a>
-                        </ListItem>
-                    </List>
                 </div>
                 <p className={classes.right}>
           <span>
