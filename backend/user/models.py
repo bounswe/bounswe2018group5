@@ -1,7 +1,3 @@
-from django.db import models
-
-# Create your models here.
-
 from mongoengine import *
 from datetime import datetime
 
@@ -37,7 +33,7 @@ class User(BaseDocument):
     username = StringField(unique=True)
     email = EmailField(unique=True)
     password = StringField()
-    type = BinaryField()
+    type = BinaryField() #0 for freelancer, 1 for client
     profile_image = StringField()
     gender = LongField(min_value=-1, max_value=1)
     bio = StringField(max_length=400)

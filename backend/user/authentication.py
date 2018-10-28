@@ -22,8 +22,10 @@ def is_authenticated(token):
     myMap[token] = int(datetime.now().timestamp())
     return True
 
+def get_user_id(token):
+    return jwt.decode(token, 'top_secret', algorithm='HS256')['id']
+
 
 def logout(token):
     global myMap
     del myMap[token]
-

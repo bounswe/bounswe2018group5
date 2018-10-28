@@ -5,7 +5,7 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from . import authentication
 import json
-from user.models import User, DoesNotExist
+from .models import User, DoesNotExist
 
 
 def hash_password(password):
@@ -65,4 +65,3 @@ def logout(request):
         authentication.logout(token)
         return JsonResponse({'response': True})
     return JsonResponse({'response': False})
-
