@@ -2,8 +2,6 @@ import React from "react";
 import PropTypes from "prop-types";
 // @material-ui/core components
 import withStyles from "@material-ui/core/styles/withStyles";
-import ListItem from "@material-ui/core/ListItem";
-import List from "@material-ui/core/List";
 // core components
 import footerStyle from "material-dashboard-react/dist/assets/jss/material-dashboard-react/components/footerStyle";
 

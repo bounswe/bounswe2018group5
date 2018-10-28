@@ -12,6 +12,7 @@ class HttpService {
             const url = this._createUrl(requestOptions);
             const overriddenHeaders = requestOptions.headers || {};
             const sendToken = requestOptions.sendToken || false;
+            const api_token = getCookie(TOKEN_COOKIE) ? getCookie(TOKEN_COOKIE)  : null;
             const processedRequestOptions = {
                 ...requestOptions,
                 body: JSON.stringify(requestOptions.body),
@@ -19,10 +20,10 @@ class HttpService {
                     "Content-Type": "application/json",
                     Authorization:
                         typeof sendToken === "undefined"
-                            ? "JWT " + getCookie(TOKEN_COOKIE)
+                            ? api_token
                             : sendToken === false
                             ? null
-                            : "JWT " + getCookie(TOKEN_COOKIE),
+                            : api_token,
                     ...overriddenHeaders
                 },
                 timeout: Configuration.HTTP_TIMEOUT_MS,
