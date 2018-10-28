@@ -24,7 +24,6 @@ def user_json(user):
     obj['full_name'] = user.full_name
     obj['username'] = user.username
     obj['email'] = user.email
-    obj['password'] = hash_password(user.password)
     obj['type'] = user.type
     obj['gender'] = user.gender
     obj['bio'] = user.bio
@@ -35,14 +34,14 @@ def user_json(user):
 
 
 def modify_user(json, user):
-    user.full_name = json['full_name'] if json['full_name'] else user.full_name
-    user.username = json['username'] if json['username'] else user.username
-    user.email = json['email'] if json['email'] else user.email
-    user.password = hash_password(json['password']) if json['password'] else user.password
-    user.type = json['type'] if json['type'] else user.type
-    user.gender = json['gender'] if json['gender'] else user.gender
-    user.bio = json['bio'] if json['bio'] else user.bio
-    user.profile_image = json['profile_image'] if json['profile_image'] else user.bio
+    user.full_name = json['full_name'] if 'full_name' in json else user.full_name
+    user.username = json['username'] if 'username' in json else user.username
+    user.email = json['email'] if 'email' in json else user.email
+    user.password = hash_password(json['password']) if 'password' in json else user.password
+    user.type = json['type'] if 'type' in json else user.type
+    user.gender = json['gender'] if 'gender' in json else user.gender
+    user.bio = json['bio'] if 'bio' in json else user.bio
+    user.profile_image = json['profile_image'] if 'profile_image' in json else user.bio
     user.updated_at = datetime.now()
     return user
 
@@ -118,8 +117,8 @@ def get_user(request, user_id):
 def get_current_user(request):
     if request.method == 'GET':
         token = request.META.get('HTTP_AUTHORIZATION', None)
-        user_id = authentication.get_user_id(token)
         if token and authentication.is_authenticated(token):
+            user_id = authentication.get_user_id(token)
             user = User.objects.get(id=user_id)
             try:
                 return JsonResponse({"response": True, "user": user_json(user)})
@@ -137,11 +136,11 @@ def get_current_user(request):
 def update_user(request):
     if request.method == 'POST':
         token = request.META.get('HTTP_AUTHORIZATION', None)
-        body = json.loads(request.body.decode('utf-8'))
-        user_id = authentication.get_user_id(token)
-        user = User.objects.get(id=user_id)
-        modify_user(body, user)
         if token and authentication.is_authenticated(token):
+            body = json.loads(request.body.decode('utf-8'))
+            user_id = authentication.get_user_id(token)
+            user = User.objects.get(id=user_id)
+            modify_user(body, user)
             try:
                 user.save()
                 return JsonResponse({"response": True})
