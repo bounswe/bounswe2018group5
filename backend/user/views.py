@@ -65,4 +65,3 @@ def logout(request):
         authentication.logout(token)
         return JsonResponse({'response': True})
     return JsonResponse({'response': False})
-

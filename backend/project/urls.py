@@ -1,11 +1,11 @@
-from django.urls import path
+from django.conf.urls import url
 
 from . import views
 
 urlpatterns = [
-    url(r'^project/createProject', views.login, name="login"),
-    url(r'^project/getProjects', views.register, name="get_projects"),
-    url(r'^project/getProject', views.logout, name="get_project"),
-    url(r'^project/updateProject', views.logout, name="update_project"),
-    url(r'^project/discardProject', views.logout, name="delete_project"),
+    url(r'create', views.create_project, name="create_project"),
+    url(r'^getAll', views.get_all_projects, name="get_all_projects"),
+    url(r'^get', views.get_projects, name="get_projects"),
+    url(r'^update', views.update_project, name="update_project"),
+    url(r'^discard', views.discard_projects, name="discard_projects"),
 ]

@@ -29,13 +29,13 @@ class Project(BaseDocument):
     def schema(self):
         pass
 
-    owner_id = IntField()
-    freelancer_id = IntField()
+    owner_id = StringField(max_length=100)
+    freelancer_id = StringField(max_length=100)
     description = StringField(max_length=400)
     title = StringField(max_length=50)
     budget = FloatField(min_value=0)
     project_deadline = DateTimeField()
-    status = IntField() #0 bidding period, 1 project awarded to a freelancer, 2 project completed
+    status = IntField() #0 bidding period, 1 project awarded to a freelancer, 2 project completed, -1 project discarded
 
 
     meta = {'collection': 'projects'}
