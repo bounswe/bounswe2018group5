@@ -3,10 +3,10 @@ import Helmet from "react-helmet";
 
 // @material-ui/core
 import withStyles from "@material-ui/core/styles/withStyles";
-
 // @material-ui/icons
 
 // core components
+import AddProjectModal from 'components/Modal/AddProjectModal.jsx';
 
 import homePageStyle from "material-dashboard-react/dist/assets/jss/material-dashboard-react/views/dashboardStyle";
 
@@ -19,6 +19,7 @@ class HomePage extends React.Component {
                     meta={[
                         {property: 'og:title', content: 'Home Page'},
                     ]} />
+                <AddProjectModal />
             </div>
         );
     }

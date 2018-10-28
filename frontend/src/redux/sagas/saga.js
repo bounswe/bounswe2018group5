@@ -2,6 +2,8 @@ import {call, put, takeLatest} from "redux-saga/effects";
 
 import {LOGIN_REQUEST, LOGOUT_REQUEST, REGISTER_REQUEST} from "../auth/actionTypes";
 import {CHANGE_PASSWORD_REQUEST, GET_PROFILE_REQUEST, UPDATE_PROFILE_REQUEST} from "../user/actionTypes";
+import {CREATE_PROJECT_REQUEST, GET_PROJECTS_REQUEST} from "../project/actionTypes";
+import {getProjectsFailure, getProjectsSuccess, createProjectSuccess, createProjectFailure} from "../project/Actions";
 import {loginSuccess, loginFailure, registerFailure, registerSuccess} from "../auth/Actions";
 import {
     profileSuccess,
@@ -11,6 +13,7 @@ import {
     updateProfileFailure,
     updateProfileSuccess
 } from "../user/Actions";
+
 
 import api from "./api";
 
@@ -166,6 +169,60 @@ const tryChangePasswordSaga = function* (action) {
     }
 };
 
+const tryGetProjectsSaga = function* () {
+    try {
+        const getProjectsResponse = yield call(api.getProjects);
+
+        if (getProjectsResponse) {
+            console.log("getProjectsResponse", getProjectsResponse);
+
+            if (getProjectsResponse.status === 200) {
+                yield put(getProjectsSuccess(getProjectsResponse.responseBody));
+            } else if (getProjectsResponse.status === 400) {
+                console.log("Something wrong! Got a status 400", getProjectsResponse.responseBody);
+                yield put(getProjectsFailure(getProjectsResponse.responseBody));
+            } else {
+                console.log("Something wrong! Got an unknown status.", getProjectsResponse);
+                yield put(getProjectsFailure({detail: ["Unknown status. Check console!"]}));
+            }
+        } else {
+            console.log("Get Projects failed by api. No response !");
+            yield put(getProjectsFailure({detail: ["No response fetched. Please contact the API team!"]}));
+        }
+    } catch (err) {
+        console.log("Get Projects failed by api. Error => ", err);
+        yield put(getProjectsFailure({detail: [err.detail]}));
+    }
+};
+
+const tryCreateProjectSaga = function* (action) {
+    try {
+        const { title, description, project_deadline, budget } = action.payload;
+
+        const createProjectResponse = yield call(api.createProject, title, description, project_deadline, budget);
+
+        if (createProjectResponse) {
+            console.log("createProjectResponse", createProjectResponse);
+
+            if (createProjectResponse.status === 200) {
+                yield put(createProjectSuccess(createProjectResponse.responseBody));
+            } else if (createProjectResponse.status === 400) {
+                console.log("Something wrong! Got a status 400", createProjectResponse.responseBody);
+                yield put(createProjectFailure(createProjectResponse.responseBody));
+            } else {
+                console.log("Something wrong! Got an unknown status.", createProjectResponse);
+                yield put(createProjectFailure({detail: ["Unknown status. Check console!"]}));
+            }
+        } else {
+            console.log("Create Project failed by api. No response !");
+            yield put(createProjectFailure({detail: ["No response fetched. Please contact the API team!"]}));
+        }
+    } catch (err) {
+        console.log("Create Project failed by api. Error => ", err);
+        yield put(createProjectFailure({detail: [err.detail]}));
+    }
+};
+
 const saga = function* () {
     // AUTH
     yield takeLatest(LOGIN_REQUEST, tryLoginSaga);
@@ -176,6 +233,10 @@ const saga = function* () {
     yield takeLatest(GET_PROFILE_REQUEST, tryGetProfileSaga);
     yield takeLatest(UPDATE_PROFILE_REQUEST, tryUpdateProfileSaga);
     yield takeLatest(CHANGE_PASSWORD_REQUEST, tryChangePasswordSaga);
+
+    // PROJECTS
+    yield takeLatest(GET_PROJECTS_REQUEST, tryGetProjectsSaga);
+    yield takeLatest(CREATE_PROJECT_REQUEST, tryCreateProjectSaga);
 };
 
 export default saga;
