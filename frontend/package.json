@@ -25,7 +25,8 @@
     "redux": "4.0.1",
     "redux-saga": "0.16.2",
     "universal-cookie": "^3.0.4",
-    "validator": "10.8.0"
+    "validator": "10.8.0",
+    "perfect-scrollbar": "1.4.0"
   },
   "scripts": {
     "start": "react-scripts start",

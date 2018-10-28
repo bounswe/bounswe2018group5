@@ -6,7 +6,7 @@ import { Route, Switch } from "react-router-dom";
 import { ConnectedRouter } from "connected-react-router";
 
 import LandingPage from "views/LandingPage/LandingPage.jsx";
-import HomePage from "layouts/Home/Home.jsx";
+import HomeLayout from "layouts/Home/Home.jsx";
 import RegisterPage from "views/RegisterPage/RegisterPage.jsx";
 import LoginPage from "views/LoginPage/LoginPage.jsx";
 
@@ -21,8 +21,7 @@ class App extends React.Component {
                 <Route path='/register' exact component={RegisterPage} />;
                 <Route path='/login' exact component={LoginPage} />;
 
-
-                <PrivateRoute path='/home' exact component={HomePage} />;
+                <PrivateRoute path='/home' component={HomeLayout} />
             </Switch>
         );
     }
