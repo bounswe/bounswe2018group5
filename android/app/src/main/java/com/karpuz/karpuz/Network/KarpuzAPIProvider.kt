@@ -5,16 +5,20 @@ import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 
-class KarpuzAPIProvider(
-    private val karpuzAPI: KarpuzAPI = Retrofit.Builder()
-        .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-        .addConverterFactory(GsonConverterFactory.create())
-        .baseUrl(Config.baseUrl)
-        .build().create(KarpuzAPI::class.java)
-) : KarpuzAPI {
+class KarpuzAPIProvider : KarpuzAPI {
 
     companion object {
         val instance = KarpuzAPIProvider()
+    }
+
+    private val karpuzAPI: KarpuzAPI
+
+    private constructor() {
+        karpuzAPI = Retrofit.Builder()
+            .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+            .addConverterFactory(GsonConverterFactory.create())
+            .baseUrl(Config.baseUrl)
+            .build().create(KarpuzAPI::class.java)
     }
 
     override fun register(registerBody: KarpuzAPIModels.RegisterBody): Observable<KarpuzAPIModels.RegisterResponse> {

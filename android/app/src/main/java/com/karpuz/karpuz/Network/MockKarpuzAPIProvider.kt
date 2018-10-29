@@ -8,6 +8,7 @@ class MockKarpuzAPIProvider : KarpuzAPI {
         val instance = MockKarpuzAPIProvider()
     }
 
+    private constructor()
 
     override fun register(register: KarpuzAPIModels.RegisterBody): Observable<KarpuzAPIModels.RegisterResponse> {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
