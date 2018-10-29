@@ -79,7 +79,7 @@ def register(request):
         except Exception as e:
             return JsonResponse({'response': False, 'error': str(e)})
         new_user.save()
-        return JsonResponse({"response": True})
+        return JsonResponse({"response": True, 'api_token': authentication.generate_token(new_user)})
     return JsonResponse({
         "response": False,
         "error": "wrong request method"
