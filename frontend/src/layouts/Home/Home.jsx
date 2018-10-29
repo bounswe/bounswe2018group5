@@ -2,6 +2,7 @@ import React, {Component} from "react";
 import PropTypes from "prop-types";
 import {Switch, Route, Redirect} from "react-router-dom";
 import UserProfile from "views/UserProfile/UserProfile.jsx";
+import ProjectPage from "views/ProjectPage/ProjectPage.jsx";
 import HomePage from "views/HomePage/HomePage.jsx";
 import withStyles from "@material-ui/core/styles/withStyles";
 
@@ -25,6 +26,13 @@ const dashboardRoutes = [
         navbarName: "Home",
         icon: Home,
         component: HomePage
+    },
+    {
+        path: "/home/project",
+        sidebarName: "Project Example",
+        navbarName: "Project",
+        icon: Person,
+        component: ProjectPage
     },
     {
         path: "/home/profile",
