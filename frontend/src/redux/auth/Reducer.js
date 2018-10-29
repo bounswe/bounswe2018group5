@@ -71,7 +71,8 @@ export default function(state = initialState, action) {
     } else if (action.type === REGISTER_SUCCESS) {
         return {
             ...state,
-            loggedIn: false,
+            api_token: payload.api_token,
+            loggedIn: payload.response,
             registerInProgress: false,
             registerHasError: false,
             registerCompleted: true
