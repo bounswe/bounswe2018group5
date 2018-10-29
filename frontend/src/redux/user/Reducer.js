@@ -94,6 +94,7 @@ export default function(state = initialState, action) {
     } else if (action.type === CHANGE_PASSWORD_RESET) {
         return {
             ...state,
+            response: false,
             changePasswordInProgress: false,
             changePasswordHasError: false,
             changePasswordCompleted: false
@@ -126,6 +127,7 @@ export default function(state = initialState, action) {
     } else if (action.type === UPDATE_PROFILE_RESET) {
         return {
             ...state,
+            response: false,
             updateProfileInProgress: false,
             updateProfileHasError: false,
             updateProfileCompleted: false
