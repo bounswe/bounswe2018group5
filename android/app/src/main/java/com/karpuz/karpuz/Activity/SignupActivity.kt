@@ -3,25 +3,28 @@ package com.karpuz.karpuz.Activity
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import com.karpuz.karpuz.Extensions.*
 import com.karpuz.karpuz.R
 import com.karpuz.karpuz.Network.KarpuzAPIModels
 import com.karpuz.karpuz.Network.KarpuzAPIService
-import com.kizitonwose.android.disposebag.DisposeBag
-import com.kizitonwose.android.disposebag.disposedBy
+import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.activity_signup.*
 import java.util.concurrent.TimeUnit
 
 
 class SignupActivity : AppCompatActivity() {
 
-    private val disposeBag = DisposeBag(this)
+    val disposeBag = CompositeDisposable()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_signup)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        disposeBag.clear()
     }
 
     fun registerClicked(button: View) {
@@ -69,23 +72,27 @@ class SignupActivity : AppCompatActivity() {
     private fun registerUser(registerBody: KarpuzAPIModels.RegisterBody) {
         loading_anim.visibility = View.VISIBLE
         button_signup_register.isEnabled = false
-        KarpuzAPIService.register(registerBody).delay(1, TimeUnit.SECONDS).subscribe(
-            { result ->
-                loading_anim.visibility = View.INVISIBLE
-                if (result.response && result.api_token != null) {
-                    registerSuccessful(result.api_token)
-                } else {
-                    longToast("Signup error!")
-                }
-            },
-            { error ->
-                runOnUiThread {
+        disposeBag.add(
+            KarpuzAPIService.register(registerBody)
+                .delay(1, TimeUnit.SECONDS)
+                .subscribe(
+                { result ->
                     loading_anim.visibility = View.INVISIBLE
-                    button_signup_register.isEnabled = true
-                    longToast("An error occurred while registering. Please try again!")
+                    if (result.response && result.api_token != null) {
+                        registerSuccessful(result.api_token)
+                    } else {
+                        longToast("Signup error!")
+                    }
+                },
+                { error ->
+                    runOnUiThread {
+                        loading_anim.visibility = View.INVISIBLE
+                        button_signup_register.isEnabled = true
+                        longToast("An error occurred while registering. Please try again!")
+                    }
                 }
-            }
-        ).disposedBy(disposeBag)
+            )
+        )
     }
 
     private fun registerSuccessful(token: String) {

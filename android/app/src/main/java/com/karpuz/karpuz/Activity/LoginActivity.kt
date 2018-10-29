@@ -8,43 +8,50 @@ import com.karpuz.karpuz.Extensions.*
 import com.karpuz.karpuz.Network.KarpuzAPIModels
 import com.karpuz.karpuz.Network.KarpuzAPIService
 import com.karpuz.karpuz.R
-import com.kizitonwose.android.disposebag.DisposeBag
-import com.kizitonwose.android.disposebag.disposedBy
+import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.activity_login.*
 import java.util.concurrent.TimeUnit
 
 class LoginActivity : AppCompatActivity() {
 
-    private val disposeBag = DisposeBag(this)
+    val disposeBag = CompositeDisposable()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
     }
 
+    override fun onPause() {
+        super.onPause()
+        disposeBag.clear()
+    }
+
     fun signInClicked(button: View) {
         loading_anim.visibility = View.VISIBLE
-        KarpuzAPIService.login(
-            KarpuzAPIModels.LoginBody(
-                editText_login_username.text.toString(),
-                editText_login_password.text.toString()
-            )
-        ).delay(1, TimeUnit.SECONDS).subscribe(
-            { result ->
-                loading_anim.visibility = View.INVISIBLE
-                if (result.response && result.api_token != null) {
-                    loginSuccessful(result.api_token)
-                } else {
-                    longToast("Login error: ${result.error}")
-                }
-            },
-            { error ->
-                runOnUiThread {
+        disposeBag.add(
+            KarpuzAPIService.login(
+                KarpuzAPIModels.LoginBody(
+                    editText_login_username.text.toString(),
+                    editText_login_password.text.toString()
+                ))
+                .delay(1, TimeUnit.SECONDS)
+                .subscribe(
+                { result ->
                     loading_anim.visibility = View.INVISIBLE
-                    longToast("Login error!")
+                    if (result.response && result.api_token != null) {
+                        loginSuccessful(result.api_token)
+                    } else {
+                        longToast("Login error: ${result.error}")
+                    }
+                },
+                { error ->
+                    runOnUiThread {
+                        loading_anim.visibility = View.INVISIBLE
+                        longToast("Login error!")
+                    }
                 }
-            }
-        ).disposedBy(disposeBag)
+            )
+        )
     }
 
     fun forgotPasswordClicked(button: View) {

@@ -22,7 +22,10 @@
         </activity>
         <activity android:name=".Activity.SignupActivity">
         </activity>
-        <activity android:name=".Activity.HomeActivity">
+        <activity
+                android:name=".Activity.HomeActivity"
+                android:label="@string/title_activity_home"
+                android:theme="@style/AppTheme">
         </activity>
     </application>
 
