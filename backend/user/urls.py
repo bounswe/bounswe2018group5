@@ -7,5 +7,7 @@ urlpatterns = [
     url(r'^auth/logout', views.logout, name="logout"),
     url(r'^profile/(?P<user_id>[a-z0-9,]*)/$', views.get_user, name="get_user"),
     url(r'^profile$', views.get_current_user, name="get_current_user"),
-    url(r'^profile/update', views.update_user, name="update_user")
+    url(r'^profile/update', views.update_user, name="update_user"),
+    url(r'^profile/upload_image', views.upload_image, name="upload_image"),
+    url(r'^profile/download_image/(?P<filename>.*)$', views.download_image, name="download_image")
 ]

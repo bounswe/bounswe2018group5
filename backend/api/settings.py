@@ -74,6 +74,12 @@ TEMPLATES = [
     },
 ]
 
+MEDIA_URL = '/media/'
+MEDIA_ROOT =  os.path.join(BASE_DIR, 'media')
+MEDIAFILES_DIRS = [
+    os.path.join(BASE_DIR, 'media'),
+]
+
 WSGI_APPLICATION = 'api.wsgi.application'
 
 

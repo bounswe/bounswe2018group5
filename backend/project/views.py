@@ -2,7 +2,8 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from user import authentication
 import json
-from .models import Project, DoesNotExist
+from .models import Project
+
 
 def project_json(project):
     obj = {}
@@ -16,6 +17,7 @@ def project_json(project):
     obj['owner_id'] = project.owner_id
     obj['status'] = project.status
     return obj
+
 
 @csrf_exempt
 def create_project(request):
@@ -65,6 +67,7 @@ def get_all_projects(request):
         "error": "wrong request method"
     })
 
+
 @csrf_exempt
 def get_projects(request, ids):
     if request.method == 'GET':
@@ -86,6 +89,7 @@ def get_projects(request, ids):
         "error": "wrong request method"
     })
 
+
 # TODO:
 @csrf_exempt
 def update_project(request):
@@ -105,6 +109,7 @@ def update_project(request):
         "response": False,
         "error": "wrong request method"
     })
+
 
 @csrf_exempt
 def discard_projects(request):
