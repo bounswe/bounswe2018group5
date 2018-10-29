@@ -58,6 +58,8 @@ class UserProfile extends Component {
             notificationMessage: '',
             updateProfile: false,
             updatePassword: false,
+            gender: -2,
+            type: -1
         };
     }
 
@@ -79,7 +81,7 @@ class UserProfile extends Component {
         this.props.tryGetProfile();
     }
 
-    componentDidUpdate(prevProps, prevState) {
+    componentDidUpdate(prevProps, prevState) {      
         const {getProfileInProgress, getProfileHasError, getProfileCompleted, user} = this.props.user;
 
         if (!getProfileInProgress && !getProfileHasError && getProfileCompleted) {
@@ -161,7 +163,7 @@ class UserProfile extends Component {
                             </CardHeader>
                             <CardBody>
                                 <GridContainer>
-                                    <GridItem xs={12} sm={12} md={4}>
+                                    <GridItem xs={12} sm={12} md={6}>
                                         <CustomInput
                                             labelText="Full Name"
                                             id="full_name"
@@ -171,19 +173,20 @@ class UserProfile extends Component {
                                             }}
                                             inputProps={{
                                                 onChange: event => this.setState({full_name: event.target.value}),
-                                                value: this.state.full_name,
-                                                autoFocus: !!this.state.full_name
+                                                value: this.state.full_name ? this.state.full_name : "",
                                             }}
                                         />
                                     </GridItem>
-                                    <GridItem xs={12} sm={12} md={4}>
+                                </GridContainer>
+                                <GridContainer>
+                                    <GridItem xs={12} sm={12} md={6}>
                                         <FormControl fullWidth={true} variant="filled" className={classes.formControl}>
                                             <InputLabel htmlFor="outlined-age-simple">Gender</InputLabel>
                                             <Select
-                                                value={this.state.gender ? this.state.gender : -2}
-                                                onChange={event => this.setState({gender: event.target.value})}
+                                                value={this.state.gender}
+                                                onChange={event => this.setState({ gender: event.target.value })}
                                                 input={
-                                                    <FilledInput name="gender"/>
+                                                    <FilledInput name="gender" />
                                                 }
                                             >
                                                 <MenuItem value={-1}>Male</MenuItem>
@@ -192,14 +195,14 @@ class UserProfile extends Component {
                                             </Select>
                                         </FormControl>
                                     </GridItem>
-                                    <GridItem xs={12} sm={12} md={4}>
+                                    <GridItem xs={12} sm={12} md={6}>
                                         <FormControl fullWidth={true} variant="filled" className={classes.formControl}>
                                             <InputLabel htmlFor="outlined-age-simple">User Type</InputLabel>
                                             <Select
-                                                value={this.state.type ? this.state.type : -1}
-                                                onChange={event => this.setState({type: event.target.value})}
+                                                value={this.state.type}
+                                                onChange={event => this.setState({ type: event.target.value })}
                                                 input={
-                                                    <FilledInput name="type"/>
+                                                    <FilledInput name="type" />
                                                 }
                                             >
                                                 <MenuItem value={1}>Client</MenuItem>
@@ -220,7 +223,7 @@ class UserProfile extends Component {
                                                 multiline: true,
                                                 rows: 3,
                                                 onChange: event => this.setState({bio: event.target.value}),
-                                                value: this.state.bio
+                                                value: this.state.bio ? this.state.bio : "",
                                             }}
                                         />
                                     </GridItem>

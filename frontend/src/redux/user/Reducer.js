@@ -103,32 +103,32 @@ export default function(state = initialState, action) {
     if (action.type === UPDATE_PROFILE_REQUEST) {
         return {
             ...state,
-            changePasswordInProgress: true,
-            changePasswordHasError: false,
-            changePasswordCompleted: false
+            updateProfileInProgress: true,
+            updateProfileHasError: false,
+            updateProfileCompleted: false
         };
     } else if (action.type === UPDATE_PROFILE_SUCCESS) {
         return {
             ...state,
             response: payload.response,
-            changePasswordInProgress: false,
-            changePasswordHasError: false,
-            changePasswordCompleted: true
+            updateProfileInProgress: false,
+            updateProfileHasError: false,
+            updateProfileCompleted: true
         };
     } else if (action.type === UPDATE_PROFILE_FAILURE) {
         return {
             ...state,
-            changePasswordInProgress: false,
-            changePasswordHasError: true,
-            changePasswordCompleted: true,
-            changePasswordError: payload.detail[0]
+            updateProfileInProgress: false,
+            updateProfileHasError: true,
+            updateProfileCompleted: true,
+            updateProfileError: payload.detail[0]
         };
     } else if (action.type === UPDATE_PROFILE_RESET) {
         return {
             ...state,
-            changePasswordInProgress: false,
-            changePasswordHasError: false,
-            changePasswordCompleted: false
+            updateProfileInProgress: false,
+            updateProfileHasError: false,
+            updateProfileCompleted: false
         };
     }
 
