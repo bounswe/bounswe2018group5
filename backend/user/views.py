@@ -79,7 +79,7 @@ def register(request):
             new_user.save()
         except Exception as e:
             return JsonResponse({'response': False, 'error': str(e)})
-        return JsonResponse({"response": True})
+        return JsonResponse({"response": True, 'api_token': authentication.generate_token(new_user)})
     return JsonResponse({
         "response": False,
         "error": "wrong request method"
@@ -149,22 +149,6 @@ def handle_uploaded_file(app_name, file, filename):
     with open('media/' + app_name + '/' + filename, 'wb+') as destination:
         for chunk in file.chunks():
             destination.write(chunk)
-
-
-@csrf_exempt
-def download_image(request, filename):
-    if request.method == 'GET':
-        file_path = os.path.join(settings.MEDIA_ROOT, 'profile_images/' + filename)
-        if os.path.exists(file_path):
-            with open(file_path, 'rb') as fh:
-                response = HttpResponse(fh.read(), content_type="image/" + str(file_path).rsplit('.', 1)[1])
-                response['Content-Disposition'] = 'inline; filename=' + os.path.basename(file_path)
-                return response
-        raise Http404
-    return JsonResponse({
-        "response": False,
-        "error": request.method
-    })
 
 
 @csrf_exempt
