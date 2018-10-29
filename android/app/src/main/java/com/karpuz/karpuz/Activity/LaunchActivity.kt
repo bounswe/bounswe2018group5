@@ -22,15 +22,7 @@ class LaunchActivity : AccountAuthenticatorActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_launch)
-    }
 
-    override fun onPause() {
-        super.onPause()
-        disposeBag.clear()
-    }
-
-    override fun onResume() {
-        super.onResume()
         val accountManager = AccountManager.get(this)
         val accounts = accountManager.getAccountsByType(Config.accountType)
         if (accounts.isEmpty() || !(accounts.any { account -> account.type == Config.accountType })) {
@@ -47,7 +39,6 @@ class LaunchActivity : AccountAuthenticatorActivity() {
                         username,
                         password
                     ))
-                    .delay(1, TimeUnit.SECONDS)
                     .subscribe(
                         { result ->
                             if (result.response && result.api_token != null) {
@@ -66,6 +57,11 @@ class LaunchActivity : AccountAuthenticatorActivity() {
                     )
             )
         }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        disposeBag.clear()
     }
 
     private fun loginSuccessful(token: String) {

@@ -45,7 +45,7 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }
 
         fab.setOnClickListener { view ->
-            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+            Snackbar.make(view, "Project creation action will be here!", Snackbar.LENGTH_LONG)
                 .setAction("Action", null).show()
         }
 
@@ -82,19 +82,9 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         return true
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        when (item.itemId) {
-            R.id.action_settings -> return true
-            else -> return super.onOptionsItemSelected(item)
-        }
-    }
-
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         // Handle navigation view item clicks here.
-        when (item.itemId) {
+        /*when (item.itemId) {
             R.id.nav_camera -> {
                 // Handle the camera action
             }
@@ -113,7 +103,7 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             R.id.nav_send -> {
 
             }
-        }
+        }*/
 
         drawer_layout.closeDrawer(GravityCompat.START)
         return true

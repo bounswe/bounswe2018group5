@@ -46,7 +46,6 @@ class LoginActivity : AccountAuthenticatorActivity() {
                     username,
                     password
                 ))
-                .delay(1, TimeUnit.SECONDS)
                 .subscribe(
                 { result ->
                     loading_anim.visibility = View.INVISIBLE

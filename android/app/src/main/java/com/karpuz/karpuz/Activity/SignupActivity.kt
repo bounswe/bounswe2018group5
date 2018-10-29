@@ -83,7 +83,6 @@ class SignupActivity : AppCompatActivity() {
         button_signup_register.isEnabled = false
         disposeBag.add(
             KarpuzAPIService.register(registerBody)
-                .delay(1, TimeUnit.SECONDS)
                 .subscribe(
                 { result ->
                     loading_anim.visibility = View.INVISIBLE
