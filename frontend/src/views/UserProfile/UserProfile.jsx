@@ -119,7 +119,14 @@ class UserProfile extends Component {
 
         if (this.state.updateProfile && !updateProfileInProgress && !updateProfileHasError && updateProfileCompleted) {
             if (response) {
+                const user = {
+                    ...this.state.user,
+                    full_name: this.state.full_name,
+                    bio: this.state.bio,
+                    type: this.state.type
+                }
                 this.setState({
+                    user: user,
                     open: true,
                     color: 'success',
                     notificationMessage: 'Your Profile is successfully changed!'

@@ -58,9 +58,10 @@ class AddProjectModal extends React.Component {
     }
 
     componentDidUpdate(prevProps, prevState) {
-        const {createProjectInProgress, createProjectHasError, createProjectCompleted, response} = this.props.project;
+        const {createProjectInProgress, createProjectHasError, createProjectCompleted, response, project} = this.props.project;
         if (!createProjectInProgress && !createProjectHasError && createProjectCompleted) {
             if (response) {
+                this.props.handleToUpdate(project);
                 this.setState({
                     open: true,
                     color: 'success',
