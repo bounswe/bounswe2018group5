@@ -71,13 +71,14 @@ class SignupActivity : AppCompatActivity() {
         button_signup_register.isEnabled = false
         KarpuzAPIService.register(registerBody).delay(1, TimeUnit.SECONDS).subscribe(
             { result ->
-                Log.v("SignupActivity", "$result")
                 loading_anim.visibility = View.INVISIBLE
-                registerSuccessful()
+                if (result.response && result.api_token != null) {
+                    registerSuccessful(result.api_token)
+                } else {
+                    longToast("Signup error!")
+                }
             },
             { error ->
-                Log.v("SignupActivity", "$error")
-
                 runOnUiThread {
                     loading_anim.visibility = View.INVISIBLE
                     button_signup_register.isEnabled = true
@@ -87,7 +88,7 @@ class SignupActivity : AppCompatActivity() {
         ).disposedBy(disposeBag)
     }
 
-    private fun registerSuccessful() {
+    private fun registerSuccessful(token: String) {
         //TODO("Create user profile, create network instance")
         val homeIntent = Intent(this, HomeActivity::class.java)
         homeIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
