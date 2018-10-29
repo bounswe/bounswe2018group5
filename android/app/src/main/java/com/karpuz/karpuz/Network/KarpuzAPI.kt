@@ -10,4 +10,7 @@ interface KarpuzAPI {
 
     @POST("api/user/auth/login")
     fun login(@Body user: KarpuzAPIModels.LoginBody): Observable<KarpuzAPIModels.LoginResponse>
+
+    @GET("api/project/get_all")
+    fun getAllProjects(@Header("Authorization") auth: String): Observable<KarpuzAPIModels.ProjectsResponse>
 }

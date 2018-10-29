@@ -28,4 +28,8 @@ class KarpuzAPIProvider : KarpuzAPI {
     override fun login(loginBody: KarpuzAPIModels.LoginBody): Observable<KarpuzAPIModels.LoginResponse> {
         return karpuzAPI.login(loginBody)
     }
+
+    override fun getAllProjects(auth: String): Observable<KarpuzAPIModels.ProjectsResponse> {
+        return karpuzAPI.getAllProjects(auth)
+    }
 }

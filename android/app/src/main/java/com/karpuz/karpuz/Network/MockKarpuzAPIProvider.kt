@@ -19,4 +19,22 @@ class MockKarpuzAPIProvider : KarpuzAPI {
     override fun login(user: KarpuzAPIModels.LoginBody): Observable<KarpuzAPIModels.LoginResponse> {
         return Observable.just(KarpuzAPIModels.LoginResponse(true, testToken, null))
     }
+
+    override fun getAllProjects(auth: String): Observable<KarpuzAPIModels.ProjectsResponse> {
+        return Observable.just(KarpuzAPIModels.ProjectsResponse(true,
+            KarpuzAPIModels.Projects(
+                arrayOf(KarpuzAPIModels.Project(
+                    "1",
+                    "Project 1",
+                    "2018-10-28T23:12:51.688",
+                    "2018-10-28T23:12:51.688",
+                    "1",
+                    "First project",
+                    "2018-10-28T23:12:51.688",
+                    10.0,
+                    0))
+                )
+            )
+        )
+    }
 }

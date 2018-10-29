@@ -1,7 +1,6 @@
 package com.karpuz.karpuz.Network
 
 import io.reactivex.Observable
-import io.reactivex.Scheduler
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 
@@ -19,5 +18,9 @@ class KarpuzAPIService(private val authToken: String, private val provider: Karp
         fun login(loginBody: KarpuzAPIModels.LoginBody): Observable<KarpuzAPIModels.LoginResponse> {
             return provider.login(loginBody).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
         }
+    }
+
+    fun getAllProjects(): Observable<KarpuzAPIModels.ProjectsResponse> {
+        return provider.getAllProjects(authToken).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
     }
 }

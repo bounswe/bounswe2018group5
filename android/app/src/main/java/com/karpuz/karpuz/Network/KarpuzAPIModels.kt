@@ -6,5 +6,17 @@ object KarpuzAPIModels {
 
     data class LoginBody(val username: String, val password: String)
     data class LoginResponse(val response: Boolean, val api_token: String?, val error: String?)
+
+    data class ProjectsResponse(val response: Boolean, val projects: Projects?)
+    data class Projects(val projects: Array<Project>)
+    data class Project(val project_id: String,
+                       val title: String,
+                       val created_at: String,
+                       val updated_at: String,
+                       val owner_id: String,
+                       val description: String,
+                       val deadline: String,
+                       val budget: Double,
+                       val status: Int)
 }
 
