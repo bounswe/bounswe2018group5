@@ -26,7 +26,7 @@ class ProjectCard extends React.Component {
                 <CardBody>
                     <h4 className={classes.cardTitle}>{title}</h4>
                     <p>{description}</p>
-                    <p align="right"><b>Budget: </b> {budget}$<br/> <b>Deadline: </b> {project_deadline}<br/><b>Created</b> At: {created_at}</p>
+                    <p align="right"><b>Budget: </b> {budget}$<br /> <b>Deadline: </b> {project_deadline}<br /><b>Created At:</b> {created_at}</p>
                 </CardBody>
                 <CardFooter className={classes.textMuted}>tags</CardFooter>
             </Card>
