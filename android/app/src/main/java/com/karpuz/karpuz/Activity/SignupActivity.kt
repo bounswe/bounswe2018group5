@@ -9,11 +9,15 @@ import com.karpuz.karpuz.Extensions.*
 import com.karpuz.karpuz.R
 import com.karpuz.karpuz.Network.KarpuzAPIModels
 import com.karpuz.karpuz.Network.KarpuzAPIService
+import com.kizitonwose.android.disposebag.DisposeBag
+import com.kizitonwose.android.disposebag.disposedBy
 import kotlinx.android.synthetic.main.activity_signup.*
 import java.util.concurrent.TimeUnit
 
 
 class SignupActivity : AppCompatActivity() {
+
+    private val disposeBag = DisposeBag(this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -80,10 +84,11 @@ class SignupActivity : AppCompatActivity() {
                     longToast("An error occurred while registering. Please try again!")
                 }
             }
-        )
+        ).disposedBy(disposeBag)
     }
 
     private fun registerSuccessful() {
+        TODO("Create user profile, create network instance")
         val homeIntent = Intent(this, HomeActivity::class.java)
         homeIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
         startActivity(homeIntent)
