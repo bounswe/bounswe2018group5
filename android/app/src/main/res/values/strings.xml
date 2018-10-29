@@ -1,4 +1,4 @@
 <resources>
     <string name="app_name">Karpuz</string>
-    <string name="title_activity_home">HomeActivity</string>
+    <string name="title_activity_home">Homepage</string>
 </resources>

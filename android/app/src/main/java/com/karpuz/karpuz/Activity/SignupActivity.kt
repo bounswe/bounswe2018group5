@@ -1,12 +1,17 @@
 package com.karpuz.karpuz.Activity
 
+import android.accounts.Account
+import android.accounts.AccountManager
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import com.karpuz.karpuz.Extensions.*
+import com.karpuz.karpuz.Network.Config
 import com.karpuz.karpuz.R
 import com.karpuz.karpuz.Network.KarpuzAPIModels
+import com.karpuz.karpuz.Network.KarpuzAPIProvider
 import com.karpuz.karpuz.Network.KarpuzAPIService
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.activity_signup.*
@@ -15,7 +20,11 @@ import java.util.concurrent.TimeUnit
 
 class SignupActivity : AppCompatActivity() {
 
-    val disposeBag = CompositeDisposable()
+    companion object {
+        private const val TAG = "SignupActivity"
+    }
+
+    private val disposeBag = CompositeDisposable()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -79,12 +88,13 @@ class SignupActivity : AppCompatActivity() {
                 { result ->
                     loading_anim.visibility = View.INVISIBLE
                     if (result.response && result.api_token != null) {
-                        registerSuccessful(result.api_token)
+                        registerSuccessful(registerBody.username, registerBody.password, result.api_token)
                     } else {
                         longToast("Signup error!")
                     }
                 },
                 { error ->
+                    Log.e(TAG, "Error: $error")
                     runOnUiThread {
                         loading_anim.visibility = View.INVISIBLE
                         button_signup_register.isEnabled = true
@@ -95,8 +105,10 @@ class SignupActivity : AppCompatActivity() {
         )
     }
 
-    private fun registerSuccessful(token: String) {
-        //TODO("Create user profile, create network instance")
+    private fun registerSuccessful(username: String, password: String, token: String) {
+        val account = Account(username, Config.accountType)
+        AccountManager.get(this).addAccountExplicitly(account, password, null)
+        KarpuzAPIService.create(token, KarpuzAPIProvider.instance) //TODO("add mock condition")
         val homeIntent = Intent(this, HomeActivity::class.java)
         homeIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
         startActivity(homeIntent)
