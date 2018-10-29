@@ -3,6 +3,7 @@
           package="com.karpuz.karpuz">
 
     <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.GET_ACCOUNTS"/>
 
     <application
             android:allowBackup="true"
@@ -12,18 +13,35 @@
             android:supportsRtl="true"
             android:theme="@style/AppTheme">
         <activity android:name=".Activity.WelcomeActivity">
+        </activity>
+        <activity android:name=".Activity.LoginActivity">
+        </activity>
+        <activity android:name=".Activity.SignupActivity">
+        </activity>
+        <activity
+                android:name=".Activity.HomeActivity"
+                android:label="@string/title_activity_home"
+                android:theme="@style/AppTheme">
+        </activity>
+        <activity android:name=".Activity.LaunchActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity android:name=".Activity.LoginActivity">
-        </activity>
-        <activity android:name=".Activity.SignupActivity">
-        </activity>
-        <activity android:name=".Activity.HomeActivity">
-        </activity>
+
+        <service android:name=".Helper.KarpuzAccountService">
+
+            <!-- Required filter used by the system to launch our account service. -->
+            <intent-filter>
+                <action android:name="android.accounts.AccountAuthenticator"/>
+            </intent-filter>
+            <!-- This points to an XMLf ile which describes our account service. -->
+            <meta-data
+                    android:name="android.accounts.AccountAuthenticator"
+                    android:resource="@xml/authenticator"/>
+        </service>
     </application>
 
 </manifest>

@@ -5,7 +5,7 @@
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".Activity.WelcomeActivity">
+        tools:context=".Activity.LaunchActivity">
 
     <TextView
             android:layout_width="379dp"
@@ -23,24 +23,12 @@
             android:id="@+id/imageView_drawer_user_pic"
             app:layout_constraintEnd_toEndOf="parent" app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" android:layout_marginTop="32dp"/>
-    <Button
-            android:text="Login"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/button_welcome_login"
-            android:onClick="loginClicked"
-            app:layout_constraintStart_toStartOf="parent" app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintEnd_toEndOf="parent" android:layout_marginTop="52dp"
-            app:layout_constraintTop_toBottomOf="@+id/textView_drawer_email"/>
-    <Button
-            android:text="Signup"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/button_welcome_signup" android:layout_marginTop="16dp"
-            app:layout_constraintTop_toBottomOf="@+id/button_welcome_login"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintHorizontal_bias="0.5" app:layout_constraintEnd_toEndOf="parent"
-            android:onClick="signupClicked"/>
+    <include layout="@layout/activity_indicator"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             app:layout_constraintStart_toStartOf="parent"
+             app:layout_constraintHorizontal_bias="0.5" app:layout_constraintEnd_toEndOf="parent"
+             android:layout_marginTop="56dp" app:layout_constraintTop_toBottomOf="@+id/textView_drawer_email"/>
     <TextView
             android:text="Bogazici University CMPE SWE Group 5"
             android:layout_width="wrap_content"
