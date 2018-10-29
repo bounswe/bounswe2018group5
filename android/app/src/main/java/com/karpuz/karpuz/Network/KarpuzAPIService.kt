@@ -4,9 +4,15 @@ import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 
-class KarpuzAPIService(private val authToken: String, private val provider: KarpuzAPI) {
+class KarpuzAPIService {
 
     companion object NoAuth {
+
+        lateinit var instance: KarpuzAPIService
+
+        fun create(authToken: String, provider: KarpuzAPI) {
+            instance = KarpuzAPIService(authToken, provider)
+        }
 
         private val provider: KarpuzAPI
             get() = if (Config.useMockNetwork) MockKarpuzAPIProvider.instance else KarpuzAPIProvider.instance
@@ -18,6 +24,14 @@ class KarpuzAPIService(private val authToken: String, private val provider: Karp
         fun login(loginBody: KarpuzAPIModels.LoginBody): Observable<KarpuzAPIModels.LoginResponse> {
             return provider.login(loginBody).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
         }
+    }
+
+    private val authToken: String
+    private val provider: KarpuzAPI
+
+    private constructor(authToken: String, provider: KarpuzAPI) {
+        this.authToken = authToken
+        this.provider = provider
     }
 
     fun getAllProjects(): Observable<KarpuzAPIModels.ProjectsResponse> {
