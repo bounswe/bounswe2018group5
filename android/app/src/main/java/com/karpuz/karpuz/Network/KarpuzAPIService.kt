@@ -9,7 +9,7 @@ class KarpuzAPIService(private val authToken: String, private val provider: Karp
         private val provider: KarpuzAPI
             get() = if (Config.useMockNetwork) MockKarpuzAPIProvider.instance else KarpuzAPIProvider.instance
 
-        fun register(registerBody: KarpuzAPIModels.RegisterBody): Observable<Void> {
+        fun register(registerBody: KarpuzAPIModels.RegisterBody): Observable<KarpuzAPIModels.RegisterResponse> {
             return provider.register(registerBody)
         }
 

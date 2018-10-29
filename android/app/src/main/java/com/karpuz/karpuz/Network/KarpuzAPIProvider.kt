@@ -17,7 +17,7 @@ class KarpuzAPIProvider(
         val instance = KarpuzAPIProvider()
     }
 
-    override fun register(registerBody: KarpuzAPIModels.RegisterBody): Observable<Void> {
+    override fun register(registerBody: KarpuzAPIModels.RegisterBody): Observable<KarpuzAPIModels.RegisterResponse> {
         return karpuzAPI.register(registerBody)
     }
 
