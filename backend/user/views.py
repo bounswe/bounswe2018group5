@@ -1,13 +1,14 @@
 import hashlib
 import uuid
 
-from django.http import JsonResponse
+from django.http import JsonResponse,HttpResponse,Http404
+from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
 from . import authentication
 import json
 from .models import User, DoesNotExist
 from datetime import datetime
-
+import os
 
 def hash_password(password):
     salt = uuid.uuid4().hex
@@ -41,7 +42,6 @@ def modify_user(json, user):
     user.type = json['type'] if 'type' in json else user.type
     user.gender = json['gender'] if 'gender' in json else user.gender
     user.bio = json['bio'] if 'bio' in json else user.bio
-    user.profile_image = json['profile_image'] if 'profile_image' in json else user.profile_image
     user.updated_at = datetime.now()
     return user
 
@@ -76,9 +76,9 @@ def register(request):
             new_user.password = hash_password(body['password'])
             new_user.full_name = body['full_name']
             new_user.email = body['email']
+            new_user.save()
         except Exception as e:
             return JsonResponse({'response': False, 'error': str(e)})
-        new_user.save()
         return JsonResponse({"response": True, 'api_token': authentication.generate_token(new_user)})
     return JsonResponse({
         "response": False,
@@ -132,6 +132,53 @@ def get_current_user(request):
     })
 
 
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
+
+
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+
+def handle_uploaded_file(app_name, file, filename):
+    if not os.path.exists('media/'):
+        os.mkdir('media/')
+    if not os.path.exists('media/'+app_name):
+        os.mkdir('media/'+app_name)
+
+    with open('media/' + app_name + '/' + filename, 'wb+') as destination:
+        for chunk in file.chunks():
+            destination.write(chunk)
+
+
+@csrf_exempt
+def upload_image(request):
+    if request.method == 'POST':
+        token = request.META.get('HTTP_AUTHORIZATION', None)
+        if token and authentication.is_authenticated(token):
+            user_id = authentication.get_user_id(token)
+            user = User.objects.get(id=user_id)
+            try:
+                if not allowed_file(str(request.FILES['profile_image'])):
+                    raise Exception("unsupported file type")
+                filename = str(user_id) + str(int(datetime.now().timestamp())) + '.' + \
+                           str(request.FILES['profile_image']).rsplit('.', 1)[1]
+                handle_uploaded_file('profile_images', request.FILES['profile_image'],
+                                     filename)
+                user.profile_image = filename
+                user.updated_at = datetime.now()
+                user.save()
+            except Exception as e:
+                return JsonResponse({'response': False, 'error': str(e)})
+            return JsonResponse({'response': True})
+        else:
+            return JsonResponse({"response": False, "error": "Unauthorized"})
+    return JsonResponse({
+        "response": False,
+        "error": request.method
+    })
+
+
 @csrf_exempt
 def update_user(request):
     if request.method == 'POST':
@@ -152,4 +199,3 @@ def update_user(request):
         "response": False,
         "error": request.method
     })
-
