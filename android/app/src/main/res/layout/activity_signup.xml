@@ -62,30 +62,14 @@
             android:layout_marginTop="16dp" app:layout_constraintTop_toBottomOf="@+id/editText_signup_name"
             app:layout_constraintStart_toStartOf="parent" app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintEnd_toEndOf="parent"/>
-    <android.support.constraint.ConstraintLayout
-            android:layout_width="136dp"
-            android:layout_height="195dp" android:layout_marginTop="8dp"
-            app:layout_constraintTop_toBottomOf="@+id/button_signup_register"
-            app:layout_constraintStart_toStartOf="parent" app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintEnd_toEndOf="parent" android:id="@+id/loading_anim" android:visibility="invisible">
 
-        <ProgressBar
-                style="?android:attr/progressBarStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/progressBar"
-                android:indeterminate="true"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintStart_toStartOf="parent" app:layout_constraintHorizontal_bias="0.5"
-                app:layout_constraintEnd_toEndOf="parent"/>
-        <TextView
-                android:text="Please wait..."
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/textView2"
-                android:layout_marginTop="4dp" app:layout_constraintTop_toBottomOf="@+id/progressBar"
-                app:layout_constraintStart_toStartOf="parent" app:layout_constraintHorizontal_bias="0.5"
-                app:layout_constraintEnd_toEndOf="parent"/>
-    </android.support.constraint.ConstraintLayout>
+    <include layout="@layout/activity_indicator"
+             android:id="@+id/loading_anim"
+             android:layout_height="wrap_content"
+             android:layout_width="wrap_content"
+             android:layout_marginTop="8dp"
+             app:layout_constraintTop_toBottomOf="@+id/button_signup_register"
+             app:layout_constraintStart_toStartOf="parent" app:layout_constraintHorizontal_bias="0.5"
+             app:layout_constraintEnd_toEndOf="parent" android:visibility="invisible"/>
 
 </android.support.constraint.ConstraintLayout>

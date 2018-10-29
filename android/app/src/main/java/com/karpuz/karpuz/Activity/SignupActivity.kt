@@ -88,7 +88,7 @@ class SignupActivity : AppCompatActivity() {
     }
 
     private fun registerSuccessful() {
-        TODO("Create user profile, create network instance")
+        //TODO("Create user profile, create network instance")
         val homeIntent = Intent(this, HomeActivity::class.java)
         homeIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
         startActivity(homeIntent)
