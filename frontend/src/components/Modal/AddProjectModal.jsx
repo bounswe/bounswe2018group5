@@ -64,7 +64,7 @@ class AddProjectModal extends React.Component {
                 this.setState({
                     open: true,
                     color: 'success',
-                    notification_message: 'Your Project is successfully created!'
+                    notificationMessage: 'Your Project is successfully created!'
                 });
                 setTimeout(function () {
                     this.setState({open: false});
@@ -73,7 +73,7 @@ class AddProjectModal extends React.Component {
                 this.setState({
                     open: true,
                     color: 'danger',
-                    notification_message: 'Your Project is not created!'
+                    notificationMessage: 'Your Project is not created!'
                 });
                 setTimeout(function () {
                     this.setState({open: false});
@@ -188,7 +188,7 @@ class AddProjectModal extends React.Component {
                     place={this.state.place}
                     icon={AddAlert}
                     color={this.state.color}
-                    message={this.state.notification_message}
+                    message={this.state.notificationMessage}
                     open={this.state.open}
                     closeNotification={() => this.setState({open: false})}
                     close

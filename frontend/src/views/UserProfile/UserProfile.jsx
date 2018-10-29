@@ -15,9 +15,16 @@ import CardAvatar from "material-dashboard-react/dist/components/Card/CardAvatar
 import CardBody from "material-dashboard-react/dist/components/Card/CardBody";
 import CardFooter from "material-dashboard-react/dist/components/Card/CardFooter";
 import Snackbar from "material-dashboard-react/dist/components/Snackbar/Snackbar";
-import {tryGetProfile, profileReset, tryChangePassword, changePasswordReset, tryUpdateProfile, updateProfileReset} from "redux/user/Actions.js";
+import {
+    tryGetProfile,
+    profileReset,
+    tryChangePassword,
+    changePasswordReset,
+    tryUpdateProfile,
+    updateProfileReset
+} from "redux/user/Actions.js";
 
-import avatar from "assets/img/faces/christian.jpg";
+import default_image from "assets/img/faces/default_image.png";
 import connect from "react-redux/es/connect/connect";
 
 const styles = {
@@ -48,19 +55,23 @@ class UserProfile extends Component {
             user: {},
             open: false,
             place: 'tr',
-            notification_message: ''
+            notificationMessage: '',
+            updateProfile: false,
+            updatePassword: false,
         };
     }
 
     handleChangePassword(event) {
         const {password, password_confirmation} = this.state;
         this.props.tryChangePassword(password);
+        this.setState({updatePassword: true});
         event.preventDefault();
     }
 
     handleUpdateProfile(event) {
         const {full_name, bio, gender, type} = this.state;
         this.props.tryUpdateProfile(full_name, gender, bio, type);
+        this.setState({updateProfile: true});
         event.preventDefault();
     }
 
@@ -78,12 +89,12 @@ class UserProfile extends Component {
 
         const {changePasswordInProgress, changePasswordHasError, changePasswordCompleted, response} = this.props.user;
 
-        if (!changePasswordInProgress && !changePasswordHasError && changePasswordCompleted) {
+        if (this.state.updatePassword && !changePasswordInProgress && !changePasswordHasError && changePasswordCompleted) {
             if (response) {
                 this.setState({
                     open: true,
                     color: 'success',
-                    notification_message: 'Your Password is successfully changed!'
+                    notificationMessage: 'Your Password is successfully changed!'
                 });
                 setTimeout(function () {
                     this.setState({open: false});
@@ -92,23 +103,24 @@ class UserProfile extends Component {
                 this.setState({
                     open: true,
                     color: 'danger',
-                    notification_message: 'Your Password is not changed!'
+                    notificationMessage: 'Your Password is not changed!'
                 });
                 setTimeout(function () {
                     this.setState({open: false});
                 }.bind(this), 6000);
             }
+            this.setState({updatePassword: false});
             this.props.changePasswordReset();
         }
 
         const {updateProfileInProgress, updateProfileHasError, updateProfileCompleted} = this.props.user;
 
-        if (!updateProfileInProgress && !updateProfileHasError && updateProfileCompleted) {
+        if (this.state.updateProfile && !updateProfileInProgress && !updateProfileHasError && updateProfileCompleted) {
             if (response) {
                 this.setState({
                     open: true,
                     color: 'success',
-                    notification_message: 'Your Profile is successfully changed!'
+                    notificationMessage: 'Your Profile is successfully changed!'
                 });
                 setTimeout(function () {
                     this.setState({open: false});
@@ -117,12 +129,13 @@ class UserProfile extends Component {
                 this.setState({
                     open: true,
                     color: 'danger',
-                    notification_message: 'Your Profile is not changed!'
+                    notificationMessage: 'Your Profile is not changed!'
                 });
                 setTimeout(function () {
                     this.setState({open: false});
                 }.bind(this), 6000);
             }
+            this.setState({updateProfile: false});
             this.props.updateProfileReset();
         }
     }
@@ -152,12 +165,14 @@ class UserProfile extends Component {
                                         <CustomInput
                                             labelText="Full Name"
                                             id="full_name"
+                                            autoFocus
                                             formControlProps={{
                                                 fullWidth: true
                                             }}
                                             inputProps={{
                                                 onChange: event => this.setState({full_name: event.target.value}),
-                                                value: this.state.full_name
+                                                value: this.state.full_name,
+                                                autoFocus: !!this.state.full_name
                                             }}
                                         />
                                     </GridItem>
@@ -263,7 +278,11 @@ class UserProfile extends Component {
                     <GridItem xs={12} sm={12} md={4}>
                         <Card profile>
                             <CardAvatar profile>
-                                <img src={avatar} alt="..."/>
+                                <img src={process.env.REACT_APP_API_STATIC_URL + "profile_images/" + user.profile_image}
+                                     onError={(e) => {
+                                         e.target.onerror = null;
+                                         e.target.src = default_image
+                                     }} alt="..."/>
                             </CardAvatar>
                             <CardBody profile>
                                 <h6 className={classes.cardCategory}>
@@ -285,7 +304,7 @@ class UserProfile extends Component {
                     place={this.state.place}
                     icon={AddAlert}
                     color={this.state.color}
-                    message={this.state.notification_message}
+                    message={this.state.notificationMessage}
                     open={this.state.open}
                     closeNotification={() => this.setState({open: false})}
                     close
