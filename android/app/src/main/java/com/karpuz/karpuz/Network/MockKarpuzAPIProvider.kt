@@ -1,6 +1,7 @@
 package com.karpuz.karpuz.Network
 
 import io.reactivex.Observable
+import java.util.concurrent.TimeUnit
 
 class MockKarpuzAPIProvider : KarpuzAPI {
 
@@ -13,11 +14,11 @@ class MockKarpuzAPIProvider : KarpuzAPI {
     private constructor()
 
     override fun register(register: KarpuzAPIModels.RegisterBody): Observable<KarpuzAPIModels.RegisterResponse> {
-        return Observable.just(KarpuzAPIModels.RegisterResponse(true, testToken))
+        return Observable.just(KarpuzAPIModels.RegisterResponse(true, testToken)).delay(300, TimeUnit.MILLISECONDS)
     }
 
     override fun login(user: KarpuzAPIModels.LoginBody): Observable<KarpuzAPIModels.LoginResponse> {
-        return Observable.just(KarpuzAPIModels.LoginResponse(true, testToken, null))
+        return Observable.just(KarpuzAPIModels.LoginResponse(true, testToken, null)).delay(300, TimeUnit.MILLISECONDS)
     }
 
     override fun getAllProjects(auth: String): Observable<KarpuzAPIModels.ProjectsResponse> {
@@ -35,6 +36,32 @@ class MockKarpuzAPIProvider : KarpuzAPI {
                     0))
                 )
             )
-        )
+        ).delay(300, TimeUnit.MILLISECONDS)
+    }
+
+    override fun getUserProfile(auth: String): Observable<KarpuzAPIModels.UserResponse> {
+        return Observable.just(KarpuzAPIModels.UserResponse(true,
+            KarpuzAPIModels.User("MeteHan",
+                null,
+                "2018-10-29T09:42:01.151",
+                "2018-10-29T09:42:01.151",
+                null,
+                "mete_han@metehan.com",
+                "Mete Han",
+                null,
+                null))).delay(300, TimeUnit.MILLISECONDS)
+    }
+
+    override fun getUserProfile(auth: String, userId: String): Observable<KarpuzAPIModels.UserResponse> {
+        return Observable.just(KarpuzAPIModels.UserResponse(true,
+            KarpuzAPIModels.User("EnisSimsar",
+                null,
+                "2018-10-29T09:42:01.151",
+                "2018-10-29T09:42:01.151",
+                null,
+                "enisimsar@metehan.com",
+                "Enis Simsar",
+                null,
+                null))).delay(300, TimeUnit.MILLISECONDS)
     }
 }

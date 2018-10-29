@@ -6,7 +6,13 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        tools:showIn="@layout/activity_home"
+        tools:showIn="@layout/app_bar_home"
         tools:context=".Activity.HomeActivity">
+
+    <FrameLayout
+            android:id="@+id/frame_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+    />
 
 </android.support.constraint.ConstraintLayout>

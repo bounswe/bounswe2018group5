@@ -11,16 +11,16 @@
             android:layout_width="379dp"
             android:layout_height="53dp"
             android:text="Freshest Freelance Platform"
-            app:layout_constraintTop_toBottomOf="@+id/imageView"
+            app:layout_constraintTop_toBottomOf="@+id/imageView_drawer_user_pic"
             android:layout_marginTop="16dp"
             android:textAppearance="@android:style/TextAppearance.Material.Body2" android:textSize="24sp"
             android:textAlignment="center" app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" android:id="@+id/textView"
+            app:layout_constraintStart_toStartOf="parent" android:id="@+id/textView_drawer_email"
     />
     <ImageView
             android:layout_width="308dp"
             android:layout_height="182dp" app:srcCompat="@drawable/karpuz_logo"
-            android:id="@+id/imageView"
+            android:id="@+id/imageView_drawer_user_pic"
             app:layout_constraintEnd_toEndOf="parent" app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" android:layout_marginTop="32dp"/>
     <Button
@@ -31,7 +31,7 @@
             android:onClick="loginClicked"
             app:layout_constraintStart_toStartOf="parent" app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintEnd_toEndOf="parent" android:layout_marginTop="52dp"
-            app:layout_constraintTop_toBottomOf="@+id/textView"/>
+            app:layout_constraintTop_toBottomOf="@+id/textView_drawer_email"/>
     <Button
             android:text="Signup"
             android:layout_width="wrap_content"

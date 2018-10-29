@@ -18,5 +18,16 @@ object KarpuzAPIModels {
                        val deadline: String,
                        val budget: Double,
                        val status: Int)
+
+    data class UserResponse(val response: Boolean, val user: User?)
+    data class User(val username: String,
+                    val profile_image: String?,
+                    val created_at: String,
+                    val updated_at: String,
+                    val gender: String?,
+                    val email: String,
+                    val full_name: String,
+                    val bio: String?,
+                    val type: String?)
 }
 

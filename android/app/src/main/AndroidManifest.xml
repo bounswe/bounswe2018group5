@@ -31,16 +31,17 @@
             </intent-filter>
         </activity>
 
-        <service android:name="com.karpuz.karpuz.Helper.KarpuzAccountService">
+        <service android:name=".Helper.KarpuzAccountService">
+
             <!-- Required filter used by the system to launch our account service. -->
             <intent-filter>
-                <action android:name="android.accounts.AccountAuthenticator" />
+                <action android:name="android.accounts.AccountAuthenticator"/>
             </intent-filter>
             <!-- This points to an XMLf ile which describes our account service. -->
-            <meta-data android:name="android.accounts.AccountAuthenticator"
-                       android:resource="@xml/authenticator" />
+            <meta-data
+                    android:name="android.accounts.AccountAuthenticator"
+                    android:resource="@xml/authenticator"/>
         </service>
-
     </application>
 
 </manifest>

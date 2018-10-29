@@ -6,10 +6,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import com.karpuz.karpuz.Extensions.longToast
-import com.karpuz.karpuz.Network.Config
-import com.karpuz.karpuz.Network.KarpuzAPIModels
-import com.karpuz.karpuz.Network.KarpuzAPIProvider
-import com.karpuz.karpuz.Network.KarpuzAPIService
+import com.karpuz.karpuz.Network.*
 import com.karpuz.karpuz.R
 import io.reactivex.disposables.CompositeDisposable
 import java.util.concurrent.TimeUnit
@@ -72,7 +69,7 @@ class LaunchActivity : AccountAuthenticatorActivity() {
     }
 
     private fun loginSuccessful(token: String) {
-        KarpuzAPIService.create(token, KarpuzAPIProvider.instance) //TODO("add mock condition")
+        KarpuzAPIService.create(token)
         val homeIntent = Intent(this, HomeActivity::class.java)
         startActivity(homeIntent)
         finish()

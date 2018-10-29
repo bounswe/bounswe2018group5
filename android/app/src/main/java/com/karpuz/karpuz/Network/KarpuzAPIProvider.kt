@@ -32,4 +32,12 @@ class KarpuzAPIProvider : KarpuzAPI {
     override fun getAllProjects(auth: String): Observable<KarpuzAPIModels.ProjectsResponse> {
         return karpuzAPI.getAllProjects(auth)
     }
+
+    override fun getUserProfile(auth: String): Observable<KarpuzAPIModels.UserResponse> {
+        return karpuzAPI.getUserProfile(auth)
+    }
+
+    override fun getUserProfile(auth: String, userId: String): Observable<KarpuzAPIModels.UserResponse> {
+        return karpuzAPI.getUserProfile(auth, userId)
+    }
 }

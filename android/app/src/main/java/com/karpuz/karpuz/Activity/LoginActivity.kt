@@ -78,7 +78,7 @@ class LoginActivity : AccountAuthenticatorActivity() {
             val account = Account(username, Config.accountType)
             AccountManager.get(this).addAccountExplicitly(account, password, null)
         }
-        KarpuzAPIService.create(token, KarpuzAPIProvider.instance) //TODO("add mock condition")
+        KarpuzAPIService.create(token)
         val homeIntent = Intent(this, HomeActivity::class.java)
         homeIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
         startActivity(homeIntent)

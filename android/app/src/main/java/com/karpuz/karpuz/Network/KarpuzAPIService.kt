@@ -10,12 +10,18 @@ class KarpuzAPIService {
 
         lateinit var instance: KarpuzAPIService
 
-        fun create(authToken: String, provider: KarpuzAPI) {
-            instance = KarpuzAPIService(authToken, provider)
+        fun create(authToken: String) {
+            val karpuzAPIProvider = when {
+                Config.useMockNetwork -> MockKarpuzAPIProvider.instance
+                else -> KarpuzAPIProvider.instance
+            }
+            instance = KarpuzAPIService(authToken, karpuzAPIProvider)
         }
 
-        private val provider: KarpuzAPI
-            get() = if (Config.useMockNetwork) MockKarpuzAPIProvider.instance else KarpuzAPIProvider.instance
+        private val provider = when {
+            Config.useMockNetwork -> MockKarpuzAPIProvider.instance
+            else -> KarpuzAPIProvider.instance
+        }
 
         fun register(registerBody: KarpuzAPIModels.RegisterBody): Observable<KarpuzAPIModels.RegisterResponse> {
             return provider.register(registerBody).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
@@ -36,5 +42,13 @@ class KarpuzAPIService {
 
     fun getAllProjects(): Observable<KarpuzAPIModels.ProjectsResponse> {
         return provider.getAllProjects(authToken).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+    }
+
+    fun getUserProfile(userId: String?): Observable<KarpuzAPIModels.UserResponse> {
+        return if (userId != null) {
+            provider.getUserProfile(authToken, userId).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+        } else {
+            provider.getUserProfile(authToken).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+        }
     }
 }
