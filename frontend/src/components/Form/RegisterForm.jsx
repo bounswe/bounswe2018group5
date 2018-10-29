@@ -18,6 +18,8 @@ import CustomInput from "components/CustomInput/CustomInput";
 import { tryRegister, registerReset } from "redux/auth/Actions.js";
 import {connect} from "react-redux";
 
+import { setCookie, LOGGEDIN_COOKIE, TOKEN_COOKIE } from "services/cookies.js";
+
 import registerFormStyle from "material-kit-react/assets/jss/material-kit-react/views/loginPage";
 
 class RegisterForm extends Component {
@@ -52,12 +54,14 @@ class RegisterForm extends Component {
 
     componentDidUpdate(prevProps, prevState) {
         const { history } = this.props;
-        const { registerInProgress, registerHasError, registerCompleted } = this.props.auth;
+        const { registerInProgress, registerHasError, registerCompleted, api_token, loggedIn } = this.props.auth;
 
         if (registerInProgress && !registerHasError && !registerCompleted) {
         } else if (!registerInProgress && !registerHasError && registerCompleted) {
+            setCookie(TOKEN_COOKIE, api_token, { path: "/" });
+            setCookie(LOGGEDIN_COOKIE, loggedIn, { path: "/" });
             this.props.registerReset();
-            history.push("/login");
+            history.push("/home");
         } else if (!registerInProgress && registerHasError && registerCompleted) {
             this.props.registerReset();
         }
