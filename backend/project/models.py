@@ -32,7 +32,7 @@ class Project(BaseDocument):
 
     owner_id = StringField(max_length=100)
     freelancer_id = StringField(max_length=100)
-    description = StringField(max_length=400)
+    description = StringField(max_length=2000)
     title = StringField(max_length=50)
     budget = FloatField(min_value=0)
     project_deadline = DateTimeField()
