@@ -2,12 +2,12 @@ package com.karpuz.karpuz.Network
 
 object KarpuzAPIModels {
     data class RegisterBody(val username: String, val password: String, val full_name: String, val email: String)
-    data class RegisterResponse(val response: Boolean, val api_token: String?)
+    data class RegisterResponse(val response: Boolean, val api_token: String?) //TODO add error String?
 
     data class LoginBody(val username: String, val password: String)
     data class LoginResponse(val response: Boolean, val api_token: String?, val error: String?)
 
-    data class ProjectsResponse(val response: Boolean, val projects: Projects?)
+    data class ProjectsResponse(val response: Boolean, val projects: Projects?) //TODO add error String?
     data class Projects(val projects: Array<Project>)
     data class Project(val project_id: String,
                        val title: String,
