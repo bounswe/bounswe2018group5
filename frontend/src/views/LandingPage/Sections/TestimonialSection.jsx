@@ -9,7 +9,8 @@ import TestimonialCard from "components/Card/TestimonialCard";
 
 import testimonialStyle from "material-kit-react/assets/jss/material-kit-react/views/landingPageSections/teamStyle";
 
-import testimonial1 from "assets/img/faces/christian.jpg"
+import elon from "assets/img/faces/elon.jpg"
+import mark from "assets/img/faces/mark.jpg"
 
 class TestimonialSection extends Component {
     render() {
@@ -21,7 +22,7 @@ class TestimonialSection extends Component {
                     <GridContainer>
                         <GridItem xs={12} sm={12} md={6}>
                             <TestimonialCard
-                                imageSrc={testimonial1}
+                                imageSrc={elon}
                                 testimonialName="Elon Musk"
                                 testimonialOccupation="CEO"
                                 description="I found a project that suited my skills in less than 10 minutes. This is insane"
@@ -29,7 +30,7 @@ class TestimonialSection extends Component {
                         </GridItem>
                         <GridItem xs={12} sm={12} md={6}>
                             <TestimonialCard
-                                imageSrc={testimonial1}
+                                imageSrc={mark}
                                 testimonialName="Mark Zuckerberg"
                                 testimonialOccupation="CEO"
                                 description="I found a developer for my dreams, now I'm a unicorn CEO!"
