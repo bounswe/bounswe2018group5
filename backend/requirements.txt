@@ -4,3 +4,4 @@ mongoengine==0.15.3
 python-decouple==3.1
 PyJWT
 django-cors-headers
+sentry_sdk

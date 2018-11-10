@@ -9,8 +9,12 @@ import json
 from .models import User, DoesNotExist
 from datetime import datetime
 import os
+import re
+from django.core import validators
 
 def hash_password(password):
+    if not re.match(r'[A-Za-z0-9]{8,}', password):  # Upper and lower case letters and numbers, 8 characters
+        raise validators.ValidationError('Password does not meet requirements')
     salt = uuid.uuid4().hex
     return hashlib.sha256(salt.encode() + password.encode()).hexdigest() + ':' + salt
 

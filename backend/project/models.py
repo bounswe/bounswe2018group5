@@ -1,4 +1,5 @@
 from mongoengine import *
+from user import models
 from datetime import datetime
 
 
@@ -30,12 +31,18 @@ class Project(BaseDocument):
     def schema(self):
         pass
 
-    owner_id = StringField(max_length=100)
-    freelancer_id = StringField(max_length=100)
+    owner_id = ReferenceField('User')
+    freelancer_id = ReferenceField('User')
     description = StringField(max_length=2000)
     title = StringField(max_length=50)
     budget = FloatField(min_value=0)
     project_deadline = DateTimeField()
     status = IntField()  # 0 bidding period, 1 project awarded to a freelancer, 2 project completed, -1 project discarded
 
-    meta = {'collection': 'projects'}
+    meta = {'collection': 'projects',
+            'indexes': [
+                {'fields': ['$title', '$description'],
+                 'default_language': 'english',
+                 'weights': {'title': 10, 'description': 2}
+                 }
+            ]}
