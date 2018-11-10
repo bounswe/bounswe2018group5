@@ -1,6 +1,8 @@
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-from user import authentication
+from user import authentication, models
+from datetime import datetime
+
 import json
 from .models import Project
 
@@ -14,9 +16,22 @@ def project_json(project):
     obj['deadline'] = project.project_deadline
     obj['created_at'] = project.created_at
     obj['updated_at'] = project.updated_at
-    obj['owner_id'] = project.owner_id
+    obj['owner_id'] = str(project.owner_id)
+    obj['freelancer_id'] = str(project.freelancer_id)
     obj['status'] = project.status
     return obj
+
+
+def modify_project(json, project):
+    project.title = json['title'] if 'title' in json else project.title
+    project.budget = json['budget'] if 'budget' in json else project.budget
+    project.description = json['description'] if 'description' in json else project.description
+    project.project_deadline = json['project_deadline'] if 'project_deadline' in json else project.project_deadline
+    project.freelancer_id = models.User.objects.get(id=json['freelancer_id']).id if 'freelancer_id' in json\
+        else project.freelancer_id
+    project.status = json['status'] if 'status' in json else project.status
+    project.updated_at = datetime.now()
+    return project
 
 
 @csrf_exempt
@@ -27,7 +42,7 @@ def create_project(request):
             body = json.loads(request.body.decode('utf-8'))
             new_project = Project()
             try:
-                new_project.owner_id = authentication.get_user_id(token)
+                new_project.owner_id = models.User.objects.get(id=authentication.get_user_id(token)).id
                 new_project.freelancer_id = None
                 new_project.description = body['description']
                 new_project.title = body['title']
@@ -53,6 +68,27 @@ def get_all_projects(request):
         token = request.META.get('HTTP_AUTHORIZATION', None)
         if token and authentication.is_authenticated(token):
             projects = Project.objects.filter(status__gte = 0) # excludes discarded projects
+            res = []
+            for project in projects:
+                res.append(project_json(project))
+            try:
+                return JsonResponse({"response": True, "projects": res})
+            except Exception as e:
+                return JsonResponse({'response': False, 'error': str(e)})
+        else:
+            return JsonResponse({"response": False, "error": "Unauthorized"})
+    return JsonResponse({
+        "response": False,
+        "error": "wrong request method"
+    })
+
+@csrf_exempt
+def search_projects(request, query):
+    if request.method == 'GET':
+        token = request.META.get('HTTP_AUTHORIZATION', None)
+        if token and authentication.is_authenticated(token):
+            projects = Project.objects.search_text(query).filter(status__gte = 0)\
+                .order_by('$text_score')  # excludes discarded projects
             res = []
             for project in projects:
                 res.append(project_json(project))
@@ -98,9 +134,10 @@ def update_project(request):
         if token and authentication.is_authenticated(token):
             body = json.loads(request.body.decode('utf-8'))
             project = Project.objects.get(id=body['project_id'])
+            modify_project(body, project)
             try:
-                success = project.modify(update=body)
-                return JsonResponse({'response': success})
+                project.save()
+                return JsonResponse({"response": True, "project": project_json(project)})
             except Exception as e:
                 return JsonResponse({'response': False, 'error': str(e)})
         else:

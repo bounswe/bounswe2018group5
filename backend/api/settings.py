@@ -133,9 +133,9 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-#sentry.io Integration
+# sentry.io Integration
 
-sentry_sdk.init(
+'''sentry_sdk.init(
     dsn="https://393fe64acf474ee483b3694e5c4f8034@sentry.io/1314574",
     integrations=[DjangoIntegration()]
-)
+)'''
