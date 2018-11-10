@@ -3,6 +3,7 @@ from django.views.decorators.csrf import csrf_exempt
 from user import authentication, models
 from datetime import datetime
 
+
 import json
 from .models import Project
 
