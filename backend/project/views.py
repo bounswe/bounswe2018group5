@@ -1,6 +1,7 @@
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-from user import authentication
+from user import authentication, models
+
 import json
 from .models import Project
 
@@ -14,7 +15,8 @@ def project_json(project):
     obj['deadline'] = project.project_deadline
     obj['created_at'] = project.created_at
     obj['updated_at'] = project.updated_at
-    obj['owner_id'] = project.owner_id
+    obj['owner_id'] = str(project.owner_id)
+    obj['freelancer_id'] = str(project.freelancer_id)
     obj['status'] = project.status
     return obj
 
@@ -27,7 +29,7 @@ def create_project(request):
             body = json.loads(request.body.decode('utf-8'))
             new_project = Project()
             try:
-                new_project.owner_id = authentication.get_user_id(token)
+                new_project.owner_id = models.User.objects.get(id=authentication.get_user_id(token)).id
                 new_project.freelancer_id = None
                 new_project.description = body['description']
                 new_project.title = body['title']
@@ -53,6 +55,27 @@ def get_all_projects(request):
         token = request.META.get('HTTP_AUTHORIZATION', None)
         if token and authentication.is_authenticated(token):
             projects = Project.objects.filter(status__gte = 0) # excludes discarded projects
+            res = []
+            for project in projects:
+                res.append(project_json(project))
+            try:
+                return JsonResponse({"response": True, "projects": res})
+            except Exception as e:
+                return JsonResponse({'response': False, 'error': str(e)})
+        else:
+            return JsonResponse({"response": False, "error": "Unauthorized"})
+    return JsonResponse({
+        "response": False,
+        "error": "wrong request method"
+    })
+
+@csrf_exempt
+def search_projects(request):
+    if request.method == 'POST':
+        token = request.META.get('HTTP_AUTHORIZATION', None)
+        if token and authentication.is_authenticated(token):
+            body = json.loads(request.body.decode('utf-8'))
+            projects = Project.objects.search_text(body['search_text'])  # excludes discarded projects
             res = []
             for project in projects:
                 res.append(project_json(project))
