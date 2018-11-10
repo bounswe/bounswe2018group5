@@ -70,12 +70,11 @@ def get_all_projects(request):
     })
 
 @csrf_exempt
-def search_projects(request):
-    if request.method == 'POST':
+def search_projects(request, query):
+    if request.method == 'GET':
         token = request.META.get('HTTP_AUTHORIZATION', None)
         if token and authentication.is_authenticated(token):
-            body = json.loads(request.body.decode('utf-8'))
-            projects = Project.objects.search_text(body['search_text'])  # excludes discarded projects
+            projects = Project.objects.search_text(query)  # excludes discarded projects
             res = []
             for project in projects:
                 res.append(project_json(project))
