@@ -2,8 +2,15 @@ import {call, put, takeLatest} from "redux-saga/effects";
 
 import {LOGIN_REQUEST, LOGOUT_REQUEST, REGISTER_REQUEST} from "../auth/actionTypes";
 import {CHANGE_PASSWORD_REQUEST, GET_PROFILE_REQUEST, GET_USER_PROFILE_REQUEST, UPDATE_PROFILE_REQUEST} from "../user/actionTypes";
-import {CREATE_PROJECT_REQUEST, GET_PROJECTS_REQUEST} from "../project/actionTypes";
-import {getProjectsFailure, getProjectsSuccess, createProjectSuccess, createProjectFailure} from "../project/Actions";
+import { CREATE_PROJECT_REQUEST, GET_PROJECTS_REQUEST, GET_OWN_PROJECTS_REQUEST} from "../project/actionTypes";
+import {
+    getProjectsFailure, 
+    getProjectsSuccess, 
+    createProjectSuccess, 
+    createProjectFailure,
+    getOwnProjectsFailure, 
+    getOwnProjectsSuccess,
+} from "../project/Actions";
 import {loginSuccess, loginFailure, registerFailure, registerSuccess} from "../auth/Actions";
 import {
     profileSuccess,
@@ -225,6 +232,32 @@ const tryGetProjectsSaga = function* () {
     }
 };
 
+const tryGetOwnProjectsSaga = function* () {
+    try {
+        const getOwnProjectsResponse = yield call(api.getOwnProjects);
+
+        if (getOwnProjectsResponse) {
+            console.log("getOwnProjectsResponse", getOwnProjectsResponse);
+
+            if (getOwnProjectsResponse.status === 200) {
+                yield put(getOwnProjectsSuccess(getOwnProjectsResponse.responseBody));
+            } else if (getOwnProjectsResponse.status === 400) {
+                console.log("Something wrong! Got a status 400", getOwnProjectsResponse.responseBody);
+                yield put(getOwnProjectsFailure(getOwnProjectsResponse.responseBody));
+            } else {
+                console.log("Something wrong! Got an unknown status.", getOwnProjectsResponse);
+                yield put(getOwnProjectsFailure({ detail: ["Unknown status. Check console!"] }));
+            }
+        } else {
+            console.log("Get Projects failed by api. No response !");
+            yield put(getOwnProjectsFailure({ detail: ["No response fetched. Please contact the API team!"] }));
+        }
+    } catch (err) {
+        console.log("Get Projects failed by api. Error => ", err);
+        yield put(getOwnProjectsFailure({ detail: [err.detail] }));
+    }
+};
+
 const tryCreateProjectSaga = function* (action) {
     try {
         const { title, description, project_deadline, budget } = action.payload;
@@ -267,6 +300,7 @@ const saga = function* () {
 
     // PROJECTS
     yield takeLatest(GET_PROJECTS_REQUEST, tryGetProjectsSaga);
+    yield takeLatest(GET_OWN_PROJECTS_REQUEST, tryGetOwnProjectsSaga);
     yield takeLatest(CREATE_PROJECT_REQUEST, tryCreateProjectSaga);
 };
 

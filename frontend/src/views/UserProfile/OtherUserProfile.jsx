@@ -56,7 +56,6 @@ class OtherUserProfile extends Component {
 
     componentDidMount() {
         const { user_id } = this.props.match.params;
-        console.log(user_id);
         this.props.tryGetUserProfile(user_id);
     }
 

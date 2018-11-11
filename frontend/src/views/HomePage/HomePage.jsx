@@ -61,6 +61,7 @@ class HomePage extends React.Component {
                                 created_at={prop.created_at.substring(0, 10)}
                                 owner={prop.owner}
                                 owner_id={prop.owner_id}
+                                project_id={prop.project_id}
                             />
                         </GridItem>
                     );

@@ -52,6 +52,7 @@ class Sidebar extends Component {
         var links = (
             <List className={classes.list}>
                 {routes.map((prop, key) => {
+                    if (prop.active === false) return null; 
                     if (prop.redirect) return null;
                     var activePro = " ";
                     var listItemClasses;
