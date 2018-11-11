@@ -19,7 +19,14 @@ function LoggedInHeader({ ...props }) {
     function makeBrand() {
         var name;
         props.routes.map((prop, key) => {
-            if (prop.path === props.location.pathname) {
+            var splited = props.location.pathname.split("/");
+            var result;
+            if (splited.length > 3) {
+                result = "/" + splited[1] + "/" + splited[2];
+            } else {
+                result = props.location.pathname;
+            }
+            if (prop.path === result) {
                 name = prop.navbarName;
             }
             return null;

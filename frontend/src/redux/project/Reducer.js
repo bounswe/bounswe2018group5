@@ -3,6 +3,10 @@ import {
     GET_PROJECTS_FAILURE,
     GET_PROJECTS_SUCCESS,
     GET_PROJECTS_REQUEST,
+    GET_OWN_PROJECTS_RESET,
+    GET_OWN_PROJECTS_FAILURE,
+    GET_OWN_PROJECTS_SUCCESS,
+    GET_OWN_PROJECTS_REQUEST,
     CREATE_PROJECT_RESET,
     CREATE_PROJECT_FAILURE,
     CREATE_PROJECT_SUCCESS,
@@ -18,6 +22,11 @@ const initialState = {
     getProjectsHasError: false,
     getProjectsCompleted: false,
     getProjectsError: "",
+
+    getOwnProjectsInProgress: false,
+    getOwnProjectsHasError: false,
+    getOwnProjectsCompleted: false,
+    getOwnProjectsError: "",
 
     createProjectInProgress: false,
     createProjectHasError: false,
@@ -57,6 +66,39 @@ export default function(state = initialState, action) {
             getProjectsInProgress: false,
             getProjectsHasError: false,
             getProjectsCompleted: false
+        };
+    }
+
+    if (action.type === GET_OWN_PROJECTS_REQUEST) {
+        return {
+            ...state,
+            getOwnProjectsInProgress: true,
+            getOwnProjectsHasError: false,
+            getOwnProjectsCompleted: false
+        };
+    } else if (action.type === GET_OWN_PROJECTS_SUCCESS) {
+        return {
+            ...state,
+            projects: payload.projects,
+            response: payload.response,
+            getOwnProjectsInProgress: false,
+            getOwnProjectsHasError: false,
+            getOwnProjectsCompleted: true
+        };
+    } else if (action.type === GET_OWN_PROJECTS_FAILURE) {
+        return {
+            ...state,
+            getOwnProjectsInProgress: false,
+            getOwnProjectsHasError: true,
+            getOwnProjectsCompleted: true,
+            getOwnProjectsError: payload.detail[0]
+        };
+    } else if (action.type === GET_OWN_PROJECTS_RESET) {
+        return {
+            ...state,
+            getOwnProjectsInProgress: false,
+            getOwnProjectsHasError: false,
+            getOwnProjectsCompleted: false
         };
     }
 

@@ -5,14 +5,9 @@ import ExpansionPanel from "@material-ui/core/ExpansionPanel/ExpansionPanel.js"
 import ExpansionPanelSummary from "@material-ui/core/ExpansionPanelSummary/ExpansionPanelSummary.js"
 import ExpansionPanelDetails from "@material-ui/core/ExpansionPanelDetails/ExpansionPanelDetails.js"
 import Typography from '@material-ui/core/Typography';
-import AddAlert from "@material-ui/icons/AddAlert";
-
 
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 
-
-
-import Snackbar from "material-dashboard-react/dist/components/Snackbar/Snackbar";
 import Helmet from 'react-helmet';
 import Bids from "../../components/Bids/Bids";
 import Card from "material-dashboard-react/dist/components/Card/Card";
@@ -25,10 +20,8 @@ import GridItem from "material-kit-react/components/Grid/GridItem";
 import avatar from "assets/img/faces/christian.jpg";
 import CreateBid from "../../components/CreateBid/CreateBid";
 import MessageCard from "../../components/Card/MessageCard";
-import connect from "react-redux/es/connect/connect";
 
 
-const dashboardRoutes = [];
 const styles = {
     
     cardTitleWhite: {

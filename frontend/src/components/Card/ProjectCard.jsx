@@ -25,7 +25,7 @@ const style = {
 
 class ProjectCard extends React.Component {
     render() {
-        const {classes, title, description, project_deadline, budget, created_at, owner, owner_id} = this.props;
+        const {classes, project_id, title, description, project_deadline, budget, created_at, owner, owner_id} = this.props;
         return (
             <Card style={{width: "100%"}}>
                 <CardHeader color={"success"}>
@@ -44,13 +44,15 @@ class ProjectCard extends React.Component {
                     </Link>
                 </CardHeader>
                 <CardBody>
-                    <h4 className={classes.cardTitle}>{title}</h4>
-                    <p>{description}</p>
-                    <p align="right">
-                        <b>Budget: </b> {budget}$<br/>
-                        <b>Deadline: </b> {project_deadline}<br/>
-                        <b>Created At:</b> {created_at}
-                    </p>
+                    <Link to={"/home/projects/"+ project_id +"/"} style={{color: "black"}}>
+                        <h4 className={classes.cardTitle}>{title}</h4>
+                        <p>{description}</p>
+                        <p align="right">
+                            <b>Budget: </b> {budget}$<br/>
+                            <b>Deadline: </b> {project_deadline}<br/>
+                            <b>Created At:</b> {created_at}
+                        </p>
+                    </Link>
                 </CardBody>
                 {/* <CardFooter className={classes.textMuted}>tags</CardFooter> */}
             </Card>
