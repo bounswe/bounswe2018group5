@@ -71,7 +71,9 @@ class UserProfile extends Component {
     }
 
     handleUpdateProfile(event) {
-        const {full_name, bio, gender, type} = this.state;
+        let {full_name, bio, gender, type} = this.state;
+        gender = gender === -2 ? null : gender;
+        type = type === -1 ? null : type;
         this.props.tryUpdateProfile(full_name, gender, bio, type);
         this.setState({updateProfile: true});
         event.preventDefault();
@@ -85,7 +87,13 @@ class UserProfile extends Component {
         const {getProfileInProgress, getProfileHasError, getProfileCompleted, user} = this.props.user;
 
         if (!getProfileInProgress && !getProfileHasError && getProfileCompleted) {
-            this.setState({user: user, full_name: user.full_name, bio: user.bio, gender: user.gender, type: user.type});
+            this.setState({
+                user: user, 
+                full_name: user.full_name, 
+                bio: user.bio, 
+                gender: user.gender === null ? -2 : user.gender, 
+                type: user.type === null ? -1 : user.type,
+            });
             this.props.profileReset();
         }
 

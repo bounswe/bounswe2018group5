@@ -39,7 +39,7 @@ class HomePage extends React.Component {
     }
 
     handleToUpdate(project) {
-        var { projects } = this.state;
+        var {projects} = this.state;
         projects.push(project);
         this.setState({
             projects: projects,
@@ -59,6 +59,8 @@ class HomePage extends React.Component {
                                 budget={prop.budget}
                                 project_deadline={prop.deadline.substring(0, 10)}
                                 created_at={prop.created_at.substring(0, 10)}
+                                owner={prop.owner}
+                                owner_id={prop.owner_id}
                             />
                         </GridItem>
                     );
@@ -72,10 +74,17 @@ class HomePage extends React.Component {
                     meta={[
                         {property: 'og:title', content: 'Home Page'},
                     ]}/>
-                <AddProjectModal handleToUpdate={this.handleToUpdate.bind(this)} />
+                <div style={{
+                    position: "fixed",
+                    bottom: "32px",
+                    right: "32px"
+                }}>
+                    <AddProjectModal handleToUpdate={this.handleToUpdate.bind(this)}/>
+                </div>
                 {project_grid}
             </div>
-        );
+        )
+            ;
     }
 }
 

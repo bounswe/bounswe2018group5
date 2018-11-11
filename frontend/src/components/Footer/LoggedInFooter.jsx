@@ -4,6 +4,7 @@ import PropTypes from "prop-types";
 import withStyles from "@material-ui/core/styles/withStyles";
 // core components
 import footerStyle from "material-dashboard-react/dist/assets/jss/material-dashboard-react/components/footerStyle";
+import Favorite from "@material-ui/icons/Favorite";
 
 function LoggedInFooter({ ...props }) {
     const { classes } = props;
@@ -15,6 +16,7 @@ function LoggedInFooter({ ...props }) {
                 <p className={classes.right}>
           <span>
              &copy; {1900 + new Date().getYear()} , made with{" "}
+              <Favorite className={classes.icon} style={{height: 15}} /> by{" "}
               <a
                   href="https://github.com/bounswe/bounswe2018group5/wiki"
                   className={classes.a}

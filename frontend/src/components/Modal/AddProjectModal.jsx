@@ -8,9 +8,10 @@ import DialogContent from "@material-ui/core/DialogContent";
 import DialogActions from "@material-ui/core/DialogActions";
 import IconButton from "@material-ui/core/IconButton";
 // @material-ui/icons
-import {Add, Close} from '@material-ui/icons';
+import {Close} from '@material-ui/icons';
+import AddIcon from '@material-ui/icons/Add';
 // core components
-import Button from "material-dashboard-react/dist/components/CustomButtons/Button";
+import Button from '@material-ui/core/Button';
 
 import modalStyle from "material-kit-react/assets/jss/material-kit-react/modalStyle";
 import AddAlert from "@material-ui/icons/AddAlert";
@@ -35,7 +36,7 @@ class AddProjectModal extends React.Component {
             cardAnimaton: "cardHidden",
             open: false,
             place: 'tr',
-            notification_message: ''
+            notificationMessage: ''
         };
     }
 
@@ -89,11 +90,9 @@ class AddProjectModal extends React.Component {
         const {classes} = this.props;
         return (
             <div>
-                <Button
-                    color="primary"
-                    justIcon
-                    round
-                    onClick={() => this.handleClickOpen("modal")}><Add style={{color: "#FFFFFF"}}/>
+                <Button variant="fab" color="secondary" aria-label="Add"
+                        onClick={() => this.handleClickOpen("modal")}>
+                    <AddIcon />
                 </Button>
                 <Dialog
                     classes={{
