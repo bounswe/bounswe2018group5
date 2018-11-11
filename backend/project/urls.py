@@ -10,4 +10,8 @@ urlpatterns = [
     url(r'^update/', views.update_project, name="update_project"),
     url(r'^discard', views.discard_projects, name="discard_projects"),
     url(r'^search/(?P<query>[a-z0-9,]*)/$', views.search_projects, name="search_projects"),
+    url(r'^bid/add/', views.add_bid, name="add_bid"),
+    url(r'^bid/accept/', views.accept_bid, name="accept_bid"),
+    url(r'^bid/discard/', views.discard_bid, name="discard_bid"),
+    url(r'^get_bids/(?P<project_id>[a-z0-9]+)/$', views.get_bids, name="get_bids"),
 ]

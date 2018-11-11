@@ -6,7 +6,7 @@ from django.core.exceptions import ObjectDoesNotExist
 
 
 import json
-from .models import Project
+from .models import Project, Bid
 
 
 def user_json(user):
@@ -38,6 +38,22 @@ def project_json(project):
     obj['freelancer'] = None if project.freelancer_id is None \
         else user_json(project.freelancer_id)
     obj['status'] = project.status
+    return obj
+
+
+def bid_json(bid):
+    obj = {}
+    obj['bid_id'] = str(bid.id)
+    obj['freelancer'] = {}
+    obj['freelancer']['id'] = str(bid.freelancer.id)
+    obj['freelancer']['full_name'] = str(bid.freelancer.full_name)
+    obj['freelancer']['username'] = str(bid.freelancer.username)
+    obj['freelancer']['profile_image'] = str(bid.freelancer.profile_image)
+    obj['offer'] = bid.offer
+    obj['note'] = bid.note
+    obj['status'] = bid.status
+    obj['created_at'] = bid.created_at
+    obj['updated_at'] = bid.updated_at
     return obj
 
 
@@ -205,6 +221,94 @@ def discard_projects(request):
             try:
                 projects.update(status=-1)
                 return JsonResponse({'response': True})
+            except Exception as e:
+                return JsonResponse({'response': False, 'error': str(e)})
+        else:
+            return JsonResponse({"response": False, "error": "Unauthorized"})
+    return JsonResponse({
+        "response": False,
+        "error": "wrong request method"
+    })
+
+
+@csrf_exempt
+def add_bid(request):
+    if request.method == 'POST':
+        token = request.META.get('HTTP_AUTHORIZATION', None)
+        if token and authentication.is_authenticated(token):
+            body = json.loads(request.body.decode('utf-8'))
+            new_bid = Bid()
+            try:
+                new_bid.project = Project.objects.get(id=body['project_id'])
+                new_bid.freelancer = models.User.objects.get(id=body['freelancer_id'])
+                new_bid.offer = body['offer']
+                new_bid.note = body['note']
+                new_bid.save()
+                return JsonResponse({'response': True})
+            except Exception as e:
+                return JsonResponse({'response': False, 'error': str(e)})
+        else:
+            return JsonResponse({"response": False, "error": "Unauthorized"})
+    return JsonResponse({
+        "response": False,
+        "error": "wrong request method"
+    })
+
+
+@csrf_exempt
+def accept_bid(request):
+    if request.method == 'POST':
+        token = request.META.get('HTTP_AUTHORIZATION', None)
+        if token and authentication.is_authenticated(token):
+            body = json.loads(request.body.decode('utf-8'))
+            try:
+                bid = Bid.objects.get(id=body['bid_id'])
+                other_bids = Bid.objects.filter(project=bid.project)
+                other_bids.update(status=2)
+                bid.update(status=1)
+                return JsonResponse({'response': True})
+            except Exception as e:
+                return JsonResponse({'response': False, 'error': str(e)})
+        else:
+            return JsonResponse({"response": False, "error": "Unauthorized"})
+    return JsonResponse({
+        "response": False,
+        "error": "wrong request method"
+    })
+
+
+@csrf_exempt
+def discard_bid(request):
+    if request.method == 'POST':
+        token = request.META.get('HTTP_AUTHORIZATION', None)
+        if token and authentication.is_authenticated(token):
+            body = json.loads(request.body.decode('utf-8'))
+            try:
+                bid = Bid.objects.get(id=body['bid_id'])
+                bid.update(status=-1)
+                return JsonResponse({'response': True})
+            except Exception as e:
+                return JsonResponse({'response': False, 'error': str(e)})
+        else:
+            return JsonResponse({"response": False, "error": "Unauthorized"})
+    return JsonResponse({
+        "response": False,
+        "error": "wrong request method"
+    })
+
+
+# Get bids of a given project
+@csrf_exempt
+def get_bids(request, project_id):
+    if request.method == 'GET':
+        token = request.META.get('HTTP_AUTHORIZATION', None)
+        if token and authentication.is_authenticated(token):
+            bids = Bid.objects.filter(status__gte = 0, project=Project.objects.get(id=project_id)) # excludes discarded projects
+            res = []
+            for bid in bids:
+                res.append(bid_json(bid))
+            try:
+                return JsonResponse({"response": True, "project_id": project_id, "bids": res})
             except Exception as e:
                 return JsonResponse({'response': False, 'error': str(e)})
         else:
