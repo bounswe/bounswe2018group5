@@ -3,12 +3,15 @@ import PropTypes from "prop-types";
 import {Switch, Route, Redirect} from "react-router-dom";
 import UserProfile from "views/UserProfile/UserProfile.jsx";
 import ProjectPage from "views/ProjectPage/ProjectPage.jsx";
+import ProjectsPage from "views/ProjectsPage/ProjectsPage.jsx";
 import HomePage from "views/HomePage/HomePage.jsx";
 import OtherUserProfile from "views/UserProfile/OtherUserProfile.jsx";
 import withStyles from "@material-ui/core/styles/withStyles";
 
 import Person from "@material-ui/icons/Person";
+import Group from "@material-ui/icons/Group";
 import Home from "@material-ui/icons/Home";
+import Layers from "@material-ui/icons/Layers";
 
 import PerfectScrollbar from "perfect-scrollbar";
 import "perfect-scrollbar/css/perfect-scrollbar.css";
@@ -36,22 +39,44 @@ const dashboardRoutes = [
         component: UserProfile
     },
     {
-        path: "/home/project",
-        sidebarName: "Project Example",
-        navbarName: "Project",
-        icon: Person,
+        path: "/home/projects",
+        sidebarName: "Projects",
+        navbarName: "Projects",
+        icon: Layers,
+        component: ProjectsPage
+    },
+    {
+        path: "/home/projects/:project_id",
+        sidebarName: "Projects",
+        navbarName: "Projects",
+        active: false,
+        icon: Layers,
         component: ProjectPage
+    },
+    {
+        path: "/home/users",
+        sidebarName: "Users",
+        navbarName: "Users",
+        icon: Group,
+        component: OtherUserProfile
+    },
+    {
+        path: "/home/users/:user_id",
+        sidebarName: "User Profile",
+        navbarName: "User Profile",
+        icon: Group,
+        active: false,
+        component: OtherUserProfile
     },
     { redirect: true, path: "/home", to: "/home/index", navbarName: "Redirect" }
 ];
 
 const switchRoutes = (
     <Switch>
-        <Route path="/home/users/:user_id" component={OtherUserProfile} navbarName={"Profile"} sidebarName={"Profile"}/>;
         {dashboardRoutes.map((prop, key) => {
             if (prop.redirect)
                 return <Redirect from={prop.path} to={prop.to} key={key}/>;
-            return <Route path={prop.path} component={prop.component} key={key}/>;
+            return <Route path={prop.path} exact={true} component={prop.component} key={key}/>;
         })}
     </Switch>
 );
