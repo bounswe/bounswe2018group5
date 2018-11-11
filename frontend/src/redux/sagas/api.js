@@ -34,7 +34,14 @@ class api {
     };
     getProfile = () => {
         return httpService.fetch({
-            path: "api/user/profile",
+            path: "api/user/profile/",
+            method: "GET",
+            sendToken: true
+        });
+    };
+    getUserProfile = (user_id) => {
+        return httpService.fetch({
+            path: "api/user/profile/" + user_id + "/",
             method: "GET",
             sendToken: true
         });

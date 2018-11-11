@@ -4,6 +4,7 @@ import {Switch, Route, Redirect} from "react-router-dom";
 import UserProfile from "views/UserProfile/UserProfile.jsx";
 import ProjectPage from "views/ProjectPage/ProjectPage.jsx";
 import HomePage from "views/HomePage/HomePage.jsx";
+import OtherUserProfile from "views/UserProfile/OtherUserProfile.jsx";
 import withStyles from "@material-ui/core/styles/withStyles";
 
 import Person from "@material-ui/icons/Person";
@@ -28,24 +29,25 @@ const dashboardRoutes = [
         component: HomePage
     },
     {
-        path: "/home/project",
-        sidebarName: "Project Example",
-        navbarName: "Project",
-        icon: Person,
-        component: ProjectPage
-    },
-    {
         path: "/home/profile",
         sidebarName: "User Profile",
         navbarName: "Profile",
         icon: Person,
         component: UserProfile
     },
+    {
+        path: "/home/project",
+        sidebarName: "Project Example",
+        navbarName: "Project",
+        icon: Person,
+        component: ProjectPage
+    },
     { redirect: true, path: "/home", to: "/home/index", navbarName: "Redirect" }
 ];
 
 const switchRoutes = (
     <Switch>
+        <Route path="/home/users/:user_id" component={OtherUserProfile} navbarName={"Profile"} sidebarName={"Profile"}/>;
         {dashboardRoutes.map((prop, key) => {
             if (prop.redirect)
                 return <Redirect from={prop.path} to={prop.to} key={key}/>;

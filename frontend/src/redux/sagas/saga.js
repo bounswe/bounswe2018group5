@@ -1,13 +1,15 @@
 import {call, put, takeLatest} from "redux-saga/effects";
 
 import {LOGIN_REQUEST, LOGOUT_REQUEST, REGISTER_REQUEST} from "../auth/actionTypes";
-import {CHANGE_PASSWORD_REQUEST, GET_PROFILE_REQUEST, UPDATE_PROFILE_REQUEST} from "../user/actionTypes";
+import {CHANGE_PASSWORD_REQUEST, GET_PROFILE_REQUEST, GET_USER_PROFILE_REQUEST, UPDATE_PROFILE_REQUEST} from "../user/actionTypes";
 import {CREATE_PROJECT_REQUEST, GET_PROJECTS_REQUEST} from "../project/actionTypes";
 import {getProjectsFailure, getProjectsSuccess, createProjectSuccess, createProjectFailure} from "../project/Actions";
 import {loginSuccess, loginFailure, registerFailure, registerSuccess} from "../auth/Actions";
 import {
     profileSuccess,
     profileFailure,
+    userProfileSuccess,
+    userProfileFailure,
     changePasswordSuccess,
     changePasswordFailure,
     updateProfileFailure,
@@ -110,6 +112,34 @@ const tryGetProfileSaga = function* () {
     } catch (err) {
         console.log("Get Profile failed by api. Error => ", err);
         yield put(profileFailure({detail: [err.detail]}));
+    }
+};
+
+const tryGetUserProfileSaga = function* (action) {
+    try {
+        const {user_id} = action.payload;
+
+        const getUserProfileResponse = yield call(api.getUserProfile, user_id);
+
+        if (getUserProfileResponse) {
+            console.log("getUserProfileResponse", getUserProfileResponse);
+
+            if (getUserProfileResponse.status === 200) {
+                yield put(userProfileSuccess(getUserProfileResponse.responseBody));
+            } else if (getUserProfileResponse.status === 400) {
+                console.log("Something wrong! Got a status 400", getUserProfileResponse.responseBody);
+                yield put(userProfileFailure(getUserProfileResponse.responseBody));
+            } else {
+                console.log("Something wrong! Got an unknown status.", getUserProfileResponse);
+                yield put(userProfileFailure({ detail: ["Unknown status. Check console!"] }));
+            }
+        } else {
+            console.log("Get Profile failed by api. No response !");
+            yield put(userProfileFailure({ detail: ["No response fetched. Please contact the API team!"] }));
+        }
+    } catch (err) {
+        console.log("Get Profile failed by api. Error => ", err);
+        yield put(userProfileFailure({ detail: [err.detail] }));
     }
 };
 
@@ -231,6 +261,7 @@ const saga = function* () {
 
     // USER
     yield takeLatest(GET_PROFILE_REQUEST, tryGetProfileSaga);
+    yield takeLatest(GET_USER_PROFILE_REQUEST, tryGetUserProfileSaga);
     yield takeLatest(UPDATE_PROFILE_REQUEST, tryUpdateProfileSaga);
     yield takeLatest(CHANGE_PASSWORD_REQUEST, tryChangePasswordSaga);
 

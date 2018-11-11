@@ -3,6 +3,10 @@ import {
     GET_PROFILE_SUCCESS,
     GET_PROFILE_FAILURE,
     GET_PROFILE_RESET,
+    GET_USER_PROFILE_REQUEST,
+    GET_USER_PROFILE_SUCCESS,
+    GET_USER_PROFILE_FAILURE,
+    GET_USER_PROFILE_RESET,
     CHANGE_PASSWORD_REQUEST,
     CHANGE_PASSWORD_SUCCESS,
     CHANGE_PASSWORD_RESET,
@@ -21,6 +25,11 @@ const initialState = {
     getProfileHasError: false,
     getProfileCompleted: false,
     getProfileError: "",
+
+    getUserProfileInProgress: false,
+    getUserProfileHasError: false,
+    getUserProfileCompleted: false,
+    getUserProfileError: "",
 
     changePasswordInProgress: false,
     changePasswordHasError: false,
@@ -65,6 +74,39 @@ export default function(state = initialState, action) {
             getProfileInProgress: false,
             getProfileHasError: false,
             getProfileCompleted: false
+        };
+    }
+
+    if (action.type === GET_USER_PROFILE_REQUEST) {
+        return {
+            ...state,
+            getUserProfileInProgress: true,
+            getUserProfileHasError: false,
+            getUserProfileCompleted: false
+        };
+    } else if (action.type === GET_USER_PROFILE_SUCCESS) {
+        return {
+            ...state,
+            user: payload.user,
+            response: payload.response,
+            getUserProfileInProgress: false,
+            getUserProfileHasError: false,
+            getUserProfileCompleted: true
+        };
+    } else if (action.type === GET_USER_PROFILE_FAILURE) {
+        return {
+            ...state,
+            getUserProfileInProgress: false,
+            getUserProfileHasError: true,
+            getUserProfileCompleted: true,
+            getUserProfileError: payload.detail[0]
+        };
+    } else if (action.type === GET_USER_PROFILE_RESET) {
+        return {
+            ...state,
+            getUserProfileInProgress: false,
+            getUserProfileHasError: false,
+            getUserProfileCompleted: false
         };
     }
 

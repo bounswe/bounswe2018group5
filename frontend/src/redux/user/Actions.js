@@ -3,6 +3,10 @@ import {
     GET_PROFILE_SUCCESS,
     GET_PROFILE_FAILURE,
     GET_PROFILE_RESET,
+    GET_USER_PROFILE_REQUEST,
+    GET_USER_PROFILE_SUCCESS,
+    GET_USER_PROFILE_FAILURE,
+    GET_USER_PROFILE_RESET,
     CHANGE_PASSWORD_FAILURE,
     CHANGE_PASSWORD_REQUEST,
     CHANGE_PASSWORD_RESET,
@@ -27,6 +31,24 @@ export const profileFailure = errorData => ({
 });
 export const profileReset = () => ({
     type: GET_PROFILE_RESET
+});
+
+export const tryGetUserProfile = (user_id) => ({
+    type: GET_USER_PROFILE_REQUEST,
+    payload: {
+        user_id
+    }
+});
+export const userProfileSuccess = res => ({
+    type: GET_USER_PROFILE_SUCCESS,
+    payload: res
+});
+export const userProfileFailure = errorData => ({
+    type: GET_USER_PROFILE_FAILURE,
+    payload: errorData
+});
+export const userProfileReset = () => ({
+    type: GET_USER_PROFILE_RESET
 });
 
 export const tryChangePassword = (password) => ({
