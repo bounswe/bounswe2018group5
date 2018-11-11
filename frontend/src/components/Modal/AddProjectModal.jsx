@@ -8,7 +8,7 @@ import DialogContent from "@material-ui/core/DialogContent";
 import DialogActions from "@material-ui/core/DialogActions";
 import IconButton from "@material-ui/core/IconButton";
 // @material-ui/icons
-import {Add, Close} from '@material-ui/icons';
+import {Close} from '@material-ui/icons';
 import AddIcon from '@material-ui/icons/Add';
 // core components
 import Button from '@material-ui/core/Button';
@@ -36,7 +36,7 @@ class AddProjectModal extends React.Component {
             cardAnimaton: "cardHidden",
             open: false,
             place: 'tr',
-            notification_message: ''
+            notificationMessage: ''
         };
     }
 
@@ -97,10 +97,7 @@ class AddProjectModal extends React.Component {
                 <Dialog
                     classes={{
                         root: classes.center,
-                        paper: {
-                            minHeight: '80vh',
-                            maxHeight: '80vh',
-                        }
+                        paper: classes.modal
                     }}
                     open={this.state.modal}
                     TransitionComponent={Transition}
