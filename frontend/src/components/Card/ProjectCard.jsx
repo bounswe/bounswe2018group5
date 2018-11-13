@@ -27,8 +27,11 @@ const style = {
 };
 
 class ProjectCard extends React.Component {
+    handleToUpdate(project, type) {
+        this.props.handleToUpdate(project, type);
+    }
     render() {
-        const {classes, project_id, title, description, project_deadline, budget, created_at, owner, owner_id, owned, status} = this.props;
+        const { classes, project_id, title, description, project_deadline, budget, created_at, owner, owner_id, owned, status } = this.props;
         const project = {
             project_id,
             title,
@@ -40,23 +43,23 @@ class ProjectCard extends React.Component {
             owner
         };
         let cardHeader;
-        let badgesStatus;
-        if (status === -1) {
-            badgesStatus = <Badge fontSize={"12px"} color="danger">discarded</Badge>;
-        } else if (status === 0) {
-            badgesStatus = <Badge fontSize={"12px"} color="warning">bidding</Badge>;
-        } else if (status === 1) {
-            badgesStatus = <Badge fontSize={"12px"} color="rose">bid accepted</Badge>;
-        } else if (status === 2) {
-            badgesStatus = <Badge fontSize={"12px"} color="success">completed</Badge>;
-        }
         if (owned === true) {
+            let badgesStatus;
+            if (status === -1) {
+                badgesStatus = <Badge fontSize={"12px"} color="danger">discarded</Badge>;
+            } else if (status === 0) {
+                badgesStatus = <Badge fontSize={"12px"} color="warning">bidding</Badge>;
+            } else if (status === 1) {
+                badgesStatus = <Badge fontSize={"12px"} color="rose">bid accepted</Badge>;
+            } else if (status === 2) {
+                badgesStatus = <Badge fontSize={"12px"} color="success">completed</Badge>;
+            }
             cardHeader = <Grid container>
                 <Grid item xs={6} style={{ paddingTop: "3%"}}>
                     {badgesStatus}
                 </Grid>
                 <Grid item xs={6} style= {{textAlign: "right"}}>
-                    <ProjectDropdown project={project} />
+                    <ProjectDropdown project_info={project} handleToUpdate={this.handleToUpdate.bind(this)}/>
                 </Grid>
             </Grid>;
         } else {

@@ -12,6 +12,7 @@ import {Close} from '@material-ui/icons';
 import AddIcon from '@material-ui/icons/Add';
 // core components
 import Button from '@material-ui/core/Button';
+import OtherButton from "material-kit-react/components/CustomButtons/Button";
 
 import modalStyle from "material-kit-react/assets/jss/material-kit-react/modalStyle";
 import AddAlert from "@material-ui/icons/AddAlert";
@@ -177,12 +178,12 @@ class AddProjectModal extends React.Component {
                     </DialogContent>
                     <DialogActions
                         className={classes.modalFooter + " " + classes.modalFooterCenter}>
-                        <Button
+                        <OtherButton
                             onClick={event => this.handleCreateProject(event)}
                             color={'primary'}
                         >
                             Add Project
-                        </Button>
+                        </OtherButton>
                     </DialogActions>
                 </Dialog>
                 <Snackbar

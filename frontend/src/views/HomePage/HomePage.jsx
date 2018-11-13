@@ -57,8 +57,8 @@ class HomePage extends React.Component {
                                 title={prop.title}
                                 description={prop.description}
                                 budget={prop.budget}
-                                project_deadline={prop.deadline.substring(0, 10)}
-                                created_at={prop.created_at.substring(0, 10)}
+                                project_deadline={prop.deadline}
+                                created_at={prop.created_at}
                                 owner={prop.owner}
                                 owner_id={prop.owner_id}
                                 project_id={prop.project_id}

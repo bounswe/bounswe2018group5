@@ -31,6 +31,10 @@ import combineStyles from "services/combineStyles";
 import dropdownStyle from "material-dashboard-react/dist/assets/jss/material-dashboard-react/dropdownStyle";
 import modalStyle from "material-kit-react/assets/jss/material-kit-react/modalStyle";
 
+import connect from "react-redux/es/connect/connect";
+
+import { tryEditProject, editProjectReset, tryDiscardProject, discardProjectReset } from "redux/project/Actions.js";
+
 
 function Transition(props) {
     return <Slide direction="down" {...props} />;
@@ -47,7 +51,8 @@ class ProjectDropdown extends React.Component {
             cardAnimaton: "cardHidden",
             alertOpen: false,
             place: 'tr',
-            notificationMessage: ''
+            notificationMessage: '',
+            description: ''
         };
     }
 
@@ -76,13 +81,83 @@ class ProjectDropdown extends React.Component {
   };
 
   handleEditProject(event) {
+    const { description} = this.state;
+    this.props.tryEditProject(this.props.project_info.project_id, description);
+    this.setState({ project_id: this.props.project_info.project_id });
+    event.preventDefault();
+  }
+
+  handleDeleteProject(event) {
     const { title, description, project_deadline, budget } = this.state;
     this.props.tryCreateProject(title, description, project_deadline, parseFloat(budget));
     event.preventDefault();
   }
 
+  handleDiscardProject(event) {
+    this.props.tryDiscardProject(this.props.project_info.project_id);
+    this.setState({ project_id: this.props.project_info.project_id});
+    event.preventDefault();
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    const { editProjectInProgress, editProjectHasError, editProjectCompleted, response, project } = this.props.project;
+    if (!editProjectInProgress && !editProjectHasError && editProjectCompleted && this.state.project_id === this.props.project_info.project_id) {
+      if (response) {
+        this.props.handleToUpdate(project, 'edit');
+        this.setState({
+          alertOpen: true,
+          color: 'success',
+          notificationMessage: 'Your Project is successfully edited!'
+        });
+        setTimeout(function () {
+          this.setState({ alertOpen: false });
+        }.bind(this), 6000);
+      } else {
+        this.setState({
+          alertOpen: true,
+          color: 'danger',
+          notificationMessage: 'Your Project is not edited!'
+        });
+        setTimeout(function () {
+          this.setState({ alertOpen: false });
+        }.bind(this), 6000);
+      }
+      this.handleModalClose("editModal");
+      this.setState({ project_id: null });
+      this.props.editProjectReset();
+    }
+
+    const { discardProjectInProgress, discardProjectHasError, discardProjectCompleted } = this.props.project;
+    if (!discardProjectInProgress && !discardProjectHasError && discardProjectCompleted && this.state.project_id === this.props.project_info.project_id) {
+      if (response) {
+        const project = {...this.props.project_info, status: -1};
+        this.props.handleToUpdate(project, 'edit');
+        this.setState({
+          alertOpen: true,
+          color: 'success',
+          notificationMessage: 'Your Project is successfully discarded!'
+        });
+        setTimeout(function () {
+          this.setState({ alertOpen: false });
+        }.bind(this), 6000);
+      } else {
+        this.setState({
+          alertOpen: true,
+          color: 'danger',
+          notificationMessage: 'Your Project is not discarded!'
+        });
+        setTimeout(function () {
+          this.setState({ alertOpen: false });
+        }.bind(this), 6000);
+      }
+      this.handleModalClose("discardModal");
+      this.setState({ project_id: null });
+      this.props.discardProjectReset();
+    }
+  }
+
   render() {
-    const { classes, project } = this.props;
+    const { classes, project_info } = this.props;
     const { open } = this.state;
     return (
       <div className={classes.manager}>
@@ -193,7 +268,8 @@ class ProjectDropdown extends React.Component {
                       }}
                       inputProps={{
                         type: "text",
-                        value: project.title,
+                        value: project_info.title,
+                        disabled: true,
                         onChange: event => this.setState({ title: event.target.value })
                       }}
                     />
@@ -208,15 +284,15 @@ class ProjectDropdown extends React.Component {
                       inputProps={{
                         multiline: true,
                         rows: 3,
-                        value: project.description,
-                        onChange: event => this.setState({ description: event.target.value })
+                        onChange: event => this.setState({ description: event.target.value }),
                       }}
                     />
                   </GridItem>
                   <GridItem xs={12} sm={12} md={6}>
                     <DateTimePicker
-                      value={project.project_deadline}
+                      value={project_info.project_deadline}
                       onChange={event => this.setState({ project_deadline: event.format("YYYY-MM-DD") })}
+                      disabled={true}
                     />
                   </GridItem>
                   <GridItem xs={12} sm={12} md={6}>
@@ -228,7 +304,8 @@ class ProjectDropdown extends React.Component {
                       }}
                       inputProps={{
                         type: 'number',
-                        value: project.budget,
+                        disabled: true,
+                        value: project_info.budget,
                         onChange: event => this.setState({ budget: event.target.value })
                       }}
                     />
@@ -240,7 +317,7 @@ class ProjectDropdown extends React.Component {
           <DialogActions
             className={classes.modalFooter + " " + classes.modalFooterCenter}>
             <Button
-              onClick={event => this.handleCreateProject(event)}
+              onClick={event => this.handleEditProject(event)}
               color={'primary'}
             >
               Edit Project
@@ -276,7 +353,7 @@ class ProjectDropdown extends React.Component {
             <DialogContent
                 id="modal-slide-description"
                 className={classes.modalBody}>
-                <h5>Are you sure you want to discard "{project.title}"?</h5>
+            <h5>Are you sure you want to discard "{project_info.title}"?</h5>
             </DialogContent>
             <DialogActions
                 className={classes.modalFooter + " " + classes.modalFooterCenter}>
@@ -286,7 +363,7 @@ class ProjectDropdown extends React.Component {
                     No
         </Button>
                 <Button
-                    onClick={() => this.handleModalClose("discardModal")}
+                    onClick={event => this.handleDiscardProject(event)}
                     color="danger">
                     Yes
         </Button>
@@ -320,7 +397,7 @@ class ProjectDropdown extends React.Component {
           <DialogContent
             id="modal-slide-description"
             className={classes.modalBody}>
-            <h5>Are you sure you want to delete "{project.title}"?</h5>
+            <h5>Are you sure you want to delete "{project_info.title}"?</h5>
           </DialogContent>
           <DialogActions
             className={classes.modalFooter + " " + classes.modalFooterCenter}>
@@ -330,7 +407,7 @@ class ProjectDropdown extends React.Component {
               No
         </Button>
             <Button
-              onClick={() => this.handleModalClose("deleteModal")}
+              onClick={event => this.handleDeleteProject(event)}
               color="danger">
               Yes
         </Button>
@@ -353,4 +430,20 @@ class ProjectDropdown extends React.Component {
 // Use our util to create a compatible function for `withStyles`:
 const combinedStyles = combineStyles(dropdownStyle, modalStyle);
 
-export default withStyles(combinedStyles)(ProjectDropdown);
+function bindAction(dispatch) {
+  return {
+    tryEditProject: (project_id, description) => dispatch(tryEditProject(project_id, description)),
+    editProjectReset: () => dispatch(editProjectReset()),
+    tryDiscardProject: (project_id) => dispatch(tryDiscardProject(project_id)),
+    discardProjectReset: () => dispatch(discardProjectReset())
+  };
+}
+
+const mapStateToProps = state => ({
+  project: state.project
+});
+
+export default connect(
+  mapStateToProps,
+  bindAction
+)(withStyles(combinedStyles)(ProjectDropdown));
