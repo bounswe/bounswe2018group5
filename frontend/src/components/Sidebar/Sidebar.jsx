@@ -37,11 +37,11 @@ class Sidebar extends Component {
 
     componentDidUpdate(prevProps, prevState) {
         const { history } = this.props;
-        const { loggedIn, logout } = this.props.auth;
+        const { logout } = this.props.auth;
 
-        if (!loggedIn && logout) {
-            removeCookie(TOKEN_COOKIE, { path: "/" });
-            removeCookie(LOGGEDIN_COOKIE, { path: "/" });
+        if (logout) {
+            removeCookie(TOKEN_COOKIE);
+            removeCookie(LOGGEDIN_COOKIE);
             history.push("/");
         }
     }
