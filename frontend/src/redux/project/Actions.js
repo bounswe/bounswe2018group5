@@ -3,6 +3,10 @@ import {
     GET_PROJECTS_SUCCESS,
     GET_PROJECTS_FAILURE,
     GET_PROJECTS_RESET,
+    GET_PROJECT_REQUEST,
+    GET_PROJECT_SUCCESS,
+    GET_PROJECT_FAILURE,
+    GET_PROJECT_RESET,
     GET_OWN_PROJECTS_REQUEST,
     GET_OWN_PROJECTS_SUCCESS,
     GET_OWN_PROJECTS_FAILURE,
@@ -39,6 +43,24 @@ export const getProjectsFailure = errorData => ({
 });
 export const getProjectsReset = () => ({
     type: GET_PROJECTS_RESET
+});
+
+export const tryGetProject = (project_id) => ({
+    type: GET_PROJECT_REQUEST,
+    payload: {
+        project_id
+    }
+});
+export const getProjectSuccess = res => ({
+    type: GET_PROJECT_SUCCESS,
+    payload: res
+});
+export const getProjectFailure = errorData => ({
+    type: GET_PROJECT_FAILURE,
+    payload: errorData
+});
+export const getProjectReset = () => ({
+    type: GET_PROJECT_RESET
 });
 
 export const tryGetOwnProjects = () => ({

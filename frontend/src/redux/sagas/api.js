@@ -76,6 +76,13 @@ class api {
             sendToken: true
         });
     };
+    getProject = (project_id) => {
+        return httpService.fetch({
+            path: "api/project/get/" + project_id + "/",
+            method: "GET",
+            sendToken: true
+        });
+    };
     getOwnProjects = () => {
         return httpService.fetch({
             path: "api/project/get/own",
