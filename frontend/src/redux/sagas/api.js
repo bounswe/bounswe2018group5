@@ -71,7 +71,7 @@ class api {
     };
     getProjects = () => {
         return httpService.fetch({
-            path: "api/project/get_all",
+            path: "api/project/get/all",
             method: "GET",
             sendToken: true
         });
@@ -92,6 +92,27 @@ class api {
                 description,
                 project_deadline,
                 budget
+            },
+            sendToken: true
+        });
+    };
+    editProject = (project_id, description) => {
+        return httpService.fetch({
+            path: "api/project/update/",
+            method: "POST",
+            body: {
+                project_id,
+                description
+            },
+            sendToken: true
+        });
+    };
+    discardProject = (project_id) => {
+        return httpService.fetch({
+            path: "api/project/discard",
+            method: "POST",
+            body: {
+                project_ids: [project_id]
             },
             sendToken: true
         });

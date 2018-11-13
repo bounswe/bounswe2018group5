@@ -2,12 +2,16 @@ import {call, put, takeLatest} from "redux-saga/effects";
 
 import {LOGIN_REQUEST, LOGOUT_REQUEST, REGISTER_REQUEST} from "../auth/actionTypes";
 import {CHANGE_PASSWORD_REQUEST, GET_PROFILE_REQUEST, GET_USER_PROFILE_REQUEST, UPDATE_PROFILE_REQUEST} from "../user/actionTypes";
-import { CREATE_PROJECT_REQUEST, GET_PROJECTS_REQUEST, GET_OWN_PROJECTS_REQUEST} from "../project/actionTypes";
+import { CREATE_PROJECT_REQUEST, EDIT_PROJECT_REQUEST, DISCARD_PROJECT_REQUEST, GET_PROJECTS_REQUEST, GET_OWN_PROJECTS_REQUEST} from "../project/actionTypes";
 import {
     getProjectsFailure, 
     getProjectsSuccess, 
     createProjectSuccess, 
     createProjectFailure,
+    editProjectSuccess,
+    editProjectFailure,
+    discardProjectSuccess,
+    discardProjectFailure,
     getOwnProjectsFailure, 
     getOwnProjectsSuccess,
 } from "../project/Actions";
@@ -286,6 +290,63 @@ const tryCreateProjectSaga = function* (action) {
     }
 };
 
+const tryEditProjectSaga = function* (action) {
+    try {
+        const { project_id, description } = action.payload;
+
+        const editProjectResponse = yield call(api.editProject, project_id, description);
+
+        if (editProjectResponse) {
+            console.log("editProjectResponse", editProjectResponse);
+
+            if (editProjectResponse.status === 200) {
+                yield put(editProjectSuccess(editProjectResponse.responseBody));
+            } else if (editProjectResponse.status === 400) {
+                console.log("Something wrong! Got a status 400", editProjectResponse.responseBody);
+                yield put(editProjectFailure(editProjectResponse.responseBody));
+            } else {
+                console.log("Something wrong! Got an unknown status.", editProjectResponse);
+                yield put(editProjectFailure({ detail: ["Unknown status. Check console!"] }));
+            }
+        } else {
+            console.log("edit Project failed by api. No response !");
+            yield put(editProjectFailure({ detail: ["No response fetched. Please contact the API team!"] }));
+        }
+    } catch (err) {
+        console.log("edit Project failed by api. Error => ", err);
+        yield put(editProjectFailure({ detail: [err.detail] }));
+    }
+};
+
+
+const tryDiscardProjectSaga = function* (action) {
+    try {
+        const { project_id } = action.payload;
+
+        const discardProjectResponse = yield call(api.discardProject, project_id);
+
+        if (discardProjectResponse) {
+            console.log("discardProjectResponse", discardProjectResponse);
+
+            if (discardProjectResponse.status === 200) {
+                yield put(discardProjectSuccess(discardProjectResponse.responseBody));
+            } else if (discardProjectResponse.status === 400) {
+                console.log("Something wrong! Got a status 400", discardProjectResponse.responseBody);
+                yield put(discardProjectFailure(discardProjectResponse.responseBody));
+            } else {
+                console.log("Something wrong! Got an unknown status.", discardProjectResponse);
+                yield put(discardProjectFailure({ detail: ["Unknown status. Check console!"] }));
+            }
+        } else {
+            console.log("discard Project failed by api. No response !");
+            yield put(discardProjectFailure({ detail: ["No response fetched. Please contact the API team!"] }));
+        }
+    } catch (err) {
+        console.log("discard Project failed by api. Error => ", err);
+        yield put(discardProjectFailure({ detail: [err.detail] }));
+    }
+};
+
 const saga = function* () {
     // AUTH
     yield takeLatest(LOGIN_REQUEST, tryLoginSaga);
@@ -302,6 +363,8 @@ const saga = function* () {
     yield takeLatest(GET_PROJECTS_REQUEST, tryGetProjectsSaga);
     yield takeLatest(GET_OWN_PROJECTS_REQUEST, tryGetOwnProjectsSaga);
     yield takeLatest(CREATE_PROJECT_REQUEST, tryCreateProjectSaga);
+    yield takeLatest(EDIT_PROJECT_REQUEST, tryEditProjectSaga);
+    yield takeLatest(DISCARD_PROJECT_REQUEST, tryDiscardProjectSaga);
 };
 
 export default saga;

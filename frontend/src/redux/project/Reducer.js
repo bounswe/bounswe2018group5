@@ -10,7 +10,19 @@ import {
     CREATE_PROJECT_RESET,
     CREATE_PROJECT_FAILURE,
     CREATE_PROJECT_SUCCESS,
-    CREATE_PROJECT_REQUEST
+    CREATE_PROJECT_REQUEST,
+    EDIT_PROJECT_RESET,
+    EDIT_PROJECT_FAILURE,
+    EDIT_PROJECT_SUCCESS,
+    EDIT_PROJECT_REQUEST,
+    DISCARD_PROJECT_RESET,
+    DISCARD_PROJECT_FAILURE,
+    DISCARD_PROJECT_SUCCESS,
+    DISCARD_PROJECT_REQUEST,
+    DELETE_PROJECT_RESET,
+    DELETE_PROJECT_FAILURE,
+    DELETE_PROJECT_SUCCESS,
+    DELETE_PROJECT_REQUEST
 } from "./actionTypes";
 
 const initialState = {
@@ -32,6 +44,16 @@ const initialState = {
     createProjectHasError: false,
     createProjectCompleted: false,
     createProjectError: "",
+
+    editProjectInProgress: false,
+    editProjectHasError: false,
+    editProjectCompleted: false,
+    editProjectError: "",
+
+    discardProjectInProgress: false,
+    discardProjectHasError: false,
+    discardProjectCompleted: false,
+    discardProjectError: "",
 };
 
 export default function(state = initialState, action) {
@@ -132,6 +154,71 @@ export default function(state = initialState, action) {
             createProjectInProgress: false,
             createProjectHasError: false,
             createProjectCompleted: false
+        };
+    }
+
+    if (action.type === EDIT_PROJECT_REQUEST) {
+        return {
+            ...state,
+            editProjectInProgress: true,
+            editProjectHasError: false,
+            editProjectCompleted: false
+        };
+    } else if (action.type === EDIT_PROJECT_SUCCESS) {
+        return {
+            ...state,
+            project: payload.project,
+            response: payload.response,
+            editProjectInProgress: false,
+            editProjectHasError: false,
+            editProjectCompleted: true
+        };
+    } else if (action.type === EDIT_PROJECT_FAILURE) {
+        return {
+            ...state,
+            editProjectInProgress: false,
+            editProjectHasError: true,
+            editProjectCompleted: true,
+            editProjectError: payload.detail[0]
+        };
+    } else if (action.type === EDIT_PROJECT_RESET) {
+        return {
+            ...state,
+            editProjectInProgress: false,
+            editProjectHasError: false,
+            editProjectCompleted: false
+        };
+    }
+
+    if (action.type === DISCARD_PROJECT_REQUEST) {
+        return {
+            ...state,
+            discardProjectInProgress: true,
+            discardProjectHasError: false,
+            discardProjectCompleted: false
+        };
+    } else if (action.type === DISCARD_PROJECT_SUCCESS) {
+        return {
+            ...state,
+            response: payload.response,
+            discardProjectInProgress: false,
+            discardProjectHasError: false,
+            discardProjectCompleted: true
+        };
+    } else if (action.type === DISCARD_PROJECT_FAILURE) {
+        return {
+            ...state,
+            discardProjectInProgress: false,
+            discardProjectHasError: true,
+            discardProjectCompleted: true,
+            discardProjectError: payload.detail[0]
+        };
+    } else if (action.type === DISCARD_PROJECT_RESET) {
+        return {
+            ...state,
+            discardProjectInProgress: false,
+            discardProjectHasError: false,
+            discardProjectCompleted: false
         };
     }
 

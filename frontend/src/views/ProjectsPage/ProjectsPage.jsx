@@ -50,6 +50,22 @@ class ProjectsPage extends React.Component {
         });
     }
 
+    handleToManageProject(project, type) {
+        var { projects_client } = this.state;
+        if (type === 'edit') {
+            projects_client = projects_client.map((prop, key) => {
+                return project.project_id === prop.project_id ? project : prop;
+            })
+        } else if (type === 'delete') {
+            projects_client = projects_client.map((prop, key) => {
+                return project.project_id === prop.project_id ? null : prop;
+            })
+        }
+        this.setState({
+            projects_client: projects_client,
+        });
+    }
+
     render() {
         const { projects_client, projects_freelancer } = this.state;
         var project_grid_client = (
@@ -61,13 +77,14 @@ class ProjectsPage extends React.Component {
                                 title={prop.title}
                                 description={prop.description}
                                 budget={prop.budget}
-                                project_deadline={prop.deadline.substring(0, 10)}
-                                created_at={prop.created_at.substring(0, 10)}
+                                project_deadline={prop.deadline}
+                                created_at={prop.created_at}
                                 owner={prop.owner}
                                 owner_id={prop.owner_id}
                                 project_id={prop.project_id}
                                 owned={true}
                                 status={prop.status}
+                                handleToUpdate={this.handleToManageProject.bind(this)}
                             />
                         </GridItem>
                     );
@@ -83,8 +100,8 @@ class ProjectsPage extends React.Component {
                                 title={prop.title}
                                 description={prop.description}
                                 budget={prop.budget}
-                                project_deadline={prop.deadline.substring(0, 10)}
-                                created_at={prop.created_at.substring(0, 10)}
+                                project_deadline={prop.deadline}
+                                created_at={prop.created_at}
                                 owner={prop.owner}
                                 owner_id={prop.owner_id}
                                 project_id={prop.project_id}
