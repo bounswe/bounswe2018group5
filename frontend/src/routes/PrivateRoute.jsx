@@ -15,8 +15,8 @@ class PrivateRoute extends Component {
         const { getProfileInProgress, getProfileHasError, getProfileCompleted, response } = this.props.user;
 
         if (!getProfileInProgress && !getProfileHasError && getProfileCompleted && !response) {
-            removeCookie(TOKEN_COOKIE, { path: "/" });
-            removeCookie(LOGGEDIN_COOKIE, { path: "/" });
+            removeCookie(TOKEN_COOKIE);
+            removeCookie(LOGGEDIN_COOKIE);
             this.props.logout();
             history.push("/");
         }
