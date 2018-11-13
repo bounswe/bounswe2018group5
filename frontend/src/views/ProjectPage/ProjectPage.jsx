@@ -21,6 +21,14 @@ import avatar from "assets/img/faces/christian.jpg";
 import CreateBid from "../../components/CreateBid/CreateBid";
 import MessageCard from "../../components/Card/MessageCard";
 
+import {
+    tryGetProject,
+    getProjectReset
+} from "redux/project/Actions.js";
+
+import connect from "react-redux/es/connect/connect";
+import default_image from "assets/img/faces/default_image.png";
+
 
 const styles = {
     
@@ -36,11 +44,34 @@ const styles = {
 };
 
 class ProjectPage extends Component {
-
-    state = { expanded: false };
+    constructor(props) {
+        super(props);
+        // we use this to make the card to appear after the page has been rendered
+        this.state = {
+            expanded: false,
+            cardAnimaton: "cardHidden",
+            project: {
+                owner: {}
+            },
+        };
+    }
     handleExpandClick = () => {
         this.setState(state => ({ expanded: !state.expanded }));
     };
+
+    componentDidMount() {
+        const { project_id } = this.props.match.params;
+        this.props.tryGetProject(project_id);
+    }
+
+    componentDidUpdate(prevProps, prevState) {
+        const { getProjectInProgress, getProjectHasError, getProjectCompleted, project } = this.props.project;
+
+        if (!getProjectInProgress && !getProjectHasError && getProjectCompleted) {
+            this.setState({ project });
+            this.props.getProjectReset();
+        }
+    }
 
     render() {
         const { classes, history, ...rest } = this.props;
@@ -55,39 +86,20 @@ class ProjectPage extends Component {
                 </div>
                 <GridContainer>
                     <GridItem xs={12} sm={12} md={6}>
-                        <h1 className={classes.title}>Social Media Monitoring Backend API</h1>
+                        <h1 className={classes.title}>{this.state.project.title}</h1>
                         <Chip label="python" clickable className={classes.chip} color="primary" />
                         <Chip label="backend" clickable className={classes.chip} color="secondary" />
                         <Chip label="tornado" clickable className={classes.chip} color="primary" />
                         <Chip label="api" clickable className={classes.chip} color="secondary" />
 
                         <h4>
-                            This project will provide its users social media analysis.
-                            We do not have the frontend part of the project so documentation
-                            is important. We wait your offers.
+                            {this.state.project.description}
                                 </h4>
                         <br />
-                        <ExpansionPanel style={{ opacity: '9' }}>
-                            <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
-                                <Typography className={classes.heading}>Show Details</Typography>
-                            </ExpansionPanelSummary>
-                            <ExpansionPanelDetails>
-                                <Typography>
-                                    We are a small but visionary Internet company and we want to be ffective on social mediaplatforms.
-                                    We need to monitor our social media accounts and activities in detail. We use Facebook ,Twitter,
-                                    Instagram and LinkedIn. So you need to work with these platforms' APIs. We want you to have experience on APIs
-                                    especially on these ones.Task will be coding only backend but must be well documented. Deadline is strict, but
-                                    budget may be associated.
-                                    </Typography>
-                            </ExpansionPanelDetails>
                             <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%' }}>
-                                <Chip label="Budget: $500" className={classes.chip} />
-                                <Chip label="Deadline: April 26, 2019" className={classes.chip} />
+                                <Chip label={"Budget: $" + this.state.project.budget} className={classes.chip} />
+                                <Chip label={"Deadline: " + this.state.project.deadline} className={classes.chip} />
                             </div>
-
-                            <br />
-                            <br />
-                        </ExpansionPanel>
                     </GridItem>
                     <GridItem xs={12} sm={12} md={1}></GridItem>
                     <GridItem xs={12} sm={12} md={5}>
@@ -97,11 +109,15 @@ class ProjectPage extends Component {
                                 <br />
                                 <Card profile>
                                     <CardAvatar profile>
-                                        <img src={avatar} alt="..." />
+                                        <img src={process.env.REACT_APP_API_STATIC_URL + "profile_images/" + this.state.project.owner.profile_image}
+                                            onError={(e) => {
+                                                e.target.onerror = null;
+                                                e.target.src = default_image
+                                            }} alt="..." />
                                     </CardAvatar>
                                     <CardBody profile>
-                                        <h4>Mete Kocaman</h4>
-                                        <h6 className={classes.title}>CEO at Sosyal Bilişim</h6>
+                                        <h4>{this.state.project.owner.full_name}</h4>
+                                        <h6 className={classes.title}>{this.state.project.owner.bio}</h6>
                                     </CardBody>
                                     <CardFooter>
                                         <MessageCard projectOwner="Mete Kocaman"></MessageCard>
@@ -125,4 +141,18 @@ class ProjectPage extends Component {
 }
 
 
-export default withStyles(styles)(ProjectPage);
+function bindAction(dispatch) {
+    return {
+        tryGetProject: (project_id) => dispatch(tryGetProject(project_id)),
+        getProjectReset: () => dispatch(getProjectReset()),
+    };
+}
+
+const mapStateToProps = state => ({
+    project: state.project
+});
+
+export default connect(
+    mapStateToProps,
+    bindAction
+)(withStyles(styles)(ProjectPage));
