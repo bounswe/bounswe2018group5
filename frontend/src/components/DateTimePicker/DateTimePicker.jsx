@@ -21,7 +21,12 @@ const styles = {
 
 class DateTimePicker extends React.Component{
     render(){
-        const { onChange } = this.props;
+        const { onChange, value } = this.props;
+        // Let's use the static moment reference in the Datetime component
+        var today = Datetime.moment();
+        var valid = function (current) {
+            return current.isAfter(today);
+        };
         return (
             <div>
                 <br />
@@ -29,8 +34,14 @@ class DateTimePicker extends React.Component{
                     <Datetime
                         onChange={onChange}
                         inputProps={{
-                            placeholder: "Project Deadline"
+                            placeholder: "Project Deadline",
                         }}
+                        isValidDate={valid}
+                        dateFormat="YYYY-MM-DD"
+                        timeFormat={false}
+                        viewMode="days"
+                        utc={true}
+                        value={value}
                     />
                 </FormControl>
             </div>
