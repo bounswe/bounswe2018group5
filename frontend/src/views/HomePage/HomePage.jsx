@@ -78,7 +78,8 @@ class HomePage extends React.Component {
                 <div style={{
                     position: "fixed",
                     bottom: "32px",
-                    right: "32px"
+                    right: "32px",
+                    zIndex: "200"
                 }}>
                     <AddProjectModal handleToUpdate={this.handleToUpdate.bind(this)}/>
                 </div>

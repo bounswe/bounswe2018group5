@@ -66,6 +66,8 @@ class ProjectsPage extends React.Component {
                                 owner={prop.owner}
                                 owner_id={prop.owner_id}
                                 project_id={prop.project_id}
+                                owned={true}
+                                status={prop.status}
                             />
                         </GridItem>
                     );
@@ -102,13 +104,14 @@ class ProjectsPage extends React.Component {
                 <div style={{
                     position: "fixed",
                     bottom: "32px",
-                    right: "32px"
+                    right: "32px",
+                    zIndex: "200"
                 }}>
                     <AddProjectModal handleToUpdate={this.handleToUpdate.bind(this)}/>
                 </div>
                 <CustomTabs
                     title="Your Projects:"
-                    headerColor="info"
+                    headerColor="primary"
                     tabs={[
                         {
                             tabName: "Client",

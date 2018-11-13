@@ -41,6 +41,7 @@ export default function(state = initialState, action) {
             ...state,
             api_token: payload.api_token,
             loggedIn: payload.response,
+            error: payload.error,
             loginInProgress: false,
             loginHasError: false,
             loginCompleted: true
@@ -92,7 +93,9 @@ export default function(state = initialState, action) {
             registerHasError: false,
             registerCompleted: false
         };
-    } else if (action.type === LOGOUT_REQUEST) {
+    }
+    
+    if (action.type === LOGOUT_REQUEST) {
         return {
             ...state,
             api_token: "",

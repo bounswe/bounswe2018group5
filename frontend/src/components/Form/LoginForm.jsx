@@ -16,6 +16,8 @@ import CardFooter from "material-kit-react/components/Card/CardFooter";
 import CustomInput from "components/CustomInput/CustomInput";
 import { tryLogin, loginReset } from "redux/auth/Actions.js";
 import {connect} from "react-redux";
+import AddAlert from "@material-ui/icons/AddAlert";
+import Snackbar from "material-dashboard-react/dist/components/Snackbar/Snackbar";
 
 import { setCookie, getCookie, LOGGEDIN_COOKIE, TOKEN_COOKIE } from "services/cookies.js";
 
@@ -29,6 +31,9 @@ class LoginForm extends Component {
             cardAnimaton: "cardHidden",
             username: "",
             password: "",
+            open: false,
+            place: 'tr',
+            notificationMessage: ''
         };
     }
 
@@ -54,14 +59,25 @@ class LoginForm extends Component {
 
     componentDidUpdate(prevProps, prevState) {
         const { history } = this.props;
-        const { loginInProgress, loginHasError, loginCompleted, api_token, loggedIn } = this.props.auth;
+        const { loginInProgress, loginHasError, loginCompleted, api_token, loggedIn, error } = this.props.auth;
 
         if (loginInProgress && !loginHasError && !loginCompleted) {
         } else if (!loginInProgress && !loginHasError && loginCompleted) {
-            setCookie(TOKEN_COOKIE, api_token, { path: "/" });
-            setCookie(LOGGEDIN_COOKIE, loggedIn, { path: "/" });
+            if (loggedIn) {
+                setCookie(TOKEN_COOKIE, api_token, { path: "/" });
+                setCookie(LOGGEDIN_COOKIE, loggedIn, { path: "/" });
+                history.push("/home");
+            } else {
+                this.setState({
+                    open: true,
+                    color: 'danger',
+                    notificationMessage: error
+                });
+                setTimeout(function () {
+                    this.setState({ open: false });
+                }.bind(this), 6000);
+            }
             this.props.loginReset();
-            history.push("/home");
         } else if (!loginInProgress && loginHasError && loginCompleted) {
             this.props.loginReset();
         }
@@ -134,6 +150,15 @@ class LoginForm extends Component {
                         </GridContainer>
                     </div>
                 </div>
+                <Snackbar
+                    place={this.state.place}
+                    icon={AddAlert}
+                    color={this.state.color}
+                    message={this.state.notificationMessage}
+                    open={this.state.open}
+                    closeNotification={() => this.setState({ open: false })}
+                    close
+                />
             </div>
         );
     }
