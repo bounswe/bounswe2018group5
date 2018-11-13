@@ -95,6 +95,7 @@ class AddProjectModal extends React.Component {
                     <AddIcon />
                 </Button>
                 <Dialog
+                    scroll="body"
                     classes={{
                         root: classes.center,
                         paper: classes.modal
