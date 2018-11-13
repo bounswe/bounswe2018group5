@@ -46,3 +46,16 @@ class Project(BaseDocument):
                  'weights': {'title': 10, 'description': 2}
                  }
             ]}
+
+
+class Bid(BaseDocument):
+    def schema(self):
+        pass
+
+    project = ReferenceField('Project')
+    freelancer = ReferenceField('User')
+    note = StringField(max_length=2000, default="")
+    offer = FloatField(min_value=0)
+    status = IntField(default=0)  # 0 bidding period, 1 won, 2 lost, -1 discarded
+
+    meta = {'collection': 'bids'}
