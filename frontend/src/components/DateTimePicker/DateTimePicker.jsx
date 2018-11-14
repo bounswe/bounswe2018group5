@@ -35,6 +35,7 @@ class DateTimePicker extends React.Component{
                         onChange={onChange}
                         inputProps={{
                             placeholder: "Project Deadline",
+                            disabled
                         }}
                         isValidDate={valid}
                         dateFormat="YYYY-MM-DD"
@@ -42,9 +43,6 @@ class DateTimePicker extends React.Component{
                         viewMode="days"
                         utc={true}
                         value={value}
-                        inputProps={{
-                            disabled
-                        }}
                 />
                 </FormControl>
             </div>

@@ -1,12 +1,6 @@
 import React, { Component } from "react";
 import withStyles from "@material-ui/core/styles/withStyles";
 import Chip from "@material-ui/core/Chip/Chip.js"
-import ExpansionPanel from "@material-ui/core/ExpansionPanel/ExpansionPanel.js"
-import ExpansionPanelSummary from "@material-ui/core/ExpansionPanelSummary/ExpansionPanelSummary.js"
-import ExpansionPanelDetails from "@material-ui/core/ExpansionPanelDetails/ExpansionPanelDetails.js"
-import Typography from '@material-ui/core/Typography';
-
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 
 import Helmet from 'react-helmet';
 import Bids from "../../components/Bids/Bids";
@@ -17,7 +11,6 @@ import CardAvatar from "material-dashboard-react/dist/components/Card/CardAvatar
 import CardBody from "material-dashboard-react/dist/components/Card/CardBody";
 import GridContainer from "material-kit-react/components/Grid/GridContainer";
 import GridItem from "material-kit-react/components/Grid/GridItem";
-import avatar from "assets/img/faces/christian.jpg";
 import CreateBid from "../../components/CreateBid/CreateBid";
 import MessageCard from "../../components/Card/MessageCard";
 
