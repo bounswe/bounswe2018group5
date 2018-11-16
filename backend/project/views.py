@@ -11,7 +11,7 @@ from .models import Project, Bid
 
 def user_json(user):
     obj = {}
-    obj['user_id'] = str(user.id)
+    obj['id'] = str(user.id)
     obj['full_name'] = user.full_name
     obj['username'] = user.username
     obj['email'] = user.email
