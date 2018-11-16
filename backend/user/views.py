@@ -26,6 +26,7 @@ def check_password(hashed_password, user_password):
 
 def user_json(user):
     obj = {}
+    obj['id'] = str(user.id)
     obj['full_name'] = user.full_name
     obj['username'] = user.username
     obj['email'] = user.email
