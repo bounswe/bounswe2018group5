@@ -8,7 +8,8 @@ import {
     DISCARD_PROJECT_REQUEST, 
     GET_PROJECTS_REQUEST, 
     GET_PROJECT_REQUEST, 
-    GET_OWN_PROJECTS_REQUEST
+    GET_OWN_PROJECTS_REQUEST,
+    CREATE_BID_REQUEST, 
 } from "../project/actionTypes";
 import {
     getProjectsFailure, 
@@ -23,6 +24,8 @@ import {
     discardProjectFailure,
     getOwnProjectsFailure, 
     getOwnProjectsSuccess,
+    createBidSuccess,
+    createBidFailure,
 } from "../project/Actions";
 import {loginSuccess, loginFailure, registerFailure, registerSuccess} from "../auth/Actions";
 import {
@@ -384,6 +387,34 @@ const tryDiscardProjectSaga = function* (action) {
     }
 };
 
+const tryCreateBidSaga = function* (action) {
+    try {
+        const { project_id, freelancer_id, offer, note } = action.payload;
+
+        const createBidResponse = yield call(api.createBid, project_id, freelancer_id, offer, note);
+
+        if (createBidResponse) {
+            console.log("createBidResponse", createBidResponse);
+
+            if (createBidResponse.status === 200) {
+                yield put(createBidSuccess(createBidResponse.responseBody));
+            } else if (createBidResponse.status === 400) {
+                console.log("Something wrong! Got a status 400", createBidResponse.responseBody);
+                yield put(createBidFailure(createBidResponse.responseBody));
+            } else {
+                console.log("Something wrong! Got an unknown status.", createBidResponse);
+                yield put(createBidFailure({ detail: ["Unknown status. Check console!"] }));
+            }
+        } else {
+            console.log("Create Bid failed by api. No response !");
+            yield put(createBidFailure({ detail: ["No response fetched. Please contact the API team!"] }));
+        }
+    } catch (err) {
+        console.log("Create Bid failed by api. Error => ", err);
+        yield put(createBidFailure({ detail: [err.detail] }));
+    }
+};
+
 const saga = function* () {
     // AUTH
     yield takeLatest(LOGIN_REQUEST, tryLoginSaga);
@@ -403,6 +434,9 @@ const saga = function* () {
     yield takeLatest(CREATE_PROJECT_REQUEST, tryCreateProjectSaga);
     yield takeLatest(EDIT_PROJECT_REQUEST, tryEditProjectSaga);
     yield takeLatest(DISCARD_PROJECT_REQUEST, tryDiscardProjectSaga);
+
+    // BIDS
+    yield takeLatest(CREATE_BID_REQUEST, tryCreateBidSaga);
 };
 
 export default saga;

@@ -124,6 +124,20 @@ class api {
             sendToken: true
         });
     };
+
+    createBid = (project_id, freelancer_id, offer, note) => {
+        return httpService.fetch({
+            path: "api/project/bid/add/",
+            method: "POST",
+            body: {
+                project_id,
+                freelancer_id,
+                offer,
+                note
+            },
+            sendToken: true
+        });
+    };
 }
 
 export default new api();

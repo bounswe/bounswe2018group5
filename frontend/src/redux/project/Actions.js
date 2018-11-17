@@ -26,7 +26,12 @@ import {
     DISCARD_PROJECT_FAILURE,
     DISCARD_PROJECT_REQUEST,
     DISCARD_PROJECT_RESET,
-    DISCARD_PROJECT_SUCCESS
+    DISCARD_PROJECT_SUCCESS,
+
+    CREATE_BID_FAILURE,
+    CREATE_BID_REQUEST,
+    CREATE_BID_RESET,
+    CREATE_BID_SUCCESS,
 } from "./actionTypes";
 
 export const tryGetProjects = () => ({
@@ -135,4 +140,25 @@ export const discardProjectFailure = errorData => ({
 });
 export const discardProjectReset = () => ({
     type: DISCARD_PROJECT_RESET
+});
+
+export const tryCreateBid = (project_id, freelancer_id, offer, note) => ({
+    type: CREATE_BID_REQUEST,
+    payload: {
+        project_id,
+        freelancer_id,
+        offer,
+        note
+    }
+});
+export const createBidSuccess = res => ({
+    type: CREATE_BID_SUCCESS,
+    payload: res
+});
+export const createBidFailure = errorData => ({
+    type: CREATE_BID_FAILURE,
+    payload: errorData
+});
+export const createBidReset = () => ({
+    type: CREATE_BID_RESET
 });

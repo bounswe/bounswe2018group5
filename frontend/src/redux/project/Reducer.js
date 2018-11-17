@@ -26,7 +26,12 @@ import {
     DELETE_PROJECT_RESET,
     DELETE_PROJECT_FAILURE,
     DELETE_PROJECT_SUCCESS,
-    DELETE_PROJECT_REQUEST
+    DELETE_PROJECT_REQUEST,
+
+    CREATE_BID_FAILURE,
+    CREATE_BID_REQUEST,
+    CREATE_BID_RESET,
+    CREATE_BID_SUCCESS,
 } from "./actionTypes";
 
 const initialState = {
@@ -63,6 +68,11 @@ const initialState = {
     discardProjectHasError: false,
     discardProjectCompleted: false,
     discardProjectError: "",
+
+    createBidInProgress: false,
+    createBidHasError: false,
+    createBidCompleted: false,
+    createBidError: "",
 };
 
 export default function(state = initialState, action) {
@@ -261,6 +271,38 @@ export default function(state = initialState, action) {
             discardProjectInProgress: false,
             discardProjectHasError: false,
             discardProjectCompleted: false
+        };
+    }
+
+    if (action.type === CREATE_BID_REQUEST) {
+        return {
+            ...state,
+            createBidInProgress: true,
+            createBidHasError: false,
+            createBidCompleted: false
+        };
+    } else if (action.type === CREATE_BID_SUCCESS) {
+        return {
+            ...state,
+            response: payload.response,
+            createBidInProgress: false,
+            createBidHasError: false,
+            createBidCompleted: true
+        };
+    } else if (action.type === CREATE_BID_FAILURE) {
+        return {
+            ...state,
+            createBidInProgress: false,
+            createBidHasError: true,
+            createBidCompleted: true,
+            createBidError: payload.detail[0]
+        };
+    } else if (action.type === CREATE_BID_RESET) {
+        return {
+            ...state,
+            createBidInProgress: false,
+            createBidHasError: false,
+            createBidCompleted: false
         };
     }
 
