@@ -8,7 +8,10 @@ import {
     DISCARD_PROJECT_REQUEST, 
     GET_PROJECTS_REQUEST, 
     GET_PROJECT_REQUEST, 
-    GET_OWN_PROJECTS_REQUEST
+    GET_OWN_PROJECTS_REQUEST,
+    CREATE_BID_REQUEST,
+    ACCEPT_BID_REQUEST,
+    DISCARD_BID_REQUEST, 
 } from "../project/actionTypes";
 import {
     getProjectsFailure, 
@@ -23,6 +26,12 @@ import {
     discardProjectFailure,
     getOwnProjectsFailure, 
     getOwnProjectsSuccess,
+    createBidSuccess,
+    createBidFailure,
+    acceptBidSuccess,
+    acceptBidFailure,
+    discardBidSuccess,
+    discardBidFailure,
 } from "../project/Actions";
 import {loginSuccess, loginFailure, registerFailure, registerSuccess} from "../auth/Actions";
 import {
@@ -384,6 +393,90 @@ const tryDiscardProjectSaga = function* (action) {
     }
 };
 
+const tryCreateBidSaga = function* (action) {
+    try {
+        const { project_id, freelancer_id, offer, note } = action.payload;
+
+        const createBidResponse = yield call(api.createBid, project_id, freelancer_id, offer, note);
+
+        if (createBidResponse) {
+            console.log("createBidResponse", createBidResponse);
+
+            if (createBidResponse.status === 200) {
+                yield put(createBidSuccess(createBidResponse.responseBody));
+            } else if (createBidResponse.status === 400) {
+                console.log("Something wrong! Got a status 400", createBidResponse.responseBody);
+                yield put(createBidFailure(createBidResponse.responseBody));
+            } else {
+                console.log("Something wrong! Got an unknown status.", createBidResponse);
+                yield put(createBidFailure({ detail: ["Unknown status. Check console!"] }));
+            }
+        } else {
+            console.log("Create Bid failed by api. No response !");
+            yield put(createBidFailure({ detail: ["No response fetched. Please contact the API team!"] }));
+        }
+    } catch (err) {
+        console.log("Create Bid failed by api. Error => ", err);
+        yield put(createBidFailure({ detail: [err.detail] }));
+    }
+};
+
+const tryAcceptBidSaga = function* (action) {
+    try {
+        const { bid_id } = action.payload;
+
+        const acceptBidResponse = yield call(api.acceptBid, bid_id);
+
+        if (acceptBidResponse) {
+            console.log("acceptBidResponse", acceptBidResponse);
+
+            if (acceptBidResponse.status === 200) {
+                yield put(acceptBidSuccess(acceptBidResponse.responseBody));
+            } else if (acceptBidResponse.status === 400) {
+                console.log("Something wrong! Got a status 400", acceptBidResponse.responseBody);
+                yield put(acceptBidFailure(acceptBidResponse.responseBody));
+            } else {
+                console.log("Something wrong! Got an unknown status.", acceptBidResponse);
+                yield put(acceptBidFailure({ detail: ["Unknown status. Check console!"] }));
+            }
+        } else {
+            console.log("accept Bid failed by api. No response !");
+            yield put(acceptBidFailure({ detail: ["No response fetched. Please contact the API team!"] }));
+        }
+    } catch (err) {
+        console.log("accept Bid failed by api. Error => ", err);
+        yield put(acceptBidFailure({ detail: [err.detail] }));
+    }
+};
+
+const tryDiscardBidSaga = function* (action) {
+    try {
+        const { bid_id } = action.payload;
+
+        const discardBidResponse = yield call(api.discardBid, bid_id);
+
+        if (discardBidResponse) {
+            console.log("discardBidResponse", discardBidResponse);
+
+            if (discardBidResponse.status === 200) {
+                yield put(discardBidSuccess(discardBidResponse.responseBody));
+            } else if (discardBidResponse.status === 400) {
+                console.log("Something wrong! Got a status 400", discardBidResponse.responseBody);
+                yield put(discardBidFailure(discardBidResponse.responseBody));
+            } else {
+                console.log("Something wrong! Got an unknown status.", discardBidResponse);
+                yield put(discardBidFailure({ detail: ["Unknown status. Check console!"] }));
+            }
+        } else {
+            console.log("discard Bid failed by api. No response !");
+            yield put(discardBidFailure({ detail: ["No response fetched. Please contact the API team!"] }));
+        }
+    } catch (err) {
+        console.log("discard Bid failed by api. Error => ", err);
+        yield put(discardBidFailure({ detail: [err.detail] }));
+    }
+};
+
 const saga = function* () {
     // AUTH
     yield takeLatest(LOGIN_REQUEST, tryLoginSaga);
@@ -403,6 +496,11 @@ const saga = function* () {
     yield takeLatest(CREATE_PROJECT_REQUEST, tryCreateProjectSaga);
     yield takeLatest(EDIT_PROJECT_REQUEST, tryEditProjectSaga);
     yield takeLatest(DISCARD_PROJECT_REQUEST, tryDiscardProjectSaga);
+
+    // BIDS
+    yield takeLatest(CREATE_BID_REQUEST, tryCreateBidSaga);
+    yield takeLatest(DISCARD_BID_REQUEST, tryDiscardBidSaga);
+    yield takeLatest(ACCEPT_BID_REQUEST, tryAcceptBidSaga);
 };
 
 export default saga;

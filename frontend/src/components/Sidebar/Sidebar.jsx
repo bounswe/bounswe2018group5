@@ -20,7 +20,7 @@ import image from "assets/img/sidebar.jpg";
 
 import sidebarStyle from "material-dashboard-react/dist/assets/jss/material-dashboard-react/components/sidebarStyle";
 
-import {removeCookie, LOGGEDIN_COOKIE, TOKEN_COOKIE} from "services/cookies";
+import { removeCookie, LOGGEDIN_COOKIE, TOKEN_COOKIE, LOGGEDIN_USERID_COOKIE} from "services/cookies";
 import {connect} from "react-redux";
 import { logout } from "redux/auth/Actions.js";
 
@@ -42,6 +42,7 @@ class Sidebar extends Component {
         if (logout) {
             removeCookie(TOKEN_COOKIE);
             removeCookie(LOGGEDIN_COOKIE);
+            removeCookie(LOGGEDIN_USERID_COOKIE);
             history.push("/");
         }
     }
