@@ -26,7 +26,20 @@ import {
     DISCARD_PROJECT_FAILURE,
     DISCARD_PROJECT_REQUEST,
     DISCARD_PROJECT_RESET,
-    DISCARD_PROJECT_SUCCESS
+    DISCARD_PROJECT_SUCCESS,
+
+    CREATE_BID_FAILURE,
+    CREATE_BID_REQUEST,
+    CREATE_BID_RESET,
+    CREATE_BID_SUCCESS,
+    DISCARD_BID_FAILURE,
+    DISCARD_BID_REQUEST,
+    DISCARD_BID_RESET,
+    DISCARD_BID_SUCCESS,
+    ACCEPT_BID_FAILURE,
+    ACCEPT_BID_REQUEST,
+    ACCEPT_BID_RESET,
+    ACCEPT_BID_SUCCESS,
 } from "./actionTypes";
 
 export const tryGetProjects = () => ({
@@ -136,3 +149,61 @@ export const discardProjectFailure = errorData => ({
 export const discardProjectReset = () => ({
     type: DISCARD_PROJECT_RESET
 });
+
+export const tryCreateBid = (project_id, freelancer_id, offer, note) => ({
+    type: CREATE_BID_REQUEST,
+    payload: {
+        project_id,
+        freelancer_id,
+        offer,
+        note
+    }
+});
+export const createBidSuccess = res => ({
+    type: CREATE_BID_SUCCESS,
+    payload: res
+});
+export const createBidFailure = errorData => ({
+    type: CREATE_BID_FAILURE,
+    payload: errorData
+});
+export const createBidReset = () => ({
+    type: CREATE_BID_RESET
+});
+
+export const tryAcceptBid = (bid_id) => ({
+    type: ACCEPT_BID_REQUEST,
+    payload: {
+        bid_id
+    }
+});
+export const acceptBidSuccess = res => ({
+    type: ACCEPT_BID_SUCCESS,
+    payload: res
+});
+export const acceptBidFailure = errorData => ({
+    type: ACCEPT_BID_FAILURE,
+    payload: errorData
+});
+export const acceptBidReset = () => ({
+    type: ACCEPT_BID_RESET
+});
+
+export const tryDiscardBid = (bid_id) => ({
+    type: DISCARD_BID_REQUEST,
+    payload: {
+        bid_id
+    }
+});
+export const discardBidSuccess = res => ({
+    type: DISCARD_BID_SUCCESS,
+    payload: res
+});
+export const discardBidFailure = errorData => ({
+    type: DISCARD_BID_FAILURE,
+    payload: errorData
+});
+export const discardBidReset = () => ({
+    type: DISCARD_BID_RESET
+});
+

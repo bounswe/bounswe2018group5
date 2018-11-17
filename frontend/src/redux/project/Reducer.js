@@ -26,7 +26,20 @@ import {
     DELETE_PROJECT_RESET,
     DELETE_PROJECT_FAILURE,
     DELETE_PROJECT_SUCCESS,
-    DELETE_PROJECT_REQUEST
+    DELETE_PROJECT_REQUEST,
+
+    CREATE_BID_FAILURE,
+    CREATE_BID_REQUEST,
+    CREATE_BID_RESET,
+    CREATE_BID_SUCCESS,
+    DISCARD_BID_FAILURE,
+    DISCARD_BID_REQUEST,
+    DISCARD_BID_RESET,
+    DISCARD_BID_SUCCESS,
+    ACCEPT_BID_FAILURE,
+    ACCEPT_BID_REQUEST,
+    ACCEPT_BID_RESET,
+    ACCEPT_BID_SUCCESS,
 } from "./actionTypes";
 
 const initialState = {
@@ -63,6 +76,21 @@ const initialState = {
     discardProjectHasError: false,
     discardProjectCompleted: false,
     discardProjectError: "",
+
+    createBidInProgress: false,
+    createBidHasError: false,
+    createBidCompleted: false,
+    createBidError: "",
+
+    discardBidInProgress: false,
+    discardBidHasError: false,
+    discardBidCompleted: false,
+    discardBidError: "",
+
+    acceptBidInProgress: false,
+    acceptBidHasError: false,
+    acceptBidCompleted: false,
+    acceptBidError: "",
 };
 
 export default function(state = initialState, action) {
@@ -261,6 +289,102 @@ export default function(state = initialState, action) {
             discardProjectInProgress: false,
             discardProjectHasError: false,
             discardProjectCompleted: false
+        };
+    }
+
+    if (action.type === CREATE_BID_REQUEST) {
+        return {
+            ...state,
+            createBidInProgress: true,
+            createBidHasError: false,
+            createBidCompleted: false
+        };
+    } else if (action.type === CREATE_BID_SUCCESS) {
+        return {
+            ...state,
+            response: payload.response,
+            createBidInProgress: false,
+            createBidHasError: false,
+            createBidCompleted: true
+        };
+    } else if (action.type === CREATE_BID_FAILURE) {
+        return {
+            ...state,
+            createBidInProgress: false,
+            createBidHasError: true,
+            createBidCompleted: true,
+            createBidError: payload.detail[0]
+        };
+    } else if (action.type === CREATE_BID_RESET) {
+        return {
+            ...state,
+            createBidInProgress: false,
+            createBidHasError: false,
+            createBidCompleted: false
+        };
+    }
+
+    if (action.type === ACCEPT_BID_REQUEST) {
+        return {
+            ...state,
+            acceptBidInProgress: true,
+            acceptBidHasError: false,
+            acceptBidCompleted: false
+        };
+    } else if (action.type === ACCEPT_BID_SUCCESS) {
+        return {
+            ...state,
+            response: payload.response,
+            acceptBidInProgress: false,
+            acceptBidHasError: false,
+            acceptBidCompleted: true
+        };
+    } else if (action.type === ACCEPT_BID_FAILURE) {
+        return {
+            ...state,
+            acceptBidInProgress: false,
+            acceptBidHasError: true,
+            acceptBidCompleted: true,
+            acceptBidError: payload.detail[0]
+        };
+    } else if (action.type === ACCEPT_BID_RESET) {
+        return {
+            ...state,
+            acceptBidInProgress: false,
+            acceptBidHasError: false,
+            acceptBidCompleted: false
+        };
+    }
+
+    if (action.type === DISCARD_BID_REQUEST) {
+        return {
+            ...state,
+            discardBidInProgress: true,
+            discardBidHasError: false,
+            discardBidCompleted: false
+        };
+    } else if (action.type === DISCARD_BID_SUCCESS) {
+        return {
+            ...state,
+            response: payload.response,
+            discardBidInProgress: false,
+            discardBidHasError: false,
+            discardBidCompleted: true
+        };
+    } else if (action.type === DISCARD_BID_FAILURE) {
+        return {
+            ...state,
+            discardBidInProgress: false,
+            discardBidHasError: true,
+            discardBidCompleted: true,
+            discardBidError: payload.detail[0]
+        };
+    } else if (action.type === DISCARD_BID_RESET) {
+        return {
+            ...state,
+            discardBidInProgress: false,
+            discardBidHasError: false,
+            discardBidCompleted: false
         };
     }
 
