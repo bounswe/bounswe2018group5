@@ -1,6 +1,6 @@
 import React, { Component} from "react";
 import {Route, Redirect} from "react-router-dom";
-import {getCookie, removeCookie, LOGGEDIN_COOKIE, TOKEN_COOKIE} from "services/cookies";
+import { getCookie, setCookie, removeCookie, LOGGEDIN_COOKIE, TOKEN_COOKIE, LOGGEDIN_USERID_COOKIE } from "services/cookies";
 import connect from "react-redux/es/connect/connect";
 import { tryGetProfile } from "redux/user/Actions.js";
 import { logout } from "redux/auth/Actions.js";
@@ -12,13 +12,18 @@ class PrivateRoute extends Component {
 
     componentDidUpdate(prevProps, prevState) {
         const { history } = this.props;
-        const { getProfileInProgress, getProfileHasError, getProfileCompleted, response } = this.props.user;
+        const { getProfileInProgress, getProfileHasError, getProfileCompleted, response, user} = this.props.user;
 
-        if (!getProfileInProgress && !getProfileHasError && getProfileCompleted && !response) {
-            removeCookie(TOKEN_COOKIE);
-            removeCookie(LOGGEDIN_COOKIE);
-            this.props.logout();
-            history.push("/");
+        if (!getProfileInProgress && !getProfileHasError && getProfileCompleted) {
+            if(!response) {
+                removeCookie(TOKEN_COOKIE);
+                removeCookie(LOGGEDIN_COOKIE);
+                removeCookie(LOGGEDIN_USERID_COOKIE)
+                this.props.logout();
+                history.push("/");
+            } else {
+                setCookie(LOGGEDIN_USERID_COOKIE, user.id, { path: "/" });
+            }
         }
     }
 

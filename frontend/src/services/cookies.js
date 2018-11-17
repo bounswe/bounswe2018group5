@@ -4,6 +4,7 @@ const cookies = new Cookies();
 
 export const TOKEN_COOKIE = "TOKEN_COOKIE";
 export const LOGGEDIN_COOKIE = "LOGGEDIN_COOKIE";
+export const LOGGEDIN_USERID_COOKIE = "LOGGEDIN_USERID_COOKIE";
 
 export const setCookie = (key, value) => {
     return cookies.set(key, value, { path: "/" });
