@@ -98,7 +98,7 @@ class ProjectPage extends Component {
                     let cell1, cell2, cell3, color;
                     if (user_id === this.state.project.owner.id) {
                         cell1 = <TableCell>{prop.note}</TableCell>;
-                        cell2 = <TableCell>actions</TableCell>;
+                        cell2 = <TableCell><BidDropdown bid_info={prop} /></TableCell>;
                         if (prop.status === -1) {
                             color = "#d9534f";
                         } else if (prop.status === 0) {
@@ -123,8 +123,8 @@ class ProjectPage extends Component {
                             <TableCell>{prop.freelancer.full_name}</TableCell>
                             <TableCell numeric>{prop.rate}</TableCell>
                             {cell1}
-                            {cell2}
                             {cell3}
+                            {cell2}
                         </TableRow>
                     );
                 })}
@@ -171,8 +171,8 @@ class ProjectPage extends Component {
                                                 <TableCell>Bid Owner</TableCell>
                                                 <TableCell numeric>Bid Owner's Rate</TableCell>
                                                 {tableCol1}
-                                                {tableCol2}
                                                 {tableCol3}
+                                                {tableCol2}
                                             </TableRow>
                                         </TableHead>
                                         {bids}
