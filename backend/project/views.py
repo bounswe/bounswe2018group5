@@ -286,6 +286,9 @@ def accept_bid(request):
                 other_bids = Bid.objects.filter(project=bid.project)
                 other_bids.update(status=2, updated_at=datetime.now)
                 bid.update(status=1, updated_at=datetime.now)
+                bid.project.freelancer_id = bid.freelancer
+                bid.project.status = 1
+                bid.project.save()
                 return JsonResponse({'response': True})
             except Exception as e:
                 return JsonResponse({'response': False, 'error': str(e)})
