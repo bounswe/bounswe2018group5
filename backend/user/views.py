@@ -191,3 +191,39 @@ def update_user(request):
         "response": False,
         "error": request.method
     })
+
+
+@csrf_exempt
+def add_rating(request):
+    if request.method == 'POST':
+        token = request.META.get('HTTP_AUTHORIZATION', None)
+        if token and authentication.is_authenticated(token):
+            body = json.loads(request.body.decode('utf-8'))
+            user_id = authentication.get_user_id(token)
+
+            project = models.Project.objects.get(body['project_id'])
+            new_rating = Rating()
+
+            if user_id == str(project.owner_id.id):
+                new_rating.rater = project.owner_id
+                new_rating.rated = project.freelancer_id
+            elif user_id == str(project.freelancer_id.id):
+                new_rating.rater = project.freelancer_id
+                new_rating.rated = project.owner_id
+            else:
+                return JsonResponse({'response': False, 'error': "Not allowed to add rating for this project"})
+
+            try:
+                new_rating.project = project
+                new_rating.value = body['value']
+                new_rating.comment = body['comment']
+                new_rating.save()
+                return JsonResponse({'response': True})
+            except Exception as e:
+                return JsonResponse({'response': False, 'error': str(e)})
+        else:
+            return JsonResponse({"response": False, "error": "Unauthorized"})
+    return JsonResponse({
+        "response": False,
+        "error": "wrong request method"
+    })
