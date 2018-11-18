@@ -11,6 +11,8 @@ from datetime import datetime
 import os
 import re
 from django.core import validators
+from api.utils import *
+
 
 def hash_password(password):
     if not re.match(r'[A-Za-z0-9]{8,}', password):  # Upper and lower case letters and numbers, 8 characters
@@ -22,21 +24,6 @@ def hash_password(password):
 def check_password(hashed_password, user_password):
     password, salt = hashed_password.split(':')
     return password == hashlib.sha256(salt.encode() + user_password.encode()).hexdigest()
-
-
-def user_json(user):
-    obj = {}
-    obj['id'] = str(user.id)
-    obj['full_name'] = user.full_name
-    obj['username'] = user.username
-    obj['email'] = user.email
-    obj['type'] = user.type
-    obj['gender'] = user.gender
-    obj['bio'] = user.bio
-    obj['profile_image'] = user.profile_image
-    obj['created_at'] = user.created_at
-    obj['updated_at'] = user.updated_at
-    return obj
 
 
 def modify_user(json, user):
