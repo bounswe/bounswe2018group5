@@ -6,11 +6,14 @@ from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
 from . import authentication
 import json
-from .models import User, DoesNotExist
 from datetime import datetime
 import os
 import re
 from django.core import validators
+from api.utils import *
+from .models import User, DoesNotExist, Rating
+from project import models
+
 
 def hash_password(password):
     if not re.match(r'[A-Za-z0-9]{8,}', password):  # Upper and lower case letters and numbers, 8 characters
@@ -22,21 +25,6 @@ def hash_password(password):
 def check_password(hashed_password, user_password):
     password, salt = hashed_password.split(':')
     return password == hashlib.sha256(salt.encode() + user_password.encode()).hexdigest()
-
-
-def user_json(user):
-    obj = {}
-    obj['id'] = str(user.id)
-    obj['full_name'] = user.full_name
-    obj['username'] = user.username
-    obj['email'] = user.email
-    obj['type'] = user.type
-    obj['gender'] = user.gender
-    obj['bio'] = user.bio
-    obj['profile_image'] = user.profile_image
-    obj['created_at'] = user.created_at
-    obj['updated_at'] = user.updated_at
-    return obj
 
 
 def modify_user(json, user):
@@ -107,7 +95,7 @@ def get_user(request, user_id):
         if token and authentication.is_authenticated(token):
             user = User.objects.get(id=user_id)
             try:
-                return JsonResponse({"response": True, "user": user_json(user)})
+                return JsonResponse({"response": True, "user": user_json(user, user_id=authentication.get_user_id(token))})
             except Exception as e:
                 return JsonResponse({'response': False, 'error': str(e)})
         else:
@@ -126,7 +114,7 @@ def get_current_user(request):
             user_id = authentication.get_user_id(token)
             user = User.objects.get(id=user_id)
             try:
-                return JsonResponse({"response": True, "user": user_json(user)})
+                return JsonResponse({"response": True, "user": user_json(user, user_id)})
             except Exception as e:
                 return JsonResponse({'response': False, 'error': str(e)})
         else:
@@ -203,4 +191,62 @@ def update_user(request):
     return JsonResponse({
         "response": False,
         "error": request.method
+    })
+
+
+# Inputs: project_id, value, comment
+@csrf_exempt
+def add_rating(request):
+    if request.method == 'POST':
+        token = request.META.get('HTTP_AUTHORIZATION', None)
+        if token and authentication.is_authenticated(token):
+            body = json.loads(request.body.decode('utf-8'))
+            user_id = authentication.get_user_id(token)
+
+            project = models.Project.objects.get(id=body['project_id'])
+            new_rating = Rating()
+
+            if user_id == str(project.owner_id.id):
+                new_rating.rater = project.owner_id
+                new_rating.rated = project.freelancer_id
+            elif user_id == str(project.freelancer_id.id):
+                new_rating.rater = project.freelancer_id
+                new_rating.rated = project.owner_id
+            else:
+                return JsonResponse({'response': False, 'error': "Not allowed to add rating for this project"})
+
+            try:
+                new_rating.project = project
+                new_rating.value = body['value']
+                new_rating.comment = body['comment']
+                new_rating.save()
+                return JsonResponse({'response': True})
+            except Exception as e:
+                return JsonResponse({'response': False, 'error': str(e)})
+        else:
+            return JsonResponse({"response": False, "error": "Unauthorized"})
+    return JsonResponse({
+        "response": False,
+        "error": "wrong request method"
+    })
+
+
+# Inputs: project_id, value, comment
+@csrf_exempt
+def get_rating(request, rating_id):
+    if request.method == 'GET':
+        token = request.META.get('HTTP_AUTHORIZATION', None)
+        if token and authentication.is_authenticated(token):
+            # body = json.loads(request.body.decode('utf-8'))
+            user_id = authentication.get_user_id(token)
+            try:
+                rating = Rating.objects.get(id=rating_id)
+                return JsonResponse({'response': True, 'rating': rating_json(rating, user_id, "rating")})
+            except Exception as e:
+                return JsonResponse({'response': False, 'error': str(e)})
+        else:
+            return JsonResponse({"response": False, "error": "Unauthorized"})
+    return JsonResponse({
+        "response": False,
+        "error": "wrong request method"
     })
