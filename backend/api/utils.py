@@ -1,6 +1,8 @@
 from project import models as project_models
+from user import models as user_models
+from django.db.models import Avg, Window
 
-def user_json(user):
+def user_json(user, user_id=""):
     obj = {}
     obj['id'] = str(user.id)
     obj['full_name'] = user.full_name
@@ -12,6 +14,19 @@ def user_json(user):
     obj['profile_image'] = user.profile_image
     obj['created_at'] = user.created_at
     obj['updated_at'] = user.updated_at
+    ratings_rater = user_models.Rating.objects.filter(rater=user)
+    ratings_rated = user_models.Rating.objects.filter(rated=user)
+    obj['ratings'] = {}
+    obj['ratings']['rater'] = []
+    for rating in ratings_rater:
+        obj['ratings']['rater'].append(rating_json(rating, user_id, "user"))
+    obj['ratings']['rated'] = []
+    for rating in ratings_rated:
+        obj['ratings']['rated'].append(rating_json(rating, user_id, "user"))
+    avg1 = ratings_rater.average('value')
+    avg2 = ratings_rated.average('value')
+    obj['avg_rating'] = (avg1 + avg2) / 2
+
     return obj
 
 
@@ -33,6 +48,10 @@ def project_json(project,user_id):
     obj['bids'] = []
     for bid in bids:
         obj['bids'].append(bid_json(bid, user_id))
+    ratings = user_models.Rating.objects.filter(project=project)
+    obj['ratings'] = []
+    for rating in ratings:
+        obj['ratings'].append(rating_json(rating, user_id, from_model= "project"))
     return obj
 
 
@@ -52,6 +71,30 @@ def bid_json(bid, user_id):
     obj['status'] = bid.status
     obj['created_at'] = bid.created_at
     obj['updated_at'] = bid.updated_at
+    return obj
+
+def rating_json(rating, user_id, from_model):
+    obj = {}
+    obj['id'] = str(rating.id)
+    if from_model != "project":
+        obj['project'] = {}
+        obj['project']['id'] = str(rating.project.id)
+        obj['project']['title'] = rating.project.title
+
+    obj['rater'] = {}
+    obj['rater']['id'] = str(rating.rater.id)
+    obj['rater']['full_name'] = str(rating.rater.full_name)
+    obj['rater']['username'] = str(rating.rater.username)
+    obj['rater']['profile_image'] = str(rating.rater.profile_image)
+
+    obj['rated'] = {}
+    obj['rated']['id'] = str(rating.rated.id)
+    obj['rated']['full_name'] = str(rating.rated.full_name)
+    obj['rated']['username'] = str(rating.rated.username)
+    obj['rated']['profile_image'] = str(rating.rated.profile_image)
+
+    obj['value'] = rating.value
+    obj['comment'] = rating.comment
     return obj
 
 def hide_name(name):

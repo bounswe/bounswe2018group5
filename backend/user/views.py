@@ -6,12 +6,13 @@ from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
 from . import authentication
 import json
-from .models import User, DoesNotExist
 from datetime import datetime
 import os
 import re
 from django.core import validators
 from api.utils import *
+from .models import User, DoesNotExist, Rating
+from project import models
 
 
 def hash_password(password):
@@ -94,7 +95,7 @@ def get_user(request, user_id):
         if token and authentication.is_authenticated(token):
             user = User.objects.get(id=user_id)
             try:
-                return JsonResponse({"response": True, "user": user_json(user)})
+                return JsonResponse({"response": True, "user": user_json(user, user_id=authentication.get_user_id(token))})
             except Exception as e:
                 return JsonResponse({'response': False, 'error': str(e)})
         else:
@@ -113,7 +114,7 @@ def get_current_user(request):
             user_id = authentication.get_user_id(token)
             user = User.objects.get(id=user_id)
             try:
-                return JsonResponse({"response": True, "user": user_json(user)})
+                return JsonResponse({"response": True, "user": user_json(user, user_id)})
             except Exception as e:
                 return JsonResponse({'response': False, 'error': str(e)})
         else:
@@ -193,6 +194,7 @@ def update_user(request):
     })
 
 
+# Inputs: project_id, value, comment
 @csrf_exempt
 def add_rating(request):
     if request.method == 'POST':
@@ -201,7 +203,7 @@ def add_rating(request):
             body = json.loads(request.body.decode('utf-8'))
             user_id = authentication.get_user_id(token)
 
-            project = models.Project.objects.get(body['project_id'])
+            project = models.Project.objects.get(id=body['project_id'])
             new_rating = Rating()
 
             if user_id == str(project.owner_id.id):
@@ -219,6 +221,27 @@ def add_rating(request):
                 new_rating.comment = body['comment']
                 new_rating.save()
                 return JsonResponse({'response': True})
+            except Exception as e:
+                return JsonResponse({'response': False, 'error': str(e)})
+        else:
+            return JsonResponse({"response": False, "error": "Unauthorized"})
+    return JsonResponse({
+        "response": False,
+        "error": "wrong request method"
+    })
+
+
+# Inputs: project_id, value, comment
+@csrf_exempt
+def get_rating(request, rating_id):
+    if request.method == 'GET':
+        token = request.META.get('HTTP_AUTHORIZATION', None)
+        if token and authentication.is_authenticated(token):
+            # body = json.loads(request.body.decode('utf-8'))
+            user_id = authentication.get_user_id(token)
+            try:
+                rating = Rating.objects.get(id=rating_id)
+                return JsonResponse({'response': True, 'rating': rating_json(rating, user_id, "rating")})
             except Exception as e:
                 return JsonResponse({'response': False, 'error': str(e)})
         else:
