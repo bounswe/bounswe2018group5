@@ -23,9 +23,7 @@ def user_json(user, user_id=""):
     obj['ratings']['rated'] = []
     for rating in ratings_rated:
         obj['ratings']['rated'].append(rating_json(rating, user_id, "user"))
-    avg1 = ratings_rater.average('value')
-    avg2 = ratings_rated.average('value')
-    obj['avg_rating'] = (avg1 + avg2) / 2
+    obj['avg_rating'] = ratings_rated.average('value')
 
     return obj
 
