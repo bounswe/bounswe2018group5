@@ -282,10 +282,16 @@ def accept_bid(request):
         if token and authentication.is_authenticated(token):
             body = json.loads(request.body.decode('utf-8'))
             try:
+                user_id = authentication.get_user_id(token)
                 bid = Bid.objects.get(id=body['bid_id'])
+                if user_id != str(bid.project.owner_id.id):
+                    return JsonResponse({'response': False, 'error': "Only owner of the project can accept a bid"})
                 other_bids = Bid.objects.filter(project=bid.project)
                 other_bids.update(status=2, updated_at=datetime.now)
                 bid.update(status=1, updated_at=datetime.now)
+                bid.project.freelancer_id = bid.freelancer
+                bid.project.status = 1
+                bid.project.save()
                 return JsonResponse({'response': True})
             except Exception as e:
                 return JsonResponse({'response': False, 'error': str(e)})
