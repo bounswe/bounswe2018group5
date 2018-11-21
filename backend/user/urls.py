@@ -1,14 +1,12 @@
 from . import views
 from django.conf.urls import url
+from django.urls import path
 
 urlpatterns = [
-    url(r'^auth/login', views.login, name="login"),
-    url(r'^auth/register', views.register, name="register"),
-    url(r'^auth/logout', views.logout, name="logout"),
-    url(r'^profile/(?P<user_id>[a-z0-9,]*)/$', views.get_user, name="get_user"),
-    url(r'^profile/$', views.get_current_user, name="get_current_user"),
-    url(r'^profile/update', views.update_user, name="update_user"),
-    url(r'^profile/upload_image', views.upload_image, name="upload_image"),
-    url(r'^rating/add', views.add_rating, name="add_rating"),
-    url(r'^rating/get/(?P<rating_id>[a-z0-9]+)/$', views.get_rating, name="get_rating")
+    path('auth/login', views.login, name="login"),
+    path('auth/register', views.register, name="register"),
+    path('auth/logout', views.logout, name="logout"),
+    path('profile/', views.profile_handler, name="get_user"),
+    path('profile/upload_image/', views.upload_image, name="upload_image"),
+    path('rating/', views.rating_handler, name="add_rating"),
 ]
