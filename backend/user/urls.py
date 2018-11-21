@@ -8,5 +8,7 @@ urlpatterns = [
     url(r'^profile/(?P<user_id>[a-z0-9,]*)/$', views.get_user, name="get_user"),
     url(r'^profile/$', views.get_current_user, name="get_current_user"),
     url(r'^profile/update', views.update_user, name="update_user"),
-    url(r'^profile/upload_image', views.upload_image, name="upload_image")
+    url(r'^profile/upload_image', views.upload_image, name="upload_image"),
+    url(r'^rating/add', views.add_rating, name="add_rating"),
+    url(r'^rating/get/(?P<rating_id>[a-z0-9]+)/$', views.get_rating, name="get_rating")
 ]

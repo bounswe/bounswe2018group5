@@ -39,3 +39,16 @@ class User(BaseDocument):
     bio = StringField(max_length=400)
 
     meta = {'collection': 'users'}
+
+
+class Rating(BaseDocument):
+    def schema(self):
+        pass
+
+    project = ReferenceField('Project')
+    rated = ReferenceField('User')
+    rater = ReferenceField('User')
+    comment = StringField(max_length=2000, default="")
+    value = FloatField(min_value=0, max_value=5)
+
+    meta = {'collection': 'ratings'}
