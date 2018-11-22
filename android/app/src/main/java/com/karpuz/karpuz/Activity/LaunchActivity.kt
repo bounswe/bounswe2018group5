@@ -10,6 +10,13 @@ import com.karpuz.karpuz.Network.*
 import com.karpuz.karpuz.R
 import io.reactivex.disposables.CompositeDisposable
 import java.util.concurrent.TimeUnit
+import com.crashlytics.android.Crashlytics
+import io.fabric.sdk.android.Fabric
+import com.crashlytics.android.answers.Answers
+
+
+
+
 
 class LaunchActivity : AccountAuthenticatorActivity() {
 
@@ -21,6 +28,8 @@ class LaunchActivity : AccountAuthenticatorActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        Fabric.with(this, Crashlytics())
+        Fabric.with(this, Answers())
         setContentView(R.layout.activity_launch)
 
         val accountManager = AccountManager.get(this)
