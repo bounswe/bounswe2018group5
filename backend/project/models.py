@@ -31,8 +31,8 @@ class Project(BaseDocument):
     def schema(self):
         pass
 
-    owner_id = ReferenceField('User')
-    freelancer_id = ReferenceField('User')
+    owner = ReferenceField('User')
+    freelancer = ReferenceField('User')
     description = StringField(max_length=2000)
     title = StringField(max_length=50)
     budget = FloatField(min_value=0)

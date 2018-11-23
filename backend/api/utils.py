@@ -19,10 +19,10 @@ def user_json(user, user_id=""):
     obj['ratings'] = {}
     obj['ratings']['rater'] = []
     for rating in ratings_rater:
-        obj['ratings']['rater'].append(rating_json(rating, user_id, "user"))
+        obj['ratings']['rater'].append(rating_json(rating, "user"))
     obj['ratings']['rated'] = []
     for rating in ratings_rated:
-        obj['ratings']['rated'].append(rating_json(rating, user_id, "user"))
+        obj['ratings']['rated'].append(rating_json(rating, "user"))
     obj['avg_rating'] = ratings_rated.average('value')
 
     return obj
@@ -37,10 +37,9 @@ def project_json(project,user_id):
     obj['deadline'] = project.project_deadline
     obj['created_at'] = project.created_at
     obj['updated_at'] = project.updated_at
-    obj['owner'] = user_json(project.owner_id)
-    # obj['freelancer_id'] = "" if project.freelancer_id is None else str(project.freelancer_id.id)
-    obj['freelancer'] = None if project.freelancer_id is None \
-        else user_json(project.freelancer_id)
+    obj['owner'] = user_json(project.owner)
+    obj['freelancer'] = None if project.freelancer is None \
+        else user_json(project.freelancer)
     obj['status'] = project.status
     bids = project_models.Bid.objects.filter(project=project)
     obj['bids'] = []
@@ -49,7 +48,7 @@ def project_json(project,user_id):
     ratings = user_models.Rating.objects.filter(project=project)
     obj['ratings'] = []
     for rating in ratings:
-        obj['ratings'].append(rating_json(rating, user_id, from_model= "project"))
+        obj['ratings'].append(rating_json(rating, from_model= "project"))
     return obj
 
 
@@ -57,7 +56,7 @@ def bid_json(bid, user_id):
     obj = {}
     obj['bid_id'] = str(bid.id)
     obj['freelancer'] = {}
-    if (user_id == str(bid.project.owner_id.id)) or (user_id == str(bid.freelancer.id)):
+    if (user_id == str(bid.project.owner.id)) or (user_id == str(bid.freelancer.id)):
         obj['freelancer']['id'] = str(bid.freelancer.id)
         obj['freelancer']['full_name'] = str(bid.freelancer.full_name)
         obj['freelancer']['username'] = str(bid.freelancer.username)
@@ -71,7 +70,8 @@ def bid_json(bid, user_id):
     obj['updated_at'] = bid.updated_at
     return obj
 
-def rating_json(rating, user_id, from_model):
+
+def rating_json(rating, from_model):
     obj = {}
     obj['id'] = str(rating.id)
     if from_model != "project":

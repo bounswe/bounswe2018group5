@@ -88,33 +88,32 @@ def logout(request):
     return JsonResponse({'response': False})
 
 
+# GET: if user_id is provided, returns the specified user, otherwise returns the user that makes the request
+# PUT: updates the user
 @csrf_exempt
-def get_user(request, user_id):
+def profile_handler(request):
+    token = request.META.get('HTTP_AUTHORIZATION', None)
     if request.method == 'GET':
-        token = request.META.get('HTTP_AUTHORIZATION', None)
+        user_id = request.GET.get('user_id', '')
         if token and authentication.is_authenticated(token):
+            if user_id == '':
+                user_id = authentication.get_user_id(token)
             user = User.objects.get(id=user_id)
             try:
-                return JsonResponse({"response": True, "user": user_json(user, user_id=authentication.get_user_id(token))})
+                return JsonResponse({"response": True, "user": user_json(user, user_id)})
             except Exception as e:
                 return JsonResponse({'response': False, 'error': str(e)})
         else:
             return JsonResponse({"response": False, "error": "Unauthorized"})
-    return JsonResponse({
-        "response": False,
-        "error": "wrong request method"
-    })
-
-
-@csrf_exempt
-def get_current_user(request):
-    if request.method == 'GET':
-        token = request.META.get('HTTP_AUTHORIZATION', None)
+    elif request.method == 'PUT':
         if token and authentication.is_authenticated(token):
+            body = json.loads(request.body.decode('utf-8'))
             user_id = authentication.get_user_id(token)
             user = User.objects.get(id=user_id)
+            modify_user(body, user)
             try:
-                return JsonResponse({"response": True, "user": user_json(user, user_id)})
+                user.save()
+                return JsonResponse({"response": True})
             except Exception as e:
                 return JsonResponse({'response': False, 'error': str(e)})
         else:
@@ -194,27 +193,36 @@ def update_user(request):
     })
 
 
-# Inputs: project_id, value, comment
+# returns rating with given id if GET request, adds new rating if POST request
 @csrf_exempt
-def add_rating(request):
-    if request.method == 'POST':
-        token = request.META.get('HTTP_AUTHORIZATION', None)
+def rating_handler(request):
+    token = request.META.get('HTTP_AUTHORIZATION', None)
+    if request.method == 'GET':
+        rating_id = request.GET.get('id', '')
+        if rating_id == '':
+            return JsonResponse({"response": False, "error": "rating_id not provided"})
+        if token and authentication.is_authenticated(token):
+            try:
+                rating = Rating.objects.get(id=rating_id)
+                return JsonResponse({'response': True, 'rating': rating_json(rating, "rating")})
+            except Exception as e:
+                return JsonResponse({'response': False, 'error': str(e)})
+        else:
+            return JsonResponse({"response": False, "error": "Unauthorized"})
+    elif request.method == 'POST':
         if token and authentication.is_authenticated(token):
             body = json.loads(request.body.decode('utf-8'))
             user_id = authentication.get_user_id(token)
-
             project = models.Project.objects.get(id=body['project_id'])
             new_rating = Rating()
-
-            if user_id == str(project.owner_id.id):
-                new_rating.rater = project.owner_id
-                new_rating.rated = project.freelancer_id
-            elif user_id == str(project.freelancer_id.id):
-                new_rating.rater = project.freelancer_id
-                new_rating.rated = project.owner_id
+            if user_id == str(project.owner.id):
+                new_rating.rater = project.owner
+                new_rating.rated = project.freelancer
+            elif user_id == str(project.freelancer.id):
+                new_rating.rater = project.freelancer
+                new_rating.rated = project.owner
             else:
                 return JsonResponse({'response': False, 'error': "Not allowed to add rating for this project"})
-
             try:
                 new_rating.project = project
                 new_rating.value = body['value']
@@ -225,28 +233,8 @@ def add_rating(request):
                 return JsonResponse({'response': False, 'error': str(e)})
         else:
             return JsonResponse({"response": False, "error": "Unauthorized"})
-    return JsonResponse({
-        "response": False,
-        "error": "wrong request method"
-    })
-
-
-# Inputs: project_id, value, comment
-@csrf_exempt
-def get_rating(request, rating_id):
-    if request.method == 'GET':
-        token = request.META.get('HTTP_AUTHORIZATION', None)
-        if token and authentication.is_authenticated(token):
-            # body = json.loads(request.body.decode('utf-8'))
-            user_id = authentication.get_user_id(token)
-            try:
-                rating = Rating.objects.get(id=rating_id)
-                return JsonResponse({'response': True, 'rating': rating_json(rating, user_id, "rating")})
-            except Exception as e:
-                return JsonResponse({'response': False, 'error': str(e)})
-        else:
-            return JsonResponse({"response": False, "error": "Unauthorized"})
-    return JsonResponse({
-        "response": False,
-        "error": "wrong request method"
-    })
+    else:
+        return JsonResponse({
+            "response": False,
+            "error": "wrong request method"
+        })
