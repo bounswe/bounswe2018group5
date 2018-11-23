@@ -53,9 +53,19 @@ class HttpService {
         });
     }
 
+    _buildUrl (base, key, value) {
+        var sep = (base.indexOf('?') > -1) ? '&' : '?';
+        return base + sep + key + '=' + value;
+    }
+
     _createUrl(requestOptions) {
         let url = requestOptions.apiPath || Configuration.API_URL;
         url = requestOptions.path ? url + requestOptions.path : url;
+        if (requestOptions.params) {
+            for (var key in requestOptions.params) {
+                url = this._buildUrl(url, key, requestOptions.params[key]);
+            };
+        }
         return url;
     }
 }
