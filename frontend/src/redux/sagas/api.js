@@ -41,15 +41,18 @@ class api {
     };
     getUserProfile = (user_id) => {
         return httpService.fetch({
-            path: "api/user/profile/" + user_id + "/",
+            path: "api/user/profile/",
+            params: {
+                user_id
+            },
             method: "GET",
             sendToken: true
         });
     };
     changePassword = (password) => {
         return httpService.fetch({
-            path: "api/user/profile/update",
-            method: "POST",
+            path: "api/user/profile/",
+            method: "PUT",
             body: {
                 password
             },
@@ -58,8 +61,8 @@ class api {
     };
     updateProfile = (full_name, gender, bio, type) => {
         return httpService.fetch({
-            path: "api/user/profile/update",
-            method: "POST",
+            path: "api/user/profile/",
+            method: "PUT",
             body: {
                 full_name,
                 gender,
@@ -71,28 +74,31 @@ class api {
     };
     getProjects = () => {
         return httpService.fetch({
-            path: "api/project/get/all",
+            path: "api/project/",
             method: "GET",
             sendToken: true
         });
     };
     getProject = (project_id) => {
         return httpService.fetch({
-            path: "api/project/get/" + project_id + "/",
+            path: "api/project/",
             method: "GET",
+            params: {
+                ids: project_id
+            },
             sendToken: true
         });
     };
     getOwnProjects = () => {
         return httpService.fetch({
-            path: "api/project/get/own",
+            path: "api/project/own/",
             method: "GET",
             sendToken: true
         });
     };
     createProject = (title, description, project_deadline, budget) => {
         return httpService.fetch({
-            path: "api/project/create",
+            path: "api/project/",
             method: "POST",
             body: {
                 title,
@@ -105,8 +111,8 @@ class api {
     };
     editProject = (project_id, description) => {
         return httpService.fetch({
-            path: "api/project/update/",
-            method: "POST",
+            path: "api/project/",
+            method: "PUT",
             body: {
                 project_id,
                 description
@@ -116,10 +122,11 @@ class api {
     };
     discardProject = (project_id) => {
         return httpService.fetch({
-            path: "api/project/discard",
-            method: "POST",
+            path: "api/project/",
+            method: "PUT",
             body: {
-                project_ids: [project_id]
+                project_id,
+                status: -1
             },
             sendToken: true
         });
@@ -131,7 +138,7 @@ class api {
             method: "POST",
             body: {
                 project_id,
-                freelancer_id,
+                freelancer: freelancer_id,
                 offer,
                 note
             },
