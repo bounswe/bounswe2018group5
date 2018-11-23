@@ -1,6 +1,6 @@
 #!/bin/sh
 
-cp ./backend/.env .env
+cat ./frontend/.env ./backend/.env > .env
 
 docker-compose -f frontend/docker-compose.yml  down
 docker-compose -f backend/docker-compose.yml down
