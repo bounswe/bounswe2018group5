@@ -24,7 +24,10 @@ def user_json(user, user_id=""):
     for rating in ratings_rated:
         obj['ratings']['rated'].append(rating_json(rating, "user"))
     obj['avg_rating'] = ratings_rated.average('value')
-
+    portfolios = user_models.Portfolio.objects.filter(user=user)
+    obj['portfolios'] = []
+    for portfolio in portfolios:
+        obj['portfolios'].append(portfolio_json(portfolio,from_model="user"))
     return obj
 
 
@@ -101,3 +104,19 @@ def hide_name(name):
     for div in divs:
         res = res + div[0] + len(div[1:])*"*" + " "
     return res
+
+def portfolio_json(portfolio, from_model=""):
+    obj = {}
+    obj['id'] = str(portfolio.id)
+    obj['title'] = portfolio.title
+    obj['description'] = portfolio.description
+    obj['date'] = portfolio.date
+    if from_model != "user":
+        obj['user'] = {
+            'id': str(portfolio.user.id),
+            'username': portfolio.user.username,
+            'full_name': portfolio.user.full_name,
+            'profile_image': portfolio.user.profile_image
+        }
+    obj['project_id'] = portfolio.project_id
+    return obj
