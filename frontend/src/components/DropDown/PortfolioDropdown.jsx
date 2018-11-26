@@ -51,7 +51,10 @@ class PortfolioDropdown extends React.Component {
             alertOpen: false,
             place: 'tr',
             notificationMessage: '',
-            description: ''
+            description: '',
+            title: '',
+            date: null,
+            project_id: null
         };
     }
 
@@ -150,6 +153,16 @@ class PortfolioDropdown extends React.Component {
     }
   }
 
+  componentDidMount() {
+    const { classes, portfolio_info } = this.props;
+    this.setState({
+      title: portfolio_info.title,
+      description: portfolio_info.description,
+      date: portfolio_info.date,
+      project_id: portfolio_info.project_id
+    });
+  }
+
   render() {
     const { classes, portfolio_info } = this.props;
     const { open } = this.state;
@@ -159,7 +172,7 @@ class PortfolioDropdown extends React.Component {
           buttonRef={node => {
             this.anchorEl = node;
           }}
-          color={"white"}
+          color={"black"}
           justIcon
           simple
           aria-owns={open ? "menu-list-grow" : null}
@@ -239,7 +252,7 @@ class PortfolioDropdown extends React.Component {
               onClick={() => this.handleModalClose("editModal")}>
               <Close className={classes.modalClose} />
             </IconButton>
-            <h4 className={classes.modalTitle}>Edit Project</h4>
+            <h4 className={classes.modalTitle}>Edit Portfolio</h4>
           </DialogTitle>
           <DialogContent
             id="modal-slide-description"
@@ -256,8 +269,7 @@ class PortfolioDropdown extends React.Component {
                       }}
                       inputProps={{
                         type: "text",
-                        value: portfolio_info.title,
-                        disabled: true,
+                        defaultValue: portfolio_info.title,
                         onChange: event => this.setState({ title: event.target.value })
                       }}
                     />
@@ -270,21 +282,24 @@ class PortfolioDropdown extends React.Component {
                         fullWidth: true
                       }}
                       inputProps={{
+                        disabled: false,
                         multiline: true,
                         rows: 3,
+                        defaultValue: portfolio_info.description,
                         onChange: event => this.setState({ description: event.target.value }),
                       }}
                     />
                   </GridItem>
                   <GridItem xs={12} sm={12} md={6}>
                     <DateTimePicker
-                      placeholder={"Project Deadline"}
-                      value={portfolio_info.project_deadline}
-                      onChange={event => this.setState({ project_deadline: event.format("YYYY-MM-DD") })}
-                      disabled={true}
+                      before={true}
+                      placeholder={"Portfolio Finish Date"}
+                      value={portfolio_info.date}
+                      onChange={event => this.setState({ date: event.format("YYYY-MM-DD") })}
+                      disabled={false}
                     />
                   </GridItem>
-                  <GridItem xs={12} sm={12} md={6}>
+                  {/* <GridItem xs={12} sm={12} md={6}>
                     <CustomInput
                       labelText="Budget"
                       id="budget"
@@ -298,7 +313,7 @@ class PortfolioDropdown extends React.Component {
                         onChange: event => this.setState({ budget: event.target.value })
                       }}
                     />
-                  </GridItem>
+                  </GridItem> */}
                 </GridContainer>
               </GridItem>
             </GridContainer>
@@ -309,7 +324,7 @@ class PortfolioDropdown extends React.Component {
               onClick={event => this.handleEditPortfolio(event)}
               color={'primary'}
             >
-              Edit Project
+              Edit Portfolio
                         </Button>
           </DialogActions>
         </Dialog>
