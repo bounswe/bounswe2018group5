@@ -162,7 +162,26 @@ def project_handler(request):
                 return JsonResponse({'response': False, 'error': str(e)})
         else:
             return JsonResponse({"response": False, "error": "Unauthorized"})
-
+    elif request.method == 'DELETE':
+        project_id = request.GET.get('id', '')
+        token = request.META.get('HTTP_AUTHORIZATION', None)
+        if token and authentication.is_authenticated(token):
+            user_id = authentication.get_user_id(token)
+            try:
+                project = Project.objects.get(id=project_id)
+                if str(project.user.id) == user_id:
+                    project.delete()
+                else:
+                    return JsonResponse({'response': False, 'error': "Not allowed to delete this project"})
+                return JsonResponse({"response": True})
+            except Exception as e:
+                return JsonResponse({'response': False, 'error': str(e)})
+        else:
+            return JsonResponse({"response": False, "error": "Unauthorized"})
+    return JsonResponse({
+        "response": False,
+        "error": "wrong request method"
+    })
 
 @csrf_exempt
 def update_project(request):
