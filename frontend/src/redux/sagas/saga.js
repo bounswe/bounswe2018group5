@@ -1,7 +1,16 @@
 import {call, put, takeLatest} from "redux-saga/effects";
 
 import {LOGIN_REQUEST, LOGOUT_REQUEST, REGISTER_REQUEST} from "../auth/actionTypes";
-import {CHANGE_PASSWORD_REQUEST, GET_PROFILE_REQUEST, GET_USER_PROFILE_REQUEST, UPDATE_PROFILE_REQUEST} from "../user/actionTypes";
+import {
+    CHANGE_PASSWORD_REQUEST, 
+    GET_PROFILE_REQUEST, 
+    GET_USER_PROFILE_REQUEST, 
+    UPDATE_PROFILE_REQUEST,
+    GET_PORTFOLIO_REQUEST,
+    POST_PORTFOLIO_REQUEST,
+    PUT_PORTFOLIO_REQUEST,
+    DELETE_PORTFOLIO_REQUEST,
+} from "../user/actionTypes";
 import { 
     CREATE_PROJECT_REQUEST, 
     EDIT_PROJECT_REQUEST, 
@@ -42,7 +51,15 @@ import {
     changePasswordSuccess,
     changePasswordFailure,
     updateProfileFailure,
-    updateProfileSuccess
+    updateProfileSuccess,
+    getPortfolioFailure,
+    getPortfolioSuccess,
+    postPortfolioSuccess,
+    postPortfolioFailure,
+    putPortfolioSuccess,
+    putPortfolioFailure,
+    deletePortfolioFailure,
+    deletePortfolioSuccess
 } from "../user/Actions";
 
 
@@ -477,6 +494,118 @@ const tryDiscardBidSaga = function* (action) {
     }
 };
 
+const tryGetPortfolioSaga = function* (action) {
+    try {
+        const { portfolio_id } = action.payload;
+
+        const getPortfolioResponse = yield call(api.getPortfolio, portfolio_id);
+
+        if (getPortfolioResponse) {
+            console.log("getPortfolioResponse", getPortfolioResponse);
+
+            if (getPortfolioResponse.status === 200) {
+                yield put(getPortfolioSuccess(getPortfolioResponse.responseBody));
+            } else if (getPortfolioResponse.status === 400) {
+                console.log("Something wrong! Got a status 400", getPortfolioResponse.responseBody);
+                yield put(getPortfolioFailure(getPortfolioResponse.responseBody));
+            } else {
+                console.log("Something wrong! Got an unknown status.", getPortfolioResponse);
+                yield put(getPortfolioFailure({ detail: ["Unknown status. Check console!"] }));
+            }
+        } else {
+            console.log("get Portfolio failed by api. No response !");
+            yield put(getPortfolioFailure({ detail: ["No response fetched. Please contact the API team!"] }));
+        }
+    } catch (err) {
+        console.log("get Portfolio failed by api. Error => ", err);
+        yield put(getPortfolioFailure({ detail: [err.detail] }));
+    }
+};
+
+const tryDeletePortfolioSaga = function* (action) {
+    try {
+        const { portfolio_id } = action.payload;
+
+        const deletePortfolioResponse = yield call(api.deletePortfolio, portfolio_id);
+
+        if (deletePortfolioResponse) {
+            console.log("deletePortfolioResponse", deletePortfolioResponse);
+
+            if (deletePortfolioResponse.status === 200) {
+                yield put(deletePortfolioSuccess(deletePortfolioResponse.responseBody));
+            } else if (deletePortfolioResponse.status === 400) {
+                console.log("Something wrong! Got a status 400", deletePortfolioResponse.responseBody);
+                yield put(deletePortfolioFailure(deletePortfolioResponse.responseBody));
+            } else {
+                console.log("Something wrong! Got an unknown status.", deletePortfolioResponse);
+                yield put(deletePortfolioFailure({ detail: ["Unknown status. Check console!"] }));
+            }
+        } else {
+            console.log("delete Portfolio failed by api. No response !");
+            yield put(deletePortfolioFailure({ detail: ["No response fetched. Please contact the API team!"] }));
+        }
+    } catch (err) {
+        console.log("delete Portfolio failed by api. Error => ", err);
+        yield put(deletePortfolioFailure({ detail: [err.detail] }));
+    }
+};
+
+const tryPostPortfolioSaga = function* (action) {
+    try {
+        const { title, description, date, project_id } = action.payload;
+
+        const postPortfolioResponse = yield call(api.postPortfolio, title, description, date, project_id);
+
+        if (postPortfolioResponse) {
+            console.log("postPortfolioResponse", postPortfolioResponse);
+
+            if (postPortfolioResponse.status === 200) {
+                yield put(postPortfolioSuccess(postPortfolioResponse.responseBody));
+            } else if (postPortfolioResponse.status === 400) {
+                console.log("Something wrong! Got a status 400", postPortfolioResponse.responseBody);
+                yield put(postPortfolioFailure(postPortfolioResponse.responseBody));
+            } else {
+                console.log("Something wrong! Got an unknown status.", postPortfolioResponse);
+                yield put(postPortfolioFailure({ detail: ["Unknown status. Check console!"] }));
+            }
+        } else {
+            console.log("post Portfolio failed by api. No response !");
+            yield put(postPortfolioFailure({ detail: ["No response fetched. Please contact the API team!"] }));
+        }
+    } catch (err) {
+        console.log("post Portfolio failed by api. Error => ", err);
+        yield put(postPortfolioFailure({ detail: [err.detail] }));
+    }
+};
+
+const tryPutPortfolioSaga = function* (action) {
+    try {
+        const { portfolio_id, title, description, date, project_id } = action.payload;
+
+        const putPortfolioResponse = yield call(api.putPortfolio, portfolio_id, title, description, date, project_id);
+
+        if (putPortfolioResponse) {
+            console.log("putPortfolioResponse", putPortfolioResponse);
+
+            if (putPortfolioResponse.status === 200) {
+                yield put(putPortfolioSuccess(putPortfolioResponse.responseBody));
+            } else if (putPortfolioResponse.status === 400) {
+                console.log("Something wrong! Got a status 400", putPortfolioResponse.responseBody);
+                yield put(putPortfolioFailure(putPortfolioResponse.responseBody));
+            } else {
+                console.log("Something wrong! Got an unknown status.", putPortfolioResponse);
+                yield put(putPortfolioFailure({ detail: ["Unknown status. Check console!"] }));
+            }
+        } else {
+            console.log("put Portfolio failed by api. No response !");
+            yield put(putPortfolioFailure({ detail: ["No response fetched. Please contact the API team!"] }));
+        }
+    } catch (err) {
+        console.log("put Portfolio failed by api. Error => ", err);
+        yield put(putPortfolioFailure({ detail: [err.detail] }));
+    }
+};
+
 const saga = function* () {
     // AUTH
     yield takeLatest(LOGIN_REQUEST, tryLoginSaga);
@@ -501,6 +630,12 @@ const saga = function* () {
     yield takeLatest(CREATE_BID_REQUEST, tryCreateBidSaga);
     yield takeLatest(DISCARD_BID_REQUEST, tryDiscardBidSaga);
     yield takeLatest(ACCEPT_BID_REQUEST, tryAcceptBidSaga);
+
+    // PORTFOLIO
+    yield takeLatest(GET_PORTFOLIO_REQUEST, tryGetPortfolioSaga);
+    yield takeLatest(POST_PORTFOLIO_REQUEST, tryPostPortfolioSaga);
+    yield takeLatest(PUT_PORTFOLIO_REQUEST, tryPutPortfolioSaga);
+    yield takeLatest(DELETE_PORTFOLIO_REQUEST, tryDeletePortfolioSaga);
 };
 
 export default saga;

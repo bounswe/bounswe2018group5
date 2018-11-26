@@ -52,17 +52,18 @@ class ProjectsPage extends React.Component {
 
     handleToManageProject(project, type) {
         var { projects_client } = this.state;
+        let new_projects_client;
         if (type === 'edit') {
-            projects_client = projects_client.map((prop, key) => {
+            new_projects_client = projects_client.map((prop, key) => {
                 return project.project_id === prop.project_id ? project : prop;
             })
         } else if (type === 'delete') {
-            projects_client = projects_client.map((prop, key) => {
+            new_projects_client = projects_client.map((prop, key) => {
                 return project.project_id === prop.project_id ? null : prop;
             })
         }
         this.setState({
-            projects_client: projects_client,
+            projects_client: new_projects_client,
         });
     }
 
