@@ -11,7 +11,7 @@ import os
 import re
 from django.core import validators
 from api.utils import *
-from .models import User, DoesNotExist, Rating
+from .models import User, DoesNotExist, Rating, Portfolio
 from project import models
 
 
@@ -38,6 +38,13 @@ def modify_user(json, user):
     user.updated_at = datetime.now()
     return user
 
+def modify_portfolio(json, portfolio):
+    portfolio.title = json['title'] if 'title' in json else portfolio.title
+    portfolio.description = json['description'] if 'description' in json else portfolio.description
+    portfolio.date = json['date'] if 'date' in json else portfolio.date
+    portfolio.project_id = json['project_id'] if 'project_id' in json else portfolio.project_id
+    portfolio.updated_at = datetime.now()
+    return portfolio
 
 @csrf_exempt
 def login(request):
@@ -238,3 +245,77 @@ def rating_handler(request):
             "response": False,
             "error": "wrong request method"
         })
+
+
+@csrf_exempt
+def portfolio_handler(request):
+    if request.method == 'POST':
+        token = request.META.get('HTTP_AUTHORIZATION', None)
+        if token and authentication.is_authenticated(token):
+            body = json.loads(request.body.decode('utf-8'))
+            user_id = authentication.get_user_id(token)
+            new_portfolio = Portfolio()
+            new_portfolio.title = body['title']
+            new_portfolio.description = body['description']
+            new_portfolio.date = body['date'] if "date" in body else None
+            if "project_id" in body:
+                new_portfolio.project_id = body['project_id']
+            new_portfolio.user = User.objects.get(id=user_id)
+            try:
+                new_portfolio.save()
+                return JsonResponse({"response": True, "portfolio": portfolio_json(new_portfolio)})
+            except Exception as e:
+                return JsonResponse({'response': False, 'error': str(e), "das": portfolio_json(new_portfolio)})
+        else:
+            return JsonResponse({"response": False, "error": "Unauthorized"})
+
+    if request.method == 'PUT':
+        token = request.META.get('HTTP_AUTHORIZATION', None)
+        if token and authentication.is_authenticated(token):
+            body = json.loads(request.body.decode('utf-8'))
+            user_id = authentication.get_user_id(token)
+            try:
+                portfolio = Portfolio.objects.get(id=body["portfolio_id"])
+                if str(portfolio.user.id) == user_id:
+                    portfolio = modify_portfolio(body, portfolio)
+                    portfolio.save()
+                    return JsonResponse({"response": True, "portfolio": portfolio_json(portfolio)})
+                else:
+                    return JsonResponse({'response': False, 'error': "Not allowed to edit this portfolio"})
+            except Exception as e:
+                return JsonResponse({'response': False, 'error': str(e)})
+        else:
+            return JsonResponse({"response": False, "error": "Unauthorized"})
+
+    if request.method == 'GET':
+        portfolio_id = request.GET.get('id', '')
+        token = request.META.get('HTTP_AUTHORIZATION', None)
+        if token and authentication.is_authenticated(token):
+            try:
+                portfolio = Portfolio.objects.get(id=portfolio_id)
+                return JsonResponse({"response": True, "portfolio": portfolio_json(portfolio)})
+            except Exception as e:
+                return JsonResponse({'response': False, 'error': str(e)})
+        else:
+            return JsonResponse({"response": False, "error": "Unauthorized"})
+
+    if request.method == 'DELETE':
+        portfolio_id = request.GET.get('id', '')
+        token = request.META.get('HTTP_AUTHORIZATION', None)
+        if token and authentication.is_authenticated(token):
+            user_id = authentication.get_user_id(token)
+            try:
+                portfolio = Portfolio.objects.get(id=portfolio_id)
+                if str(portfolio.user.id) == user_id:
+                    portfolio.delete()
+                else:
+                    return JsonResponse({'response': False, 'error': "Not allowed to delete this portfolio"})
+                return JsonResponse({"response": True})
+            except Exception as e:
+                return JsonResponse({'response': False, 'error': str(e)})
+        else:
+            return JsonResponse({"response": False, "error": "Unauthorized"})
+    return JsonResponse({
+        "response": False,
+        "error": "wrong request method"
+    })
