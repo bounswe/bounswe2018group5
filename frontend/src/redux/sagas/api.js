@@ -173,7 +173,7 @@ class api {
             path: "api/user/portfolio/",
             method: "GET",
             params: {
-                portfolio_id
+                id: portfolio_id
             },
             sendToken: true
         });
@@ -183,7 +183,7 @@ class api {
         return httpService.fetch({
             path: "api/user/portfolio/",
             method: "POST",
-            params: {
+            body: {
                 title,
                 description,
                 date,
@@ -197,7 +197,7 @@ class api {
         return httpService.fetch({
             path: "api/user/portfolio/",
             method: "POST",
-            params: {
+            body: {
                 portfolio_id,
                 title,
                 description,
@@ -213,7 +213,7 @@ class api {
             path: "api/user/portfolio/",
             method: "DELETE",
             params: {
-                portfolio_id
+                id: portfolio_id
             },
             sendToken: true
         });

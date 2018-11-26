@@ -106,9 +106,11 @@ export const updateProfileReset = () => ({
     type: UPDATE_PROFILE_RESET
 });
 
-export const tryGetPortfolio = () => ({
+export const tryGetPortfolio = (portfolio_id) => ({
     type: GET_PORTFOLIO_REQUEST,
-    payload: {}
+    payload: {
+        portfolio_id
+    }
 });
 export const getPortfolioSuccess = res => ({
     type: GET_PORTFOLIO_SUCCESS,
@@ -122,9 +124,14 @@ export const getPortfolioReset = () => ({
     type: GET_PORTFOLIO_RESET
 });
 
-export const tryPostPortfolio = () => ({
+export const tryPostPortfolio = (title, description, date, project_id) => ({
     type: POST_PORTFOLIO_REQUEST,
-    payload: {}
+    payload: {
+        title, 
+        description, 
+        date, 
+        project_id
+    }
 });
 export const postPortfolioSuccess = res => ({
     type: POST_PORTFOLIO_SUCCESS,
@@ -138,9 +145,15 @@ export const postPortfolioReset = () => ({
     type: POST_PORTFOLIO_RESET
 });
 
-export const tryPutPortfolio = () => ({
+export const tryPutPortfolio = (portfolio_id, title, description, date, project_id) => ({
     type: PUT_PORTFOLIO_REQUEST,
-    payload: {}
+    payload: {
+        portfolio_id,
+        title, 
+        description, 
+        date, 
+        project_id
+    }
 });
 export const putPortfolioSuccess = res => ({
     type: PUT_PORTFOLIO_SUCCESS,
@@ -154,9 +167,11 @@ export const putPortfolioReset = () => ({
     type: PUT_PORTFOLIO_RESET
 });
 
-export const tryDeletePortfolio = () => ({
+export const tryDeletePortfolio = (portfolio_id) => ({
     type: DELETE_PORTFOLIO_REQUEST,
-    payload: {}
+    payload: {
+        portfolio_id
+    }
 });
 export const deletePortfolioSuccess = res => ({
     type: DELETE_PORTFOLIO_SUCCESS,

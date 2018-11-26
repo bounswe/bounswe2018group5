@@ -271,6 +271,7 @@ export default function(state = initialState, action) {
         return {
             ...state,
             response: payload.response,
+            project: payload.project,
             discardProjectInProgress: false,
             discardProjectHasError: false,
             discardProjectCompleted: true

@@ -33,19 +33,18 @@ import modalStyle from "material-kit-react/assets/jss/material-kit-react/modalSt
 
 import connect from "react-redux/es/connect/connect";
 
-import { tryEditProject, editProjectReset, tryDiscardProject, discardProjectReset } from "redux/project/Actions.js";
+import { tryPutPortfolio, postPortfolioReset, tryDeletePortfolio, deletePortfolioReset } from "redux/user/Actions.js";
 
 
 function Transition(props) {
     return <Slide direction="down" {...props} />;
 }
 
-class ProjectDropdown extends React.Component {
+class PortfolioDropdown extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             open: false,
-            discardModal: false,
             deleteModal: false,
             editModal: false,
             cardAnimaton: "cardHidden",
@@ -80,34 +79,29 @@ class ProjectDropdown extends React.Component {
     this.setState({ open: false });
   };
 
-  handleEditProject(event) {
-    const { description} = this.state;
-    this.props.tryEditProject(this.props.project_info.project_id, description);
-    this.setState({ project_id: this.props.project_info.project_id });
+  handleEditPortfolio(event) {
+    const { title, description, date, project_id } = this.state;
+    this.props.tryPutPortfolio(this.props.portfolio_info.portfolio_id, title, description, date, project_id);
+    this.setState({ portfolio_id: this.props.portfolio_info.portfolio_id });
     event.preventDefault();
   }
 
-  handleDeleteProject(event) {
-    const { title, description, project_deadline, budget } = this.state;
-    this.props.tryCreateProject(title, description, project_deadline, parseFloat(budget));
-    event.preventDefault();
-  }
-
-  handleDiscardProject(event) {
-    this.props.tryDiscardProject(this.props.project_info.project_id);
-    this.setState({ project_id: this.props.project_info.project_id});
+  handleDeletePortfolio(event) {
+    this.props.tryDeletePortfolio(this.props.portfolio_info.portfolio_id);
+    this.setState({ portfolio_id: this.props.portfolio_info.portfolio_id });
     event.preventDefault();
   }
 
   componentDidUpdate(prevProps, prevState) {
-    const { editProjectInProgress, editProjectHasError, editProjectCompleted, response, project } = this.props.project;
-    if (!editProjectInProgress && !editProjectHasError && editProjectCompleted && this.state.project_id === this.props.project_info.project_id) {
+    const { putPortfolioInProgress, putPortfolioHasError, putPortfolioCompleted, response, portfolio } = this.props.user;
+    if (!putPortfolioInProgress && !putPortfolioHasError && putPortfolioCompleted && this.state.portfolio_id === this.props.portfolio_info.portfolio_id) {
       if (response) {
-        this.props.handleToUpdate(project, 'edit');
+        const new_portfolio = { ...portfolio, id: this.props.portfolio_info.portfolio_id };
+        this.props.handleToUpdate(new_portfolio, 'edit');
         this.setState({
           alertOpen: true,
           color: 'success',
-          notificationMessage: 'Your Project is successfully edited!'
+          notificationMessage: 'Your Portfolio is successfully edited!'
         });
         setTimeout(function () {
           this.setState({ alertOpen: false });
@@ -116,25 +110,26 @@ class ProjectDropdown extends React.Component {
         this.setState({
           alertOpen: true,
           color: 'danger',
-          notificationMessage: 'Your Project is not edited!'
+          notificationMessage: 'Your Portfolio is not edited!'
         });
         setTimeout(function () {
           this.setState({ alertOpen: false });
         }.bind(this), 6000);
       }
       this.handleModalClose("editModal");
-      this.setState({ project_id: null });
-      this.props.editProjectReset();
+      this.setState({ portfolio_id: null });
+      this.props.postPortfolioReset();
     }
 
-    const { discardProjectInProgress, discardProjectHasError, discardProjectCompleted } = this.props.project;
-    if (!discardProjectInProgress && !discardProjectHasError && discardProjectCompleted && this.state.project_id === this.props.project_info.project_id) {
+    const { deletePortfolioInProgress, deletePortfolioHasError, deletePortfolioCompleted } = this.props.user;
+    if (!deletePortfolioInProgress && !deletePortfolioHasError && deletePortfolioCompleted && this.state.portfolio_id === this.props.portfolio_info.portfolio_id) {
       if (response) {
-        this.props.handleToUpdate(project, 'edit');
+        const portfolio = { ...this.props.portfolio_info, id: this.props.portfolio_info.portfolio_id};
+        this.props.handleToUpdate(portfolio, 'delete');
         this.setState({
           alertOpen: true,
           color: 'success',
-          notificationMessage: 'Your Project is successfully discarded!'
+          notificationMessage: 'Your Portfolio is successfully deleted!'
         });
         setTimeout(function () {
           this.setState({ alertOpen: false });
@@ -143,20 +138,20 @@ class ProjectDropdown extends React.Component {
         this.setState({
           alertOpen: true,
           color: 'danger',
-          notificationMessage: 'Your Project is not discarded!'
+          notificationMessage: 'Your Portfolio is not deleted!'
         });
         setTimeout(function () {
           this.setState({ alertOpen: false });
         }.bind(this), 6000);
       }
-      this.handleModalClose("discardModal");
-      this.setState({ project_id: null });
-      this.props.discardProjectReset();
+      this.handleModalClose("deleteModal");
+      this.setState({ portfolio_id: null });
+      this.props.deletePortfolioReset();
     }
   }
 
   render() {
-    const { classes, project_info } = this.props;
+    const { classes, portfolio_info } = this.props;
     const { open } = this.state;
     return (
       <div className={classes.manager}>
@@ -207,12 +202,6 @@ class ProjectDropdown extends React.Component {
                         className={classes.dropdownItem}
                     >
                       Edit
-                    </MenuItem>
-                    <MenuItem
-                      onClick={() => this.handleClickOpen("discardModal")}
-                        className={classes.dropdownItem}
-                    >
-                      Discard
                     </MenuItem>
                     <MenuItem
                       onClick={() => this.handleClickOpen("deleteModal")}
@@ -267,7 +256,7 @@ class ProjectDropdown extends React.Component {
                       }}
                       inputProps={{
                         type: "text",
-                        value: project_info.title,
+                        value: portfolio_info.title,
                         disabled: true,
                         onChange: event => this.setState({ title: event.target.value })
                       }}
@@ -290,7 +279,7 @@ class ProjectDropdown extends React.Component {
                   <GridItem xs={12} sm={12} md={6}>
                     <DateTimePicker
                       placeholder={"Project Deadline"}
-                      value={project_info.project_deadline}
+                      value={portfolio_info.project_deadline}
                       onChange={event => this.setState({ project_deadline: event.format("YYYY-MM-DD") })}
                       disabled={true}
                     />
@@ -305,7 +294,7 @@ class ProjectDropdown extends React.Component {
                       inputProps={{
                         type: 'number',
                         disabled: true,
-                        value: project_info.budget,
+                        value: portfolio_info.budget,
                         onChange: event => this.setState({ budget: event.target.value })
                       }}
                     />
@@ -317,7 +306,7 @@ class ProjectDropdown extends React.Component {
           <DialogActions
             className={classes.modalFooter + " " + classes.modalFooterCenter}>
             <Button
-              onClick={event => this.handleEditProject(event)}
+              onClick={event => this.handleEditPortfolio(event)}
               color={'primary'}
             >
               Edit Project
@@ -325,51 +314,7 @@ class ProjectDropdown extends React.Component {
           </DialogActions>
         </Dialog>
 
-        <Dialog
-            classes={{
-                root: classes.center,
-                paper: classes.modal
-            }}
-            open={this.state.discardModal}
-            TransitionComponent={Transition}
-            keepMounted
-            onClose={() => this.handleModalClose("discardModal")}
-            aria-labelledby="modal-slide-title"
-            aria-describedby="modal-slide-description">
-            <DialogTitle
-                id="classic-modal-slide-title"
-                disableTypography
-                className={classes.modalHeader}>
-                <IconButton
-                    className={classes.modalCloseButton}
-                    key="close"
-                    aria-label="Close"
-                    color="inherit"
-                    onClick={() => this.handleModalClose("discardModal")}>
-                    <Close className={classes.modalClose} />
-                </IconButton>
-                <h4 className={classes.modalTitle}>Discard Project</h4>
-            </DialogTitle>
-            <DialogContent
-                id="modal-slide-description"
-                className={classes.modalBody}>
-            <h5>Are you sure you want to discard "{project_info.title}"?</h5>
-            </DialogContent>
-            <DialogActions
-                className={classes.modalFooter + " " + classes.modalFooterCenter}>
-                <Button
-                    onClick={() => this.handleModalClose("discardModal")}
-                >
-                    No
-        </Button>
-                <Button
-                    onClick={event => this.handleDiscardProject(event)}
-                    color="danger">
-                    Yes
-        </Button>
-            </DialogActions>
-        </Dialog>
-        <Dialog
+       <Dialog
           classes={{
             root: classes.center,
             paper: classes.modal
@@ -397,7 +342,7 @@ class ProjectDropdown extends React.Component {
           <DialogContent
             id="modal-slide-description"
             className={classes.modalBody}>
-            <h5>Are you sure you want to delete "{project_info.title}"?</h5>
+            <h5>Are you sure you want to delete "{portfolio_info.title}"?</h5>
           </DialogContent>
           <DialogActions
             className={classes.modalFooter + " " + classes.modalFooterCenter}>
@@ -407,7 +352,7 @@ class ProjectDropdown extends React.Component {
               No
         </Button>
             <Button
-              onClick={event => this.handleDeleteProject(event)}
+              onClick={event => this.handleDeletePortfolio(event)}
               color="danger">
               Yes
         </Button>
@@ -432,18 +377,18 @@ const combinedStyles = combineStyles(dropdownStyle, modalStyle);
 
 function bindAction(dispatch) {
   return {
-    tryEditProject: (project_id, description) => dispatch(tryEditProject(project_id, description)),
-    editProjectReset: () => dispatch(editProjectReset()),
-    tryDiscardProject: (project_id) => dispatch(tryDiscardProject(project_id)),
-    discardProjectReset: () => dispatch(discardProjectReset())
+    tryPutPortfolio: (portfolio_id, title, description, date, project_id) => dispatch(tryPutPortfolio(portfolio_id, title, description, date, project_id)),
+    postPortfolioReset: () => dispatch(postPortfolioReset()),
+    tryDeletePortfolio: (portfolio_id) => dispatch(tryDeletePortfolio(portfolio_id)),
+    deletePortfolioReset: () => dispatch(deletePortfolioReset())
   };
 }
 
 const mapStateToProps = state => ({
-  project: state.project
+  user: state.user
 });
 
 export default connect(
   mapStateToProps,
   bindAction
-)(withStyles(combinedStyles)(ProjectDropdown));
+)(withStyles(combinedStyles)(PortfolioDropdown));

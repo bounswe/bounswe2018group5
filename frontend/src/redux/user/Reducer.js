@@ -36,6 +36,7 @@ import {
 const initialState = {
     user: "",
     response: false,
+    portfolio: "",
 
     getProfileInProgress: false,
     getProfileHasError: false,
@@ -223,6 +224,7 @@ export default function(state = initialState, action) {
         return {
             ...state,
             response: payload.response,
+            portfolio: payload.portfolio,
             getPortfolioInProgress: false,
             getPortfolioHasError: false,
             getPortfolioCompleted: true
@@ -255,7 +257,8 @@ export default function(state = initialState, action) {
     } else if (action.type === POST_PORTFOLIO_SUCCESS) {
         return {
             ...state,
-            response: payload.response,
+            response: payload.response, 
+            portfolio: payload.portfolio,
             postPortfolioInProgress: false,
             postPortfolioHasError: false,
             postPortfolioCompleted: true
@@ -289,6 +292,7 @@ export default function(state = initialState, action) {
         return {
             ...state,
             response: payload.response,
+            portfolio: payload.portfolio,
             putPortfolioInProgress: false,
             putPortfolioHasError: false,
             putPortfolioCompleted: true
