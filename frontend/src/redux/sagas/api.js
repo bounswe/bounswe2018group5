@@ -167,6 +167,57 @@ class api {
             sendToken: true
         });
     };
+
+    getPortfolio = (portfolio_id) => {
+        return httpService.fetch({
+            path: "api/user/portfolio/",
+            method: "GET",
+            params: {
+                portfolio_id
+            },
+            sendToken: true
+        });
+    };
+
+    postPortfolio = (title, description, date, project_id) => {
+        return httpService.fetch({
+            path: "api/user/portfolio/",
+            method: "POST",
+            params: {
+                title,
+                description,
+                date,
+                project_id
+            },
+            sendToken: true
+        });
+    };
+
+    putPortfolio = (portfolio_id, title, description, date, project_id) => {
+        return httpService.fetch({
+            path: "api/user/portfolio/",
+            method: "POST",
+            params: {
+                portfolio_id,
+                title,
+                description,
+                date,
+                project_id
+            },
+            sendToken: true
+        });
+    };
+
+    deletePortfolio = (portfolio_id) => {
+        return httpService.fetch({
+            path: "api/user/portfolio/",
+            method: "DELETE",
+            params: {
+                portfolio_id
+            },
+            sendToken: true
+        });
+    };
 }
 
 export default new api();

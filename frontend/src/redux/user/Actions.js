@@ -14,7 +14,23 @@ import {
     UPDATE_PROFILE_FAILURE,
     UPDATE_PROFILE_REQUEST,
     UPDATE_PROFILE_RESET,
-    UPDATE_PROFILE_SUCCESS
+    UPDATE_PROFILE_SUCCESS,
+    GET_PORTFOLIO_REQUEST,
+    GET_PORTFOLIO_SUCCESS,
+    GET_PORTFOLIO_FAILURE,
+    GET_PORTFOLIO_RESET,
+    POST_PORTFOLIO_REQUEST,
+    POST_PORTFOLIO_SUCCESS,
+    POST_PORTFOLIO_FAILURE,
+    POST_PORTFOLIO_RESET,
+    PUT_PORTFOLIO_REQUEST,
+    PUT_PORTFOLIO_SUCCESS,
+    PUT_PORTFOLIO_FAILURE,
+    PUT_PORTFOLIO_RESET,
+    DELETE_PORTFOLIO_REQUEST,
+    DELETE_PORTFOLIO_SUCCESS,
+    DELETE_PORTFOLIO_FAILURE,
+    DELETE_PORTFOLIO_RESET
 } from "./actionTypes";
 
 export const tryGetProfile = () => ({
@@ -88,4 +104,68 @@ export const updateProfileFailure = errorData => ({
 });
 export const updateProfileReset = () => ({
     type: UPDATE_PROFILE_RESET
+});
+
+export const tryGetPortfolio = () => ({
+    type: GET_PORTFOLIO_REQUEST,
+    payload: {}
+});
+export const getPortfolioSuccess = res => ({
+    type: GET_PORTFOLIO_SUCCESS,
+    payload: res
+});
+export const getPortfolioFailure = errorData => ({
+    type: GET_PORTFOLIO_FAILURE,
+    payload: errorData
+});
+export const getPortfolioReset = () => ({
+    type: GET_PORTFOLIO_RESET
+});
+
+export const tryPostPortfolio = () => ({
+    type: POST_PORTFOLIO_REQUEST,
+    payload: {}
+});
+export const postPortfolioSuccess = res => ({
+    type: POST_PORTFOLIO_SUCCESS,
+    payload: res
+});
+export const postPortfolioFailure = errorData => ({
+    type: POST_PORTFOLIO_FAILURE,
+    payload: errorData
+});
+export const postPortfolioReset = () => ({
+    type: POST_PORTFOLIO_RESET
+});
+
+export const tryPutPortfolio = () => ({
+    type: PUT_PORTFOLIO_REQUEST,
+    payload: {}
+});
+export const putPortfolioSuccess = res => ({
+    type: PUT_PORTFOLIO_SUCCESS,
+    payload: res
+});
+export const putPortfolioFailure = errorData => ({
+    type: PUT_PORTFOLIO_FAILURE,
+    payload: errorData
+});
+export const putPortfolioReset = () => ({
+    type: PUT_PORTFOLIO_RESET
+});
+
+export const tryDeletePortfolio = () => ({
+    type: DELETE_PORTFOLIO_REQUEST,
+    payload: {}
+});
+export const deletePortfolioSuccess = res => ({
+    type: DELETE_PORTFOLIO_SUCCESS,
+    payload: res
+});
+export const deletePortfolioFailure = errorData => ({
+    type: DELETE_PORTFOLIO_FAILURE,
+    payload: errorData
+});
+export const deletePortfolioReset = () => ({
+    type: DELETE_PORTFOLIO_RESET
 });

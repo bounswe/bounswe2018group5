@@ -14,7 +14,23 @@ import {
     UPDATE_PROFILE_SUCCESS,
     UPDATE_PROFILE_RESET,
     UPDATE_PROFILE_REQUEST,
-    UPDATE_PROFILE_FAILURE
+    UPDATE_PROFILE_FAILURE,
+    GET_PORTFOLIO_REQUEST,
+    GET_PORTFOLIO_SUCCESS,
+    GET_PORTFOLIO_FAILURE,
+    GET_PORTFOLIO_RESET,
+    POST_PORTFOLIO_REQUEST,
+    POST_PORTFOLIO_SUCCESS,
+    POST_PORTFOLIO_FAILURE,
+    POST_PORTFOLIO_RESET,
+    PUT_PORTFOLIO_REQUEST,
+    PUT_PORTFOLIO_SUCCESS,
+    PUT_PORTFOLIO_FAILURE,
+    PUT_PORTFOLIO_RESET,
+    DELETE_PORTFOLIO_REQUEST,
+    DELETE_PORTFOLIO_SUCCESS,
+    DELETE_PORTFOLIO_FAILURE,
+    DELETE_PORTFOLIO_RESET,
 } from "./actionTypes";
 
 const initialState = {
@@ -40,6 +56,26 @@ const initialState = {
     updateProfileHasError: false,
     updateProfileCompleted: false,
     updateProfileError: "",
+
+    getPortfolioInProgress: false,
+    getPortfolioHasError: false,
+    getPortfolioCompleted: false,
+    getPortfolioError: "",
+
+    postPortfolioInProgress: false,
+    postPortfolioHasError: false,
+    postPortfolioCompleted: false,
+    postPortfolioError: "",
+
+    putPortfolioInProgress: false,
+    putPortfolioHasError: false,
+    putPortfolioCompleted: false,
+    putPortfolioError: "",
+
+    deletePortfolioInProgress: false,
+    deletePortfolioHasError: false,
+    deletePortfolioCompleted: false,
+    deletePortfolioError: "",
 };
 
 export default function(state = initialState, action) {
@@ -173,6 +209,138 @@ export default function(state = initialState, action) {
             updateProfileInProgress: false,
             updateProfileHasError: false,
             updateProfileCompleted: false
+        };
+    }
+
+    if (action.type === GET_PORTFOLIO_REQUEST) {
+        return {
+            ...state,
+            getPortfolioInProgress: true,
+            getPortfolioHasError: false,
+            getPortfolioCompleted: false
+        };
+    } else if (action.type === GET_PORTFOLIO_SUCCESS) {
+        return {
+            ...state,
+            response: payload.response,
+            getPortfolioInProgress: false,
+            getPortfolioHasError: false,
+            getPortfolioCompleted: true
+        };
+    } else if (action.type === GET_PORTFOLIO_FAILURE) {
+        return {
+            ...state,
+            getPortfolioInProgress: false,
+            getPortfolioHasError: true,
+            getPortfolioCompleted: true,
+            getPortfolioError: payload.detail[0]
+        };
+    } else if (action.type === GET_PORTFOLIO_RESET) {
+        return {
+            ...state,
+            response: false,
+            getPortfolioInProgress: false,
+            getPortfolioHasError: false,
+            getPortfolioCompleted: false
+        };
+    }
+
+    if (action.type === POST_PORTFOLIO_REQUEST) {
+        return {
+            ...state,
+            postPortfolioInProgress: true,
+            postPortfolioHasError: false,
+            postPortfolioCompleted: false
+        };
+    } else if (action.type === POST_PORTFOLIO_SUCCESS) {
+        return {
+            ...state,
+            response: payload.response,
+            postPortfolioInProgress: false,
+            postPortfolioHasError: false,
+            postPortfolioCompleted: true
+        };
+    } else if (action.type === POST_PORTFOLIO_FAILURE) {
+        return {
+            ...state,
+            postPortfolioInProgress: false,
+            postPortfolioHasError: true,
+            postPortfolioCompleted: true,
+            postPortfolioError: payload.detail[0]
+        };
+    } else if (action.type === POST_PORTFOLIO_RESET) {
+        return {
+            ...state,
+            response: false,
+            postPortfolioInProgress: false,
+            postPortfolioHasError: false,
+            postPortfolioCompleted: false
+        };
+    }
+
+    if (action.type === PUT_PORTFOLIO_REQUEST) {
+        return {
+            ...state,
+            putPortfolioInProgress: true,
+            putPortfolioHasError: false,
+            putPortfolioCompleted: false
+        };
+    } else if (action.type === PUT_PORTFOLIO_SUCCESS) {
+        return {
+            ...state,
+            response: payload.response,
+            putPortfolioInProgress: false,
+            putPortfolioHasError: false,
+            putPortfolioCompleted: true
+        };
+    } else if (action.type === PUT_PORTFOLIO_FAILURE) {
+        return {
+            ...state,
+            putPortfolioInProgress: false,
+            putPortfolioHasError: true,
+            putPortfolioCompleted: true,
+            putPortfolioError: payload.detail[0]
+        };
+    } else if (action.type === PUT_PORTFOLIO_RESET) {
+        return {
+            ...state,
+            response: false,
+            putPortfolioInProgress: false,
+            putPortfolioHasError: false,
+            putPortfolioCompleted: false
+        };
+    }
+
+    if (action.type === DELETE_PORTFOLIO_REQUEST) {
+        return {
+            ...state,
+            deletePortfolioInProgress: true,
+            deletePortfolioHasError: false,
+            deletePortfolioCompleted: false
+        };
+    } else if (action.type === DELETE_PORTFOLIO_SUCCESS) {
+        return {
+            ...state,
+            response: payload.response,
+            deletePortfolioInProgress: false,
+            deletePortfolioHasError: false,
+            deletePortfolioCompleted: true
+        };
+    } else if (action.type === DELETE_PORTFOLIO_FAILURE) {
+        return {
+            ...state,
+            deletePortfolioInProgress: false,
+            deletePortfolioHasError: true,
+            deletePortfolioCompleted: true,
+            deletePortfolioError: payload.detail[0]
+        };
+    } else if (action.type === DELETE_PORTFOLIO_RESET) {
+        return {
+            ...state,
+            response: false,
+            deletePortfolioInProgress: false,
+            deletePortfolioHasError: false,
+            deletePortfolioCompleted: false
         };
     }
 
