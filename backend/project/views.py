@@ -16,6 +16,7 @@ def modify_project(json, project):
     project.freelancer = models.User.objects.get(id=json['freelancer']) if 'freelancer' in json\
         else project.freelancer
     project.status = json['status'] if 'status' in json else project.status
+    project.milestones = json['milestones'] if 'milestones' in json else project.milestones
     project.updated_at = datetime.now()
     return project
 
@@ -35,6 +36,8 @@ def create_project(request):
                 new_project.title = body['title']
                 new_project.budget = body['budget']
                 new_project.project_deadline = body['project_deadline']
+                if "milestones" in body:
+                    new_project.milestones = body['milestones']
                 new_project.status = 0  # default
             except Exception as e:
                 return JsonResponse({'response': False, 'error': str(e)})
@@ -142,6 +145,8 @@ def project_handler(request):
                 new_project.title = body['title']
                 new_project.budget = body['budget']
                 new_project.project_deadline = body['project_deadline']
+                if "milestones" in body:
+                    new_project.milestones = body['milestones']
                 new_project.status = 0  # default
             except Exception as e:
                 return JsonResponse({'response': False, 'error': str(e)})
@@ -162,7 +167,26 @@ def project_handler(request):
                 return JsonResponse({'response': False, 'error': str(e)})
         else:
             return JsonResponse({"response": False, "error": "Unauthorized"})
-
+    elif request.method == 'DELETE':
+        project_id = request.GET.get('id', '')
+        token = request.META.get('HTTP_AUTHORIZATION', None)
+        if token and authentication.is_authenticated(token):
+            user_id = authentication.get_user_id(token)
+            try:
+                project = Project.objects.get(id=project_id)
+                if str(project.user.id) == user_id:
+                    project.delete()
+                else:
+                    return JsonResponse({'response': False, 'error': "Not allowed to delete this project"})
+                return JsonResponse({"response": True})
+            except Exception as e:
+                return JsonResponse({'response': False, 'error': str(e)})
+        else:
+            return JsonResponse({"response": False, "error": "Unauthorized"})
+    return JsonResponse({
+        "response": False,
+        "error": "wrong request method"
+    })
 
 @csrf_exempt
 def update_project(request):
@@ -176,6 +200,31 @@ def update_project(request):
             try:
                 project.save()
                 return JsonResponse({"response": True, "project": project_json(project,user_id)})
+            except Exception as e:
+                return JsonResponse({'response': False, 'error': str(e)})
+        else:
+            return JsonResponse({"response": False, "error": "Unauthorized"})
+    return JsonResponse({
+        "response": False,
+        "error": "wrong request method"
+    })
+
+
+@csrf_exempt
+def finish_project(request):
+    if request.method == 'PUT':
+        token = request.META.get('HTTP_AUTHORIZATION', None)
+        if token and authentication.is_authenticated(token):
+            user_id = authentication.get_user_id(token)
+            body = json.loads(request.body.decode('utf-8'))
+            try:
+                project = Project.objects.get(id=body['project_id'])
+                if user_id == str(project.owner.id):
+                    project.status = 2
+                    project.save()
+                    return JsonResponse({"response": True, "project": project_json(project,user_id)})
+                else:
+                    return JsonResponse({"response": False, "error": "Not allowed to edit this project"})
             except Exception as e:
                 return JsonResponse({'response': False, 'error': str(e)})
         else:

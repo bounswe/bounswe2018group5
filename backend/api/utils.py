@@ -52,6 +52,7 @@ def project_json(project,user_id):
     obj['ratings'] = []
     for rating in ratings:
         obj['ratings'].append(rating_json(rating, from_model= "project"))
+    obj['milestones'] = project.milestones
     return obj
 
 
