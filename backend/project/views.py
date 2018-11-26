@@ -211,6 +211,31 @@ def update_project(request):
 
 
 @csrf_exempt
+def finish_project(request):
+    if request.method == 'PUT':
+        token = request.META.get('HTTP_AUTHORIZATION', None)
+        if token and authentication.is_authenticated(token):
+            user_id = authentication.get_user_id(token)
+            body = json.loads(request.body.decode('utf-8'))
+            try:
+                project = Project.objects.get(id=body['project_id'])
+                if user_id == str(project.owner.id):
+                    project.status = 2
+                    project.save()
+                    return JsonResponse({"response": True, "project": project_json(project,user_id)})
+                else:
+                    return JsonResponse({"response": False, "error": "Not allowed to edit this project"})
+            except Exception as e:
+                return JsonResponse({'response': False, 'error': str(e)})
+        else:
+            return JsonResponse({"response": False, "error": "Unauthorized"})
+    return JsonResponse({
+        "response": False,
+        "error": "wrong request method"
+    })
+
+
+@csrf_exempt
 def add_bid(request):
     if request.method == 'POST':
         token = request.META.get('HTTP_AUTHORIZATION', None)
