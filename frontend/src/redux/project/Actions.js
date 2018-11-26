@@ -27,7 +27,10 @@ import {
     DISCARD_PROJECT_REQUEST,
     DISCARD_PROJECT_RESET,
     DISCARD_PROJECT_SUCCESS,
-
+    FINISH_PROJECT_FAILURE,
+    FINISH_PROJECT_REQUEST,
+    FINISH_PROJECT_RESET,
+    FINISH_PROJECT_SUCCESS,
     CREATE_BID_FAILURE,
     CREATE_BID_REQUEST,
     CREATE_BID_RESET,
@@ -148,6 +151,42 @@ export const discardProjectFailure = errorData => ({
 });
 export const discardProjectReset = () => ({
     type: DISCARD_PROJECT_RESET
+});
+
+export const tryFinishProject = (project_id) => ({
+    type: FINISH_PROJECT_REQUEST,
+    payload: {
+        project_id
+    }
+});
+export const finishProjectSuccess = res => ({
+    type: FINISH_PROJECT_SUCCESS,
+    payload: res
+});
+export const finishProjectFailure = errorData => ({
+    type: FINISH_PROJECT_FAILURE,
+    payload: errorData
+});
+export const finishProjectReset = () => ({
+    type: FINISH_PROJECT_RESET
+});
+
+export const tryDeleteProject = (project_id) => ({
+    type: DELETE_PROJECT_REQUEST,
+    payload: {
+        project_id
+    }
+});
+export const deleteProjectSuccess = res => ({
+    type: DELETE_PROJECT_SUCCESS,
+    payload: res
+});
+export const deleteProjectFailure = errorData => ({
+    type: DELETE_PROJECT_FAILURE,
+    payload: errorData
+});
+export const deleteProjectReset = () => ({
+    type: DELETE_PROJECT_RESET
 });
 
 export const tryCreateBid = (project_id, freelancer_id, offer, note) => ({

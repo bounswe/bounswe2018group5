@@ -33,7 +33,7 @@ import modalStyle from "material-kit-react/assets/jss/material-kit-react/modalSt
 
 import connect from "react-redux/es/connect/connect";
 
-import { tryEditProject, editProjectReset, tryDiscardProject, discardProjectReset } from "redux/project/Actions.js";
+import { tryEditProject, editProjectReset, tryDiscardProject, discardProjectReset, tryDeleteProject, deleteProjectReset, tryFinishProject, finishProjectReset } from "redux/project/Actions.js";
 
 
 function Transition(props) {
@@ -48,6 +48,7 @@ class ProjectDropdown extends React.Component {
             discardModal: false,
             deleteModal: false,
             editModal: false,
+            finishModal: false,
             cardAnimaton: "cardHidden",
             alertOpen: false,
             place: 'tr',
@@ -88,13 +89,19 @@ class ProjectDropdown extends React.Component {
   }
 
   handleDeleteProject(event) {
-    const { title, description, project_deadline, budget } = this.state;
-    this.props.tryCreateProject(title, description, project_deadline, parseFloat(budget));
+    this.props.tryDeleteProject(this.props.project_info.project_id);
+    this.setState({ project_id: this.props.project_info.project_id });
     event.preventDefault();
   }
 
   handleDiscardProject(event) {
     this.props.tryDiscardProject(this.props.project_info.project_id);
+    this.setState({ project_id: this.props.project_info.project_id});
+    event.preventDefault();
+  }
+
+  handleFinishProject(event) {
+    this.props.tryFinishProject(this.props.project_info.project_id);
     this.setState({ project_id: this.props.project_info.project_id});
     event.preventDefault();
   }
@@ -153,6 +160,60 @@ class ProjectDropdown extends React.Component {
       this.setState({ project_id: null });
       this.props.discardProjectReset();
     }
+
+    const { finishProjectInProgress, finishProjectHasError, finishProjectCompleted } = this.props.project;
+    if (!finishProjectInProgress && !finishProjectHasError && finishProjectCompleted && this.state.project_id === this.props.project_info.project_id) {
+      if (response) {
+        this.props.handleToUpdate(project, 'edit');
+        this.setState({
+          alertOpen: true,
+          color: 'success',
+          notificationMessage: 'Your Project is successfully finished!'
+        });
+        setTimeout(function () {
+          this.setState({ alertOpen: false });
+        }.bind(this), 6000);
+      } else {
+        this.setState({
+          alertOpen: true,
+          color: 'danger',
+          notificationMessage: 'Your Project is not finished!'
+        });
+        setTimeout(function () {
+          this.setState({ alertOpen: false });
+        }.bind(this), 6000);
+      }
+      this.handleModalClose("finishModal");
+      this.setState({ project_id: null });
+      this.props.finishProjectReset();
+    }
+
+    const { deleteProjectInProgress, deleteProjectHasError, deleteProjectCompleted } = this.props.project;
+    if (!deleteProjectInProgress && !deleteProjectHasError && deleteProjectCompleted && this.state.project_id === this.props.project_info.project_id) {
+      if (response) {
+        this.props.handleToUpdate(this.props.project_info, 'delete');
+        this.setState({
+          alertOpen: true,
+          color: 'success',
+          notificationMessage: 'Your Project is successfully deleted!'
+        });
+        setTimeout(function () {
+          this.setState({ alertOpen: false });
+        }.bind(this), 6000);
+      } else {
+        this.setState({
+          alertOpen: true,
+          color: 'danger',
+          notificationMessage: 'Your Project is not deleted!'
+        });
+        setTimeout(function () {
+          this.setState({ alertOpen: false });
+        }.bind(this), 6000);
+      }
+      this.handleModalClose("deleteModal");
+      this.setState({ project_id: null });
+      this.props.deleteProjectReset();
+    }
   }
 
   render() {
@@ -207,6 +268,12 @@ class ProjectDropdown extends React.Component {
                         className={classes.dropdownItem}
                     >
                       Edit
+                    </MenuItem>
+                    <MenuItem
+                      onClick={() => this.handleClickOpen("finishModal")}
+                      className={classes.dropdownItem}
+                    >
+                      Finish
                     </MenuItem>
                     <MenuItem
                       onClick={() => this.handleClickOpen("discardModal")}
@@ -325,6 +392,50 @@ class ProjectDropdown extends React.Component {
                         </Button>
           </DialogActions>
         </Dialog>
+        <Dialog
+          classes={{
+            root: classes.center,
+            paper: classes.modal
+          }}
+          open={this.state.finishModal}
+          TransitionComponent={Transition}
+          keepMounted
+          onClose={() => this.handleModalClose("finishModal")}
+          aria-labelledby="modal-slide-title"
+          aria-describedby="modal-slide-description">
+          <DialogTitle
+            id="classic-modal-slide-title"
+            disableTypography
+            className={classes.modalHeader}>
+            <IconButton
+              className={classes.modalCloseButton}
+              key="close"
+              aria-label="Close"
+              color="inherit"
+              onClick={() => this.handleModalClose("finishModal")}>
+              <Close className={classes.modalClose} />
+            </IconButton>
+            <h4 className={classes.modalTitle}>Finish Project</h4>
+          </DialogTitle>
+          <DialogContent
+            id="modal-slide-description"
+            className={classes.modalBody}>
+            <h5>Are you sure you want to finish "{project_info.title}"?</h5>
+          </DialogContent>
+          <DialogActions
+            className={classes.modalFooter + " " + classes.modalFooterCenter}>
+            <Button
+              onClick={() => this.handleModalClose("finishModal")}
+            >
+              No
+        </Button>
+            <Button
+              onClick={event => this.handleFinishProject(event)}
+              color="danger">
+              Yes
+        </Button>
+          </DialogActions>
+        </Dialog>
 
         <Dialog
             classes={{
@@ -436,7 +547,11 @@ function bindAction(dispatch) {
     tryEditProject: (project_id, description) => dispatch(tryEditProject(project_id, description)),
     editProjectReset: () => dispatch(editProjectReset()),
     tryDiscardProject: (project_id) => dispatch(tryDiscardProject(project_id)),
-    discardProjectReset: () => dispatch(discardProjectReset())
+    discardProjectReset: () => dispatch(discardProjectReset()),
+    tryDeleteProject: (project_id) => dispatch(tryDeleteProject(project_id)),
+    deleteProjectReset: () => dispatch(deleteProjectReset()),
+    tryFinishProject: (project_id) => dispatch(tryFinishProject(project_id)),
+    finishProjectReset: () => dispatch(finishProjectReset()),
   };
 }
 

@@ -76,7 +76,7 @@ class UserProfile extends Component {
     }
 
     handleChangePassword(event) {
-        const {password, password_confirmation} = this.state;
+        const {password} = this.state;
         this.props.tryChangePassword(password);
         this.setState({updatePassword: true});
         event.preventDefault();
