@@ -174,7 +174,7 @@ def project_handler(request):
             user_id = authentication.get_user_id(token)
             try:
                 project = Project.objects.get(id=project_id)
-                if str(project.user.id) == user_id:
+                if str(project.owner.id) == user_id:
                     project.delete()
                 else:
                     return JsonResponse({'response': False, 'error': "Not allowed to delete this project"})
