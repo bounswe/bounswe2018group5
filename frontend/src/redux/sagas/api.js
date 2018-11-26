@@ -131,7 +131,16 @@ class api {
             sendToken: true
         });
     };
-
+    finishProject = (project_id) => {
+        return httpService.fetch({
+            path: "api/project/finish/",
+            method: "PUT",
+            body: {
+                project_id,
+            },
+            sendToken: true
+        });
+    };
     deleteProject = (project_id) => {
         return httpService.fetch({
             path: "api/project/",
@@ -142,7 +151,6 @@ class api {
             sendToken: true
         });
     };
-
     createBid = (project_id, freelancer_id, offer, note) => {
         return httpService.fetch({
             path: "api/project/bid/add/",
@@ -207,7 +215,7 @@ class api {
     putPortfolio = (portfolio_id, title, description, date, project_id) => {
         return httpService.fetch({
             path: "api/user/portfolio/",
-            method: "POST",
+            method: "PUT",
             body: {
                 portfolio_id,
                 title,
