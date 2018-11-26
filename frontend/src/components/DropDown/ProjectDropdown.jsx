@@ -283,6 +283,7 @@ class ProjectDropdown extends React.Component {
                       inputProps={{
                         multiline: true,
                         rows: 3,
+                        defaultValue: project_info.description,
                         onChange: event => this.setState({ description: event.target.value }),
                       }}
                     />
