@@ -7,7 +7,7 @@ import Grid from '@material-ui/core/Grid';
 import Card from "material-kit-react/components/Card/Card";
 import CardBody from "material-kit-react/components/Card/CardBody";
 import CardHeader from "material-kit-react/components/Card/CardHeader";
-import CardFooter from "material-kit-react/components/Card/CardFooter";
+// import CardFooter from "material-kit-react/components/Card/CardFooter";
 import ProjectDropdown from "components/DropDown/ProjectDropdown"
 import Badge from 'components/Badge/Badge';
 
@@ -31,7 +31,7 @@ class ProjectCard extends React.Component {
         this.props.handleToUpdate(project, type);
     }
     render() {
-        const { classes, project_id, title, description, project_deadline, budget, created_at, owner, owner_id, owned, status } = this.props;
+        const { classes, project_id, title, description, project_deadline, budget, created_at, owner, owned, status } = this.props;
         const project = {
             project_id,
             title,

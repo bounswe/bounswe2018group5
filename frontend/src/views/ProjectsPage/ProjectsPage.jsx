@@ -58,8 +58,8 @@ class ProjectsPage extends React.Component {
                 return project.project_id === prop.project_id ? project : prop;
             })
         } else if (type === 'delete') {
-            new_projects_client = projects_client.map((prop, key) => {
-                return project.project_id === prop.project_id ? null : prop;
+            new_projects_client = projects_client.filter(function (elem, index, portfolios) {
+                return project.project_id !== elem.project_id;
             })
         }
         this.setState({
