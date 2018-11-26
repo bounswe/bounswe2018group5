@@ -1,6 +1,7 @@
 from project import models as project_models
 from user import models as user_models
 from django.db.models import Avg, Window
+from datetime import datetime
 
 def user_json(user, user_id=""):
     obj = {}
@@ -12,8 +13,8 @@ def user_json(user, user_id=""):
     obj['gender'] = user.gender
     obj['bio'] = user.bio
     obj['profile_image'] = user.profile_image
-    obj['created_at'] = user.created_at
-    obj['updated_at'] = user.updated_at
+    obj['created_at'] = format_datetime(user.created_at)
+    obj['updated_at'] = format_datetime(user.updated_at)
     ratings_rater = user_models.Rating.objects.filter(rater=user)
     ratings_rated = user_models.Rating.objects.filter(rated=user)
     obj['ratings'] = {}
@@ -37,9 +38,9 @@ def project_json(project,user_id):
     obj['title'] = project.title
     obj['budget'] = project.budget
     obj['description'] = project.description
-    obj['deadline'] = project.project_deadline
-    obj['created_at'] = project.created_at
-    obj['updated_at'] = project.updated_at
+    obj['deadline'] = format_datetime(project.project_deadline)
+    obj['created_at'] = format_datetime(project.created_at)
+    obj['updated_at'] = format_datetime(project.updated_at)
     obj['owner'] = user_json(project.owner)
     obj['freelancer'] = None if project.freelancer is None \
         else user_json(project.freelancer)
@@ -70,8 +71,8 @@ def bid_json(bid, user_id):
         obj['freelancer']['full_name'] = hide_name(str(bid.freelancer.full_name))
     obj['offer'] = bid.offer
     obj['status'] = bid.status
-    obj['created_at'] = bid.created_at
-    obj['updated_at'] = bid.updated_at
+    obj['created_at'] = format_datetime(bid.created_at)
+    obj['updated_at'] = format_datetime(bid.updated_at)
     return obj
 
 
@@ -97,6 +98,9 @@ def rating_json(rating, from_model):
 
     obj['value'] = rating.value
     obj['comment'] = rating.comment
+
+    obj['created_at'] = format_datetime(rating.created_at)
+    obj['updated_at'] = format_datetime(rating.updated_at)
     return obj
 
 def hide_name(name):
@@ -111,7 +115,7 @@ def portfolio_json(portfolio, from_model=""):
     obj['id'] = str(portfolio.id)
     obj['title'] = portfolio.title
     obj['description'] = portfolio.description
-    obj['date'] = portfolio.date
+    obj['date'] = format_datetime(portfolio.date)
     if from_model != "user":
         obj['user'] = {
             'id': str(portfolio.user.id),
@@ -120,4 +124,9 @@ def portfolio_json(portfolio, from_model=""):
             'profile_image': portfolio.user.profile_image
         }
     obj['project_id'] = portfolio.project_id
+    obj['created_at'] = format_datetime(portfolio.created_at)
+    obj['updated_at'] = format_datetime(portfolio.updated_at)
     return obj
+
+def format_datetime(dt):
+    return dt.strftime("%Y-%m-%d")
