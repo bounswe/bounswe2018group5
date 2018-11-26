@@ -38,7 +38,7 @@ def project_json(project,user_id):
     obj['title'] = project.title
     obj['budget'] = project.budget
     obj['description'] = project.description
-    obj['deadline'] = format_datetime(project.project_deadline)
+    obj['deadline'] = format_datetime(project.project_deadline) if project.project_deadline != None else None
     obj['created_at'] = format_datetime(project.created_at)
     obj['updated_at'] = format_datetime(project.updated_at)
     obj['owner'] = user_json(project.owner)
@@ -115,7 +115,7 @@ def portfolio_json(portfolio, from_model=""):
     obj['id'] = str(portfolio.id)
     obj['title'] = portfolio.title
     obj['description'] = portfolio.description
-    obj['date'] = format_datetime(portfolio.date)
+    obj['date'] = format_datetime(portfolio.date) if portfolio.date != None else None
     if from_model != "user":
         obj['user'] = {
             'id': str(portfolio.user.id),
