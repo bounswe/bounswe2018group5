@@ -14,12 +14,12 @@ def generate_token(user):
 
 def is_authenticated(token):
     global myMap
-    # previous_req = myMap[token] if token in myMap else 0
-    # if (int(datetime.now().timestamp()) - previous_req) > 6000:
-    #     if token in myMap:
-    #         del myMap[token]
-    #     return False
-    # myMap[token] = int(datetime.now().timestamp())
+    previous_req = myMap[token] if token in myMap else 0
+    if (int(datetime.now().timestamp()) - previous_req) > 6000:
+        if token in myMap:
+            del myMap[token]
+        return False
+    myMap[token] = int(datetime.now().timestamp())
     return True
 
 
