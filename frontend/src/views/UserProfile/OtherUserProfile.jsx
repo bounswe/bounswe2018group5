@@ -6,7 +6,6 @@ import AddAlert from "@material-ui/icons/AddAlert";
 // core components
 import PortfolioCard from "components/Card/PortfolioCard";
 import Grid from '@material-ui/core/Grid';
-import AddPortfolioModal from 'components/Modal/AddPortfolioModal.jsx';
 import GridItem from "material-dashboard-react/dist/components/Grid/GridItem";
 import GridContainer from "material-dashboard-react/dist/components/Grid/GridContainer";
 import Card from "material-dashboard-react/dist/components/Card/Card";

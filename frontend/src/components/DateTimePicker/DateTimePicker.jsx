@@ -46,7 +46,7 @@ class DateTimePicker extends React.Component{
                         timeFormat={false}
                         viewMode="days"
                         utc={true}
-                        value={value}
+                        defaultValue={typeof value === "string" ? value : ""}
                 />
                 </FormControl>
             </div>
