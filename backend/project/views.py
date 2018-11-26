@@ -16,6 +16,7 @@ def modify_project(json, project):
     project.freelancer = models.User.objects.get(id=json['freelancer']) if 'freelancer' in json\
         else project.freelancer
     project.status = json['status'] if 'status' in json else project.status
+    project.milestones = json['milestones'] if 'milestones' in json else project.milestones
     project.updated_at = datetime.now()
     return project
 
@@ -35,6 +36,8 @@ def create_project(request):
                 new_project.title = body['title']
                 new_project.budget = body['budget']
                 new_project.project_deadline = body['project_deadline']
+                if "milestones" in body:
+                    new_project.milestones = body['milestones']
                 new_project.status = 0  # default
             except Exception as e:
                 return JsonResponse({'response': False, 'error': str(e)})
@@ -142,6 +145,8 @@ def project_handler(request):
                 new_project.title = body['title']
                 new_project.budget = body['budget']
                 new_project.project_deadline = body['project_deadline']
+                if "milestones" in body:
+                    new_project.milestones = body['milestones']
                 new_project.status = 0  # default
             except Exception as e:
                 return JsonResponse({'response': False, 'error': str(e)})
