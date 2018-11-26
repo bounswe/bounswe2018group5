@@ -132,6 +132,17 @@ class api {
         });
     };
 
+    deleteProject = (project_id) => {
+        return httpService.fetch({
+            path: "api/project/",
+            method: "DELETE",
+            params: {
+                id: project_id
+            },
+            sendToken: true
+        });
+    };
+
     createBid = (project_id, freelancer_id, offer, note) => {
         return httpService.fetch({
             path: "api/project/bid/add/",

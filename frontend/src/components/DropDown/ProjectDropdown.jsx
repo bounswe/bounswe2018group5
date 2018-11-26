@@ -33,7 +33,7 @@ import modalStyle from "material-kit-react/assets/jss/material-kit-react/modalSt
 
 import connect from "react-redux/es/connect/connect";
 
-import { tryEditProject, editProjectReset, tryDiscardProject, discardProjectReset } from "redux/project/Actions.js";
+import { tryEditProject, editProjectReset, tryDiscardProject, discardProjectReset, tryDeleteProject, deleteProjectReset } from "redux/project/Actions.js";
 
 
 function Transition(props) {
@@ -88,8 +88,8 @@ class ProjectDropdown extends React.Component {
   }
 
   handleDeleteProject(event) {
-    const { title, description, project_deadline, budget } = this.state;
-    this.props.tryCreateProject(title, description, project_deadline, parseFloat(budget));
+    this.props.tryDeleteProject(this.props.project_info.project_id);
+    this.setState({ project_id: this.props.project_info.project_id });
     event.preventDefault();
   }
 
@@ -152,6 +152,33 @@ class ProjectDropdown extends React.Component {
       this.handleModalClose("discardModal");
       this.setState({ project_id: null });
       this.props.discardProjectReset();
+    }
+
+    const { deleteProjectInProgress, deleteProjectHasError, deleteProjectCompleted } = this.props.project;
+    if (!deleteProjectInProgress && !deleteProjectHasError && deleteProjectCompleted && this.state.project_id === this.props.project_info.project_id) {
+      if (response) {
+        this.props.handleToUpdate(this.state.project_info, 'delete');
+        this.setState({
+          alertOpen: true,
+          color: 'success',
+          notificationMessage: 'Your Project is successfully deleted!'
+        });
+        setTimeout(function () {
+          this.setState({ alertOpen: false });
+        }.bind(this), 6000);
+      } else {
+        this.setState({
+          alertOpen: true,
+          color: 'danger',
+          notificationMessage: 'Your Project is not deleted!'
+        });
+        setTimeout(function () {
+          this.setState({ alertOpen: false });
+        }.bind(this), 6000);
+      }
+      this.handleModalClose("deleteModal");
+      this.setState({ project_id: null });
+      this.props.deleteProjectReset();
     }
   }
 
@@ -436,7 +463,9 @@ function bindAction(dispatch) {
     tryEditProject: (project_id, description) => dispatch(tryEditProject(project_id, description)),
     editProjectReset: () => dispatch(editProjectReset()),
     tryDiscardProject: (project_id) => dispatch(tryDiscardProject(project_id)),
-    discardProjectReset: () => dispatch(discardProjectReset())
+    discardProjectReset: () => dispatch(discardProjectReset()),
+    tryDeleteProject: (project_id) => dispatch(tryDeleteProject(project_id)),
+    deleteProjectReset: () => dispatch(deleteProjectReset())
   };
 }
 

@@ -150,6 +150,24 @@ export const discardProjectReset = () => ({
     type: DISCARD_PROJECT_RESET
 });
 
+export const tryDeleteProject = (project_id) => ({
+    type: DELETE_PROJECT_REQUEST,
+    payload: {
+        project_id
+    }
+});
+export const deleteProjectSuccess = res => ({
+    type: DELETE_PROJECT_SUCCESS,
+    payload: res
+});
+export const deleteProjectFailure = errorData => ({
+    type: DELETE_PROJECT_FAILURE,
+    payload: errorData
+});
+export const deleteProjectReset = () => ({
+    type: DELETE_PROJECT_RESET
+});
+
 export const tryCreateBid = (project_id, freelancer_id, offer, note) => ({
     type: CREATE_BID_REQUEST,
     payload: {

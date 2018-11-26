@@ -13,7 +13,7 @@ import Group from "@material-ui/icons/Group";
 import Home from "@material-ui/icons/Home";
 import Layers from "@material-ui/icons/Layers";
 
-import PerfectScrollbar from "perfect-scrollbar";
+//import PerfectScrollbar from "perfect-scrollbar";
 import "perfect-scrollbar/css/perfect-scrollbar.css";
 
 // core components
@@ -102,7 +102,7 @@ class HomeLayout extends Component {
 
     componentDidMount() {
         if (navigator.platform.indexOf("Win") > -1) {
-            const ps = new PerfectScrollbar(this.refs.mainPanel);
+            //const ps = new PerfectScrollbar(this.refs.mainPanel);
         }
         window.addEventListener("resize", this.resizeFunction);
     }

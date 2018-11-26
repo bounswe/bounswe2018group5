@@ -1,16 +1,11 @@
 import React from "react";
 // material-ui components
 import withStyles from "@material-ui/core/styles/withStyles";
-import Avatar from '@material-ui/core/Avatar';
 import Grid from '@material-ui/core/Grid';
 // core components
 import Card from "material-kit-react/components/Card/Card";
 import CardBody from "material-kit-react/components/Card/CardBody";
-import CardHeader from "material-kit-react/components/Card/CardHeader";
-import CardFooter from "material-kit-react/components/Card/CardFooter";
 import PortfolioDropdown from "components/DropDown/PortfolioDropdown"
-
-import {Link} from "react-router-dom";
 
 import imagesStyles from "material-kit-react/assets/jss/material-kit-react/imagesStyles";
 

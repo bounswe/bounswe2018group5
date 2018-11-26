@@ -77,6 +77,11 @@ const initialState = {
     discardProjectCompleted: false,
     discardProjectError: "",
 
+    deleteProjectInProgress: false,
+    deleteProjectHasError: false,
+    deleteProjectCompleted: false,
+    deleteProjectError: "",
+
     createBidInProgress: false,
     createBidHasError: false,
     createBidCompleted: false,
@@ -386,6 +391,39 @@ export default function(state = initialState, action) {
             discardBidInProgress: false,
             discardBidHasError: false,
             discardBidCompleted: false
+        };
+    }
+
+    if (action.type === DELETE_PROJECT_REQUEST) {
+        return {
+            ...state,
+            deleteProjectInProgress: true,
+            deleteProjectHasError: false,
+            deleteProjectCompleted: false
+        };
+    } else if (action.type === DELETE_PROJECT_SUCCESS) {
+        return {
+            ...state,
+            response: payload.response,
+            deleteProjectInProgress: false,
+            deleteProjectHasError: false,
+            deleteProjectCompleted: true
+        };
+    } else if (action.type === DELETE_PROJECT_FAILURE) {
+        return {
+            ...state,
+            deleteProjectInProgress: false,
+            deleteProjectHasError: true,
+            deleteProjectCompleted: true,
+            deleteProjectError: payload.detail[0]
+        };
+    } else if (action.type === DELETE_PROJECT_RESET) {
+        return {
+            ...state,
+            response: false,
+            deleteProjectInProgress: false,
+            deleteProjectHasError: false,
+            deleteProjectCompleted: false
         };
     }
 

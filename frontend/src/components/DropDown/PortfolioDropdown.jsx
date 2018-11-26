@@ -154,7 +154,7 @@ class PortfolioDropdown extends React.Component {
   }
 
   componentDidMount() {
-    const { classes, portfolio_info } = this.props;
+    const { portfolio_info } = this.props;
     this.setState({
       title: portfolio_info.title,
       description: portfolio_info.description,
