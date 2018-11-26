@@ -63,7 +63,7 @@ class ProjectCard extends React.Component {
                 </Grid>
             </Grid>;
         } else {
-            cardHeader = <Link to={"/home/users/" + owner_id + "/"} style={{ color: "white" }}>
+            cardHeader = <Link to={"/home/users/" + owner.id + "/"} style={{ color: "white" }}>
                 <div style={{
                     display: 'flex',
                 }}>

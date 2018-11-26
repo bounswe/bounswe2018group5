@@ -22,14 +22,14 @@ import GridItem from "material-dashboard-react/dist/components/Grid/GridItem";
 import CustomInput from "components/CustomInput/CustomInput";
 import DateTimePicker from "components/DateTimePicker/DateTimePicker";
 import connect from "react-redux/es/connect/connect";
-import {tryCreateProject, createProjectReset} from "redux/project/Actions.js";
+import {tryPostPortfolio, postPortfolioReset} from "redux/user/Actions.js";
 
 
 function Transition(props) {
     return <Slide direction="down" {...props} />;
 }
 
-class AddProjectModal extends React.Component {
+class AddPortfolioModal extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -37,7 +37,11 @@ class AddProjectModal extends React.Component {
             cardAnimaton: "cardHidden",
             open: false,
             place: 'tr',
-            notificationMessage: ''
+            notificationMessage: '',
+            title: '', 
+            description: '', 
+            date: null, 
+            project_id: null
         };
     }
 
@@ -53,21 +57,21 @@ class AddProjectModal extends React.Component {
         this.setState(x);
     }
 
-    handleCreateProject(event) {
-        const {title, description, project_deadline, budget} = this.state;
-        this.props.tryCreateProject(title, description, project_deadline, parseFloat(budget));
+    handleCreatePortfolio(event) {
+        const {title, description, date, project_id} = this.state;
+        this.props.tryPostPortfolio(title, description, date, project_id);
         event.preventDefault();
     }
 
     componentDidUpdate(prevProps, prevState) {
-        const {createProjectInProgress, createProjectHasError, createProjectCompleted, response, project} = this.props.project;
-        if (!createProjectInProgress && !createProjectHasError && createProjectCompleted) {
+        const {postPortfolioInProgress, postPortfolioHasError, postPortfolioCompleted, response, portfolio} = this.props.user;
+        if (!postPortfolioInProgress && !postPortfolioHasError && postPortfolioCompleted) {
             if (response) {
-                this.props.handleToUpdate(project);
+                this.props.handleToUpdate(portfolio);
                 this.setState({
                     open: true,
                     color: 'success',
-                    notificationMessage: 'Your Project is successfully created!'
+                    notificationMessage: 'Your Portfolio is successfully created!'
                 });
                 setTimeout(function () {
                     this.setState({open: false});
@@ -76,14 +80,14 @@ class AddProjectModal extends React.Component {
                 this.setState({
                     open: true,
                     color: 'danger',
-                    notificationMessage: 'Your Project is not created!'
+                    notificationMessage: 'Your Portfolio is not created!'
                 });
                 setTimeout(function () {
                     this.setState({open: false});
                 }.bind(this), 6000);
             }
             this.handleClose("modal");
-            this.props.createProjectReset();
+            this.props.postPortfolioReset();
         }
     }
 
@@ -91,7 +95,7 @@ class AddProjectModal extends React.Component {
         const {classes} = this.props;
         return (
             <div>
-                <Button variant="fab" color="secondary" aria-label="Add"
+                <Button variant="fab" mini color="default" aria-label="Add"
                         onClick={() => this.handleClickOpen("modal")}>
                     <AddIcon />
                 </Button>
@@ -119,7 +123,7 @@ class AddProjectModal extends React.Component {
                             onClick={() => this.handleClose("modal")}>
                             <Close className={classes.modalClose}/>
                         </IconButton>
-                        <h4 className={classes.modalTitle}>Add Project</h4>
+                        <h4 className={classes.modalTitle}>Add Portfolio</h4>
                     </DialogTitle>
                     <DialogContent
                         id="modal-slide-description"
@@ -156,11 +160,12 @@ class AddProjectModal extends React.Component {
                                     </GridItem>
                                     <GridItem xs={12} sm={12} md={6}>
                                         <DateTimePicker
-                                            placeholder={"Project Deadline"}
-                                            onChange={event => this.setState({project_deadline: event.format("YYYY-MM-DD")})}
+                                            before={true}
+                                            placeholder={"Portfolio Finish Date"}
+                                            onChange={event => this.setState({date: event.format("YYYY-MM-DD")})}
                                         />
                                     </GridItem>
-                                    <GridItem xs={12} sm={12} md={6}>
+                                    {/* <GridItem xs={12} sm={12} md={6}>
                                         <CustomInput
                                             labelText="Budget"
                                             id="budget"
@@ -172,7 +177,7 @@ class AddProjectModal extends React.Component {
                                                 onChange: event => this.setState({budget: event.target.value})
                                             }}
                                         />
-                                    </GridItem>
+                                    </GridItem> */}
                                 </GridContainer>
                             </GridItem>
                         </GridContainer>
@@ -180,10 +185,10 @@ class AddProjectModal extends React.Component {
                     <DialogActions
                         className={classes.modalFooter + " " + classes.modalFooterCenter}>
                         <OtherButton
-                            onClick={event => this.handleCreateProject(event)}
+                            onClick={event => this.handleCreatePortfolio(event)}
                             color={'primary'}
                         >
-                            Add Project
+                            Add Portfolio
                         </OtherButton>
                     </DialogActions>
                 </Dialog>
@@ -203,16 +208,16 @@ class AddProjectModal extends React.Component {
 
 function bindAction(dispatch) {
     return {
-        tryCreateProject: (title, description, project_deadline, budget) => dispatch(tryCreateProject(title, description, project_deadline, budget)),
-        createProjectReset: () => dispatch(createProjectReset())
+        tryPostPortfolio: (title, description, date, project_id) => dispatch(tryPostPortfolio(title, description, date, project_id)),
+        postPortfolioReset: () => dispatch(postPortfolioReset())
     };
 }
 
 const mapStateToProps = state => ({
-    project: state.project
+    user: state.user
 });
 
 export default connect(
     mapStateToProps,
     bindAction
-)(withStyles(modalStyle)(AddProjectModal));
+)(withStyles(modalStyle)(AddPortfolioModal));

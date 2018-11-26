@@ -5,6 +5,9 @@ import withStyles from "@material-ui/core/styles/withStyles";
 import AddAlert from "@material-ui/icons/AddAlert";
 import {Select, MenuItem, FormControl, InputLabel, FilledInput} from '@material-ui/core';
 // core components
+import PortfolioCard from "components/Card/PortfolioCard";
+import Grid from '@material-ui/core/Grid';
+import AddPortfolioModal from 'components/Modal/AddPortfolioModal.jsx';
 import GridItem from "material-dashboard-react/dist/components/Grid/GridItem";
 import GridContainer from "material-dashboard-react/dist/components/Grid/GridContainer";
 import CustomInput from "components/CustomInput/CustomInput";
@@ -59,8 +62,17 @@ class UserProfile extends Component {
             updateProfile: false,
             updatePassword: false,
             gender: -2,
-            type: -1
+            type: -1,
+            portfolios: []
         };
+    }
+
+    handleToUpdate(portfolio) {
+        var { portfolios } = this.state;
+        portfolios.push(portfolio);
+        this.setState({
+            portfolios: portfolios,
+        });
     }
 
     handleChangePassword(event) {
@@ -93,6 +105,7 @@ class UserProfile extends Component {
                 bio: user.bio, 
                 gender: user.gender === null ? -2 : user.gender, 
                 type: user.type === null ? -1 : user.type,
+                portfolios: user.portfolios
             });
             this.props.profileReset();
         }
@@ -157,9 +170,45 @@ class UserProfile extends Component {
         }
     }
 
+    handleToManagePortfolio(portfolio, type) {
+        var { portfolios } = this.state;
+        let new_portfolios;
+        if (type === 'edit') {
+            new_portfolios = portfolios.map((prop, key) => {
+                return portfolio.portfolio_id === prop.id ? portfolio : prop;
+            })
+        } else if (type === 'delete') {
+            new_portfolios = portfolios.filter(function (elem, index, portfolios) {
+                return portfolio.portfolio_id !== elem.id ;
+            });
+        }
+        this.setState({
+            portfolios: new_portfolios,
+        });
+    }
+
     render() {
         const {classes} = this.props;
-        const user = this.state.user;
+        const {user, portfolios} = this.state;
+        var porfolio_grid = (
+            <GridContainer>
+                {portfolios.map((prop, key) => {
+                    return (
+                        <GridItem xs={12} sm={12} md={12} key={key}>
+                            <PortfolioCard
+                                portfolio_id={prop.id}
+                                title={prop.title}
+                                description={prop.description}
+                                date={prop.date}
+                                project_id={prop.project_id}
+                                owned={true}
+                                handleToUpdate={this.handleToManagePortfolio.bind(this)}
+                            />
+                        </GridItem>
+                    );
+                })}
+            </GridContainer>
+        );
         return (
             <div>
                 <div>
@@ -170,154 +219,178 @@ class UserProfile extends Component {
                         ]}/>
                 </div>
                 <GridContainer>
-                    <GridItem xs={12} sm={12} md={4}>
-                        <Card>
+                        <GridItem xs={12} sm={12} md={8}>
+                            <Card>
                             <CardHeader color="primary">
-                                <h4 className={classes.cardTitleWhite}>Edit Profile</h4>
-                                <p className={classes.cardCategoryWhite}>Complete your profile</p>
-                            </CardHeader>
-                            <CardBody>
-                                <GridContainer>
-                                    <GridItem xs={12} sm={12} md={6}>
-                                        <CustomInput
-                                            labelText="Full Name"
-                                            id="full_name"
-                                            autoFocus
-                                            formControlProps={{
-                                                fullWidth: true
-                                            }}
-                                            inputProps={{
-                                                onChange: event => this.setState({full_name: event.target.value}),
-                                                value: this.state.full_name ? this.state.full_name : "",
-                                            }}
-                                        />
-                                    </GridItem>
+                                <Grid container>
+                                    <Grid item xs={11}>
+                                        <h4 className={classes.cardTitleWhite}>{"Portfolio"}</h4>
+                                        <p className={classes.cardCategoryWhite}>Fill your portfolio</p>
+                                    </Grid>
+                                    <Grid item xs={1}>
+                                        <AddPortfolioModal handleToUpdate={this.handleToUpdate.bind(this)}/>
+                                    </Grid>
+                                </Grid>
+                                </CardHeader>
+                                <CardBody>
+                                    {porfolio_grid}
+                                </CardBody>
+                            </Card>
+                        </GridItem>
+                        <GridItem xs={12} sm={12} md={4}>
+                            <GridContainer>
+                                <GridItem xs={12} sm={12} md={12}>
+
+                                    <Card profile>
+                                        <CardAvatar profile>
+                                            <img src={process.env.REACT_APP_API_STATIC_URL + "profile_images/" + user.profile_image}
+                                                onError={(e) => {
+                                                    e.target.onerror = null;
+                                                    e.target.src = default_image
+                                                }} alt="..." />
+                                        </CardAvatar>
+                                        <CardBody profile>
+                                            <h6 className={classes.cardCategory}>
+                                                {typeof user.type === "undefined" || user.type === null ? "User Type Not Set" : user.type ? "Client" : "Freelancer"}
+                                            </h6>
+                                            <h4 className={classes.cardTitle}>
+                                                {user.full_name ? user.full_name : ""}
+                                                <br />
+                                                {user.email ? user.email : ""}
+                                            </h4>
+                                            <p className={classes.description}>
+                                                {user.bio ? user.bio : ""}
+                                            </p>
+                                        </CardBody>
+                                    </Card>
+                                </GridItem>
+
+                                <GridItem xs={12} sm={12} md={12}>
+                                    <Card>
+                                        <CardHeader color="primary">
+                                            <h4 className={classes.cardTitleWhite}>Edit Profile</h4>
+                                            <p className={classes.cardCategoryWhite}>Complete your profile</p>
+                                        </CardHeader>
+                                        <CardBody>
+                                            <GridContainer>
+                                                <GridItem xs={12} sm={12} md={6}>
+                                                    <CustomInput
+                                                        labelText="Full Name"
+                                                        id="full_name"
+                                                        autoFocus
+                                                        formControlProps={{
+                                                            fullWidth: true
+                                                        }}
+                                                        inputProps={{
+                                                            onChange: event => this.setState({ full_name: event.target.value }),
+                                                            value: this.state.full_name ? this.state.full_name : "",
+                                                        }}
+                                                    />
+                                                </GridItem>
+                                            </GridContainer>
+                                            <GridContainer>
+                                                <GridItem xs={12} sm={12} md={6}>
+                                                    <FormControl fullWidth={true} variant="filled" className={classes.formControl}>
+                                                        <InputLabel htmlFor="outlined-age-simple">Gender</InputLabel>
+                                                        <Select
+                                                            value={this.state.gender}
+                                                            onChange={event => this.setState({ gender: event.target.value })}
+                                                            input={
+                                                                <FilledInput name="gender" />
+                                                            }
+                                                        >
+                                                            <MenuItem value={-1}>Male</MenuItem>
+                                                            <MenuItem value={0}>Other</MenuItem>
+                                                            <MenuItem value={1}>Female</MenuItem>
+                                                        </Select>
+                                                    </FormControl>
+                                                </GridItem>
+                                                <GridItem xs={12} sm={12} md={6}>
+                                                    <FormControl fullWidth={true} variant="filled" className={classes.formControl}>
+                                                        <InputLabel htmlFor="outlined-age-simple">User Type</InputLabel>
+                                                        <Select
+                                                            value={this.state.type}
+                                                            onChange={event => this.setState({ type: event.target.value })}
+                                                            input={
+                                                                <FilledInput name="type" />
+                                                            }
+                                                        >
+                                                            <MenuItem value={1}>Client</MenuItem>
+                                                            <MenuItem value={0}>Freelancer</MenuItem>
+                                                        </Select>
+                                                    </FormControl>
+                                                </GridItem>
+                                            </GridContainer>
+                                            <GridContainer>
+                                                <GridItem xs={12} sm={12} md={12}>
+                                                    <CustomInput
+                                                        labelText="Biography"
+                                                        id="bio"
+                                                        formControlProps={{
+                                                            fullWidth: true
+                                                        }}
+                                                        inputProps={{
+                                                            multiline: true,
+                                                            rows: 3,
+                                                            onChange: event => this.setState({ bio: event.target.value }),
+                                                            value: this.state.bio ? this.state.bio : "",
+                                                        }}
+                                                    />
+                                                </GridItem>
+                                            </GridContainer>
+                                        </CardBody>
+                                        <CardFooter>
+                                            <Button color="primary" onClick={event => this.handleUpdateProfile(event)}>Update
+                                        Profile</Button>
+                                        </CardFooter>
+                                    </Card>
+                                </GridItem>
+                                <GridItem xs={12} sm={12} md={12}>
+                                    <Card>
+                                        <CardHeader color="primary">
+                                            <h4 className={classes.cardTitleWhite}>Edit Password</h4>
+                                            <p className={classes.cardCategoryWhite}>Change your password</p>
+                                        </CardHeader>
+                                        <CardBody>
+                                            <GridContainer>
+                                                <GridItem xs={12} sm={12} md={12}>
+                                                    <CustomInput
+                                                        labelText="Password"
+                                                        id="password"
+                                                        formControlProps={{
+                                                            fullWidth: true
+                                                        }}
+                                                        inputProps={{
+                                                            type: "password",
+                                                            onChange: event => this.setState({ password: event.target.value })
+                                                        }}
+                                                    />
+                                                </GridItem>
+                                                <GridItem xs={12} sm={12} md={12}>
+                                                    <CustomInput
+                                                        labelText="Password Confirmation"
+                                                        id="pass_conf"
+                                                        formControlProps={{
+                                                            fullWidth: true
+                                                        }}
+                                                        inputProps={{
+                                                            type: "password",
+                                                            onChange: event => this.setState({ password_confirmation: event.target.value })
+                                                        }}
+                                                    />
+                                                </GridItem>
+                                            </GridContainer>
+                                        </CardBody>
+                                        <CardFooter>
+                                            <Button color="primary" onClick={event => this.handleChangePassword(event)}>
+                                                Update Password
+                                    </Button>
+                                        </CardFooter>
+                                    </Card>
+                                </GridItem>
                                 </GridContainer>
-                                <GridContainer>
-                                    <GridItem xs={12} sm={12} md={6}>
-                                        <FormControl fullWidth={true} variant="filled" className={classes.formControl}>
-                                            <InputLabel htmlFor="outlined-age-simple">Gender</InputLabel>
-                                            <Select
-                                                value={this.state.gender}
-                                                onChange={event => this.setState({ gender: event.target.value })}
-                                                input={
-                                                    <FilledInput name="gender" />
-                                                }
-                                            >
-                                                <MenuItem value={-1}>Male</MenuItem>
-                                                <MenuItem value={0}>Other</MenuItem>
-                                                <MenuItem value={1}>Female</MenuItem>
-                                            </Select>
-                                        </FormControl>
-                                    </GridItem>
-                                    <GridItem xs={12} sm={12} md={6}>
-                                        <FormControl fullWidth={true} variant="filled" className={classes.formControl}>
-                                            <InputLabel htmlFor="outlined-age-simple">User Type</InputLabel>
-                                            <Select
-                                                value={this.state.type}
-                                                onChange={event => this.setState({ type: event.target.value })}
-                                                input={
-                                                    <FilledInput name="type" />
-                                                }
-                                            >
-                                                <MenuItem value={1}>Client</MenuItem>
-                                                <MenuItem value={0}>Freelancer</MenuItem>
-                                            </Select>
-                                        </FormControl>
-                                    </GridItem>
-                                </GridContainer>
-                                <GridContainer>
-                                    <GridItem xs={12} sm={12} md={12}>
-                                        <CustomInput
-                                            labelText="Biography"
-                                            id="bio"
-                                            formControlProps={{
-                                                fullWidth: true
-                                            }}
-                                            inputProps={{
-                                                multiline: true,
-                                                rows: 3,
-                                                onChange: event => this.setState({bio: event.target.value}),
-                                                value: this.state.bio ? this.state.bio : "",
-                                            }}
-                                        />
-                                    </GridItem>
-                                </GridContainer>
-                            </CardBody>
-                            <CardFooter>
-                                <Button color="primary" onClick={event => this.handleUpdateProfile(event)}>Update
-                                    Profile</Button>
-                            </CardFooter>
-                        </Card>
-                    </GridItem>
-                    <GridItem xs={12} sm={12} md={4}>
-                        <Card>
-                            <CardHeader color="primary">
-                                <h4 className={classes.cardTitleWhite}>Edit Password</h4>
-                                <p className={classes.cardCategoryWhite}>Change your password</p>
-                            </CardHeader>
-                            <CardBody>
-                                <GridContainer>
-                                    <GridItem xs={12} sm={12} md={12}>
-                                        <CustomInput
-                                            labelText="Password"
-                                            id="password"
-                                            formControlProps={{
-                                                fullWidth: true
-                                            }}
-                                            inputProps={{
-                                                type: "password",
-                                                onChange: event => this.setState({password: event.target.value})
-                                            }}
-                                        />
-                                    </GridItem>
-                                    <GridItem xs={12} sm={12} md={12}>
-                                        <CustomInput
-                                            labelText="Password Confirmation"
-                                            id="pass_conf"
-                                            formControlProps={{
-                                                fullWidth: true
-                                            }}
-                                            inputProps={{
-                                                type: "password",
-                                                onChange: event => this.setState({password_confirmation: event.target.value})
-                                            }}
-                                        />
-                                    </GridItem>
-                                </GridContainer>
-                            </CardBody>
-                            <CardFooter>
-                                <Button color="primary" onClick={event => this.handleChangePassword(event)}>
-                                    Update Password
-                                </Button>
-                            </CardFooter>
-                        </Card>
-                    </GridItem>
-                    <GridItem xs={12} sm={12} md={4}>
-                        <Card profile>
-                            <CardAvatar profile>
-                                <img src={process.env.REACT_APP_API_STATIC_URL + "profile_images/" + user.profile_image}
-                                     onError={(e) => {
-                                         e.target.onerror = null;
-                                         e.target.src = default_image
-                                     }} alt="..."/>
-                            </CardAvatar>
-                            <CardBody profile>
-                                <h6 className={classes.cardCategory}>
-                                    {typeof user.type === "undefined" || user.type === null ? "User Type Not Set" : user.type ? "Client" : "Freelancer"}
-                                </h6>
-                                <h4 className={classes.cardTitle}>
-                                    {user.full_name ? user.full_name : ""}
-                                    <br/>
-                                    {user.email ? user.email : ""}
-                                </h4>
-                                <p className={classes.description}>
-                                    {user.bio ? user.bio : ""}
-                                </p>
-                            </CardBody>
-                        </Card>
-                    </GridItem>
-                </GridContainer>
+                        </GridItem>
+                    </GridContainer>
                 <Snackbar
                     place={this.state.place}
                     icon={AddAlert}
