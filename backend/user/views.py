@@ -2,6 +2,7 @@ import hashlib
 import uuid
 
 from django.http import JsonResponse,HttpResponse,Http404
+from django.utils.dateparse import parse_datetime
 from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
 from . import authentication
@@ -41,7 +42,7 @@ def modify_user(json, user):
 def modify_portfolio(json, portfolio):
     portfolio.title = json['title'] if 'title' in json else portfolio.title
     portfolio.description = json['description'] if 'description' in json else portfolio.description
-    portfolio.date = json['date'] if 'date' in json else portfolio.date
+    portfolio.date = parse_datetime(json['date']) if 'date' in json else portfolio.date
     portfolio.project_id = json['project_id'] if 'project_id' in json else portfolio.project_id
     portfolio.updated_at = datetime.now()
     return portfolio
@@ -257,7 +258,7 @@ def portfolio_handler(request):
             new_portfolio = Portfolio()
             new_portfolio.title = body['title']
             new_portfolio.description = body['description']
-            new_portfolio.date = body['date'] if "date" in body else None
+            new_portfolio.date = parse_datetime(body['date']) if "date" in body else None
             if "project_id" in body:
                 new_portfolio.project_id = body['project_id']
             new_portfolio.user = User.objects.get(id=user_id)
