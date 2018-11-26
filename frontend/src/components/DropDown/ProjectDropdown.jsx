@@ -157,7 +157,7 @@ class ProjectDropdown extends React.Component {
     const { deleteProjectInProgress, deleteProjectHasError, deleteProjectCompleted } = this.props.project;
     if (!deleteProjectInProgress && !deleteProjectHasError && deleteProjectCompleted && this.state.project_id === this.props.project_info.project_id) {
       if (response) {
-        this.props.handleToUpdate(this.state.project_info, 'delete');
+        this.props.handleToUpdate(this.props.project_info, 'delete');
         this.setState({
           alertOpen: true,
           color: 'success',
