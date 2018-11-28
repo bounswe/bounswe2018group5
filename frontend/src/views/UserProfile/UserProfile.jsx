@@ -44,6 +44,33 @@ import combineStyles from "services/combineStyles";
 
 import modalStyle from "material-kit-react/assets/jss/material-kit-react/modalStyle";
 
+
+// Import React FilePond
+import { FilePond, registerPlugin, File } from 'react-filepond';
+import 'filepond/dist/filepond.min.css';
+import 'filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css';
+import 'filepond-plugin-image-edit/dist/filepond-plugin-image-edit.css';
+import FilePondPluginImageExifOrientation from 'filepond-plugin-image-exif-orientation';
+import FilePondPluginImagePreview from 'filepond-plugin-image-preview';
+import FilePondPluginImageCrop from 'filepond-plugin-image-crop';
+import FilePondPluginImageResize from 'filepond-plugin-image-resize';
+import FilePondPluginImageTransform from 'filepond-plugin-image-transform';
+import FilePondPluginFileValidateType from 'filepond-plugin-file-validate-type';
+
+import { getCookie, TOKEN_COOKIE } from "services/cookies.js";
+
+// We register the plugins required to do 
+// image previews, cropping, resizing, etc.
+registerPlugin(
+    FilePondPluginFileValidateType,
+    FilePondPluginImageExifOrientation,
+    FilePondPluginImagePreview,
+    FilePondPluginImageCrop,
+    FilePondPluginImageResize,
+    FilePondPluginImageTransform
+);
+
+
 const styles = {
     textCenter: {
         textAlign: "center"
@@ -300,6 +327,10 @@ class UserProfile extends Component {
                 })}
             </GridContainer>
         );
+        let profile_image;
+        if (user.profile_image) {
+            profile_image = <File key={user.profile_image} src={"media/profile_images/" + user.profile_image} origin="local" />;
+        }
         return (
             <div>
                 <div>
@@ -338,11 +369,42 @@ class UserProfile extends Component {
 
                                 <Card profile>
                                     <CardAvatar profile>
-                                        <img src={process.env.REACT_APP_API_STATIC_URL + "profile_images/" + user.profile_image}
-                                            onError={(e) => {
-                                                e.target.onerror = null;
-                                                e.target.src = default_image
-                                            }} alt="..." />
+                                        <FilePond
+                                            className="filepond"
+                                            name={"profile_image"}
+                                            imagePreviewMaxHeight={50}
+                                            imageCropAspectRatio={'1:1'}
+                                            imageResizeTargetWidth={200}
+                                            imageResizeTargetHeight={200}
+                                            stylePanelLayout={'compact circle'}
+                                            styleLoadIndicatorPosition={'center bottom'}
+                                            styleProgressIndicatorPosition={'right bottom'}
+                                            styleButtonRemoveItemPosition={'left bottom'}
+                                            styleButtonProcessItemPosition={'right bottom'}
+                                            instantUpload={false}
+                                            server={{
+                                                url: process.env.REACT_APP_API_URL,
+                                                process: {
+                                                    url: './api/user/profile/upload_image/',
+                                                    method: 'POST',
+                                                    headers: {
+                                                        Authorization: getCookie(TOKEN_COOKIE)
+                                                    },
+                                                    timeout: 7000,
+                                                    onload: null,
+                                                    onerror: null
+                                                },
+                                                load: {
+                                                    url: "./"
+                                                }
+                                            }}
+
+                                            labelIdle={`Drag & Drop your picture or <span class="filepond--label-action">Browse</span>`}
+                                            acceptedFileTypes={"image/png, image/jpeg"}
+                                        >
+                                            {profile_image}
+                                        </FilePond>
+                                        <img src={default_image} alt="..." />
                                     </CardAvatar>
                                     <CardBody profile>
                                         <h6 className={classes.cardCategory}>
