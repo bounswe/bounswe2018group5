@@ -48,9 +48,10 @@ def modify_portfolio(json, portfolio):
     portfolio.updated_at = datetime.now()
     return portfolio
 
-def create_wallet(user_id):
+
+def create_wallet(user):
     wallet = Wallet()
-    wallet.user = User.objects.get(id=user_id)
+    wallet.user = User.objects.get(id=user.id)
     wallet.balance = 0
     wallet.save()
 
@@ -86,7 +87,7 @@ def register(request):
             new_user.full_name = body['full_name']
             new_user.email = body['email']
             new_user.save()
-            create_wallet(new_user.id)
+            create_wallet(new_user)
         except Exception as e:
             return JsonResponse({'response': False, 'error': str(e)})
         return JsonResponse({"response": True, 'api_token': authentication.generate_token(new_user)})
@@ -313,10 +314,8 @@ def portfolio_handler(request):
 def wallet_handler(request):
     token = request.META.get('HTTP_AUTHORIZATION', None)
     if request.method == 'GET':
-        user_id = request.GET.get('user_id', '')
-        if user_id == '':
-            return JsonResponse({"response": False, "error": "user_id not provided"})
         if token and authentication.is_authenticated(token):
+            user_id = authentication.get_user_id(token)
             try:
                 wallet = Wallet.objects.get(user=user_id)
                 return JsonResponse({'response': True, 'wallet': wallet_json(wallet)})
@@ -329,14 +328,11 @@ def wallet_handler(request):
             user_id = authentication.get_user_id(token)
             body = json.loads(request.body.decode('utf-8'))
             try:
-                if user_id == body['user_id']:
-                    wallet = Wallet.objects.get(user=body['user_id'])
-                    wallet.balance += body['deposit'] if 'deposit' in body else 0
-                    wallet.balance -= body['withdraw'] if 'withdraw' in body else 0
-                    wallet.save()
-                    return JsonResponse({'response': True, 'wallet': wallet_json(wallet)})
-                else:
-                    return JsonResponse({"response": False, "error": "You cannot add funds for another user"})
+                wallet = Wallet.objects.get(user=user_id)
+                wallet.balance += body['deposit'] if 'deposit' in body else 0
+                wallet.balance -= body['withdraw'] if 'withdraw' in body else 0
+                wallet.save()
+                return JsonResponse({'response': True, 'wallet': wallet_json(wallet)})
             except Exception as e:
                 return JsonResponse({'response': False, 'error': str(e)})
         else:

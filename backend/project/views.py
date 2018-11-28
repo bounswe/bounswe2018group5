@@ -22,19 +22,22 @@ def modify_project(json, project):
     return project
 
 
-def make_payment(project_id):
-    project = Project.objects.get(id=project_id)
+def make_payment(project):
+    project = Project.objects.get(id=project.id)
     owner_wallet = Wallet.objects.get(user=project.owner)
     freelancer_wallet = Wallet.objects.get(user=project.freelancer)
-    bid = Bid.objects.get(project=project.id)
+    bid = Bid.objects.get(project=project.id, status=1)
     if owner_wallet.balance < bid.offer:
         return 0  # insufficient funds
     else:
-        owner_wallet.balance -= bid.offer
-        freelancer_wallet.balance += bid.offer
-        owner_wallet.save()
-        freelancer_wallet.save()
-        return 1
+        try:
+            owner_wallet.balance -= bid.offer
+            freelancer_wallet.balance += bid.offer
+            owner_wallet.save()
+            freelancer_wallet.save()
+            return 1
+        except Exception as e:
+            return JsonResponse({'response': False, 'error': str(e)})
 
 
 @csrf_exempt
@@ -215,7 +218,7 @@ def finish_project(request):
             try:
                 project = Project.objects.get(id=body['project_id'])
                 if user_id == str(project.owner.id):
-                    payment_status = make_payment(project.id)
+                    payment_status = make_payment(project)
                     if payment_status == 0:
                         return JsonResponse({"response": False, "error": "Insufficient funds"})
                     elif payment_status == 1:

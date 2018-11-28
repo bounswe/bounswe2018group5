@@ -28,7 +28,9 @@ def user_json(user, user_id=""):
     portfolios = user_models.Portfolio.objects.filter(user=user)
     obj['portfolios'] = []
     for portfolio in portfolios:
-        obj['portfolios'].append(portfolio_json(portfolio,from_model="user"))
+        obj['portfolios'].append(portfolio_json(portfolio, from_model="user"))
+    wallet = user_models.Wallet.objects.get(user=user)
+    obj['wallet'] = wallet_json(wallet)
     return obj
 
 
@@ -106,7 +108,6 @@ def rating_json(rating, from_model):
 
 def wallet_json(wallet):
     obj = {}
-    obj['user'] = user_json(wallet.user)
     obj['balance'] = wallet.balance
     return obj
 
