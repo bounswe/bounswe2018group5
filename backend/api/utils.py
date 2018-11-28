@@ -28,7 +28,9 @@ def user_json(user, user_id=""):
     portfolios = user_models.Portfolio.objects.filter(user=user)
     obj['portfolios'] = []
     for portfolio in portfolios:
-        obj['portfolios'].append(portfolio_json(portfolio,from_model="user"))
+        obj['portfolios'].append(portfolio_json(portfolio, from_model="user"))
+    wallet = user_models.Wallet.objects.get(user=user)
+    obj['wallet'] = wallet_json(wallet)
     return obj
 
 
@@ -38,7 +40,7 @@ def project_json(project,user_id):
     obj['title'] = project.title
     obj['budget'] = project.budget
     obj['description'] = project.description
-    obj['deadline'] = format_datetime(project.project_deadline) if project.project_deadline != None else None
+    obj['deadline'] = format_datetime(project.project_deadline) if project.project_deadline is None else None
     obj['created_at'] = format_datetime(project.created_at)
     obj['updated_at'] = format_datetime(project.updated_at)
     obj['owner'] = user_json(project.owner)
@@ -101,6 +103,12 @@ def rating_json(rating, from_model):
 
     obj['created_at'] = format_datetime(rating.created_at)
     obj['updated_at'] = format_datetime(rating.updated_at)
+    return obj
+
+
+def wallet_json(wallet):
+    obj = {}
+    obj['balance'] = wallet.balance
     return obj
 
 def hide_name(name):

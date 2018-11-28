@@ -65,3 +65,13 @@ class Portfolio(BaseDocument):
     project_id = StringField(blank=True, null=True)
 
     meta = {'collection': 'portfolios'}
+
+
+class Wallet(BaseDocument):
+    def schema(self):
+        pass
+
+    user = ReferenceField('User')
+    balance = FloatField(min_value=0)
+
+    meta = {'collection': 'wallet'}
