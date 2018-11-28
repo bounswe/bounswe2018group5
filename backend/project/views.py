@@ -5,7 +5,8 @@ from datetime import datetime
 from api.utils import *
 
 import json
-from .models import Project, Bid
+from .models import *
+from user.models import *
 
 
 def modify_project(json, project):
@@ -19,6 +20,21 @@ def modify_project(json, project):
     project.milestones = json['milestones'] if 'milestones' in json else project.milestones
     project.updated_at = datetime.now()
     return project
+
+
+def make_payment(project_id):
+    project = Project.objects.get(id=project_id)
+    owner_wallet = Wallet.objects.get(user=project.owner)
+    freelancer_wallet = Wallet.objects.get(user=project.freelancer)
+    bid = Bid.objects.get(project=project.id)
+    if owner_wallet.balance < bid.offer:
+        return 0  # insufficient funds
+    else:
+        owner_wallet.balance -= bid.offer
+        freelancer_wallet.balance += bid.offer
+        owner_wallet.save()
+        freelancer_wallet.save()
+        return 1
 
 
 @csrf_exempt
@@ -188,27 +204,6 @@ def project_handler(request):
         "error": "wrong request method"
     })
 
-@csrf_exempt
-def update_project(request):
-    if request.method == 'POST':
-        token = request.META.get('HTTP_AUTHORIZATION', None)
-        if token and authentication.is_authenticated(token):
-            user_id = authentication.get_user_id(token)
-            body = json.loads(request.body.decode('utf-8'))
-            project = Project.objects.get(id=body['project_id'])
-            modify_project(body, project)
-            try:
-                project.save()
-                return JsonResponse({"response": True, "project": project_json(project,user_id)})
-            except Exception as e:
-                return JsonResponse({'response': False, 'error': str(e)})
-        else:
-            return JsonResponse({"response": False, "error": "Unauthorized"})
-    return JsonResponse({
-        "response": False,
-        "error": "wrong request method"
-    })
-
 
 @csrf_exempt
 def finish_project(request):
@@ -220,9 +215,13 @@ def finish_project(request):
             try:
                 project = Project.objects.get(id=body['project_id'])
                 if user_id == str(project.owner.id):
-                    project.status = 2
-                    project.save()
-                    return JsonResponse({"response": True, "project": project_json(project,user_id)})
+                    payment_status = make_payment(project.id)
+                    if payment_status == 0:
+                        return JsonResponse({"response": False, "error": "Insufficient funds"})
+                    elif payment_status == 1:
+                        project.status = 2
+                        project.save()
+                        return JsonResponse({"response": True, "project": project_json(project, user_id)})
                 else:
                     return JsonResponse({"response": False, "error": "Not allowed to edit this project"})
             except Exception as e:

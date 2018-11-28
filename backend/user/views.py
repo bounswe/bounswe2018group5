@@ -12,8 +12,8 @@ import os
 import re
 from django.core import validators
 from api.utils import *
-from .models import User, DoesNotExist, Rating, Portfolio
-from project import models
+from .models import *
+from project.models import *
 
 
 def hash_password(password):
@@ -39,6 +39,7 @@ def modify_user(json, user):
     user.updated_at = datetime.now()
     return user
 
+
 def modify_portfolio(json, portfolio):
     portfolio.title = json['title'] if 'title' in json else portfolio.title
     portfolio.description = json['description'] if 'description' in json else portfolio.description
@@ -46,6 +47,13 @@ def modify_portfolio(json, portfolio):
     portfolio.project_id = json['project_id'] if 'project_id' in json else portfolio.project_id
     portfolio.updated_at = datetime.now()
     return portfolio
+
+def create_wallet(user_id):
+    wallet = Wallet()
+    wallet.user = User.objects.get(id=user_id)
+    wallet.balance = 0
+    wallet.save()
+
 
 @csrf_exempt
 def login(request):
@@ -78,6 +86,7 @@ def register(request):
             new_user.full_name = body['full_name']
             new_user.email = body['email']
             new_user.save()
+            create_wallet(new_user.id)
         except Exception as e:
             return JsonResponse({'response': False, 'error': str(e)})
         return JsonResponse({"response": True, 'api_token': authentication.generate_token(new_user)})
@@ -179,28 +188,6 @@ def upload_image(request):
     })
 
 
-@csrf_exempt
-def update_user(request):
-    if request.method == 'POST':
-        token = request.META.get('HTTP_AUTHORIZATION', None)
-        if token and authentication.is_authenticated(token):
-            body = json.loads(request.body.decode('utf-8'))
-            user_id = authentication.get_user_id(token)
-            user = User.objects.get(id=user_id)
-            modify_user(body, user)
-            try:
-                user.save()
-                return JsonResponse({"response": True})
-            except Exception as e:
-                return JsonResponse({'response': False, 'error': str(e)})
-        else:
-            return JsonResponse({"response": False, "error": "Unauthorized"})
-    return JsonResponse({
-        "response": False,
-        "error": request.method
-    })
-
-
 # returns rating with given id if GET request, adds new rating if POST request
 @csrf_exempt
 def rating_handler(request):
@@ -221,7 +208,7 @@ def rating_handler(request):
         if token and authentication.is_authenticated(token):
             body = json.loads(request.body.decode('utf-8'))
             user_id = authentication.get_user_id(token)
-            project = models.Project.objects.get(id=body['project_id'])
+            project = Project.objects.get(id=body['project_id'])
             new_rating = Rating()
             if user_id == str(project.owner.id):
                 new_rating.rater = project.owner
@@ -320,3 +307,42 @@ def portfolio_handler(request):
         "response": False,
         "error": "wrong request method"
     })
+
+
+@csrf_exempt
+def wallet_handler(request):
+    token = request.META.get('HTTP_AUTHORIZATION', None)
+    if request.method == 'GET':
+        user_id = request.GET.get('user_id', '')
+        if user_id == '':
+            return JsonResponse({"response": False, "error": "user_id not provided"})
+        if token and authentication.is_authenticated(token):
+            try:
+                wallet = Wallet.objects.get(user=user_id)
+                return JsonResponse({'response': True, 'wallet': wallet_json(wallet)})
+            except Exception as e:
+                return JsonResponse({'response': False, 'error': str(e)})
+        else:
+            return JsonResponse({"response": False, "error": "Unauthorized"})
+    elif request.method == 'PUT':
+        if token and authentication.is_authenticated(token):
+            user_id = authentication.get_user_id(token)
+            body = json.loads(request.body.decode('utf-8'))
+            try:
+                if user_id == body['user_id']:
+                    wallet = Wallet.objects.get(user=body['user_id'])
+                    wallet.balance += body['add'] if 'add' in body else 0
+                    wallet.save()
+                    return JsonResponse({'response': True, 'wallet': wallet_json(wallet)})
+                else:
+                    return JsonResponse({"response": False, "error": "You cannot add funds for another user"})
+            except Exception as e:
+                return JsonResponse({'response': False, 'error': str(e)})
+        else:
+            return JsonResponse({"response": False, "error": "Unauthorized"})
+    else:
+        return JsonResponse({
+            "response": False,
+            "error": "wrong request method"
+        })
+
