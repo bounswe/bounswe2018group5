@@ -33,7 +33,9 @@ import {
     tryChangePassword,
     changePasswordReset,
     tryUpdateProfile,
-    updateProfileReset
+    updateProfileReset,
+    tryPutWallet,
+    putWalletReset
 } from "redux/user/Actions.js";
 
 import default_image from "assets/img/faces/default_image.png";
@@ -87,7 +89,10 @@ class UserProfile extends Component {
             type: -1,
             portfolios: [],
             withdrawModal: false,
-            addMoneyModal: false
+            depositModal: false,
+            withdraw: 0,
+            deposit_amount: 0,
+            withdraw_amount: 0
         };
     }
 
@@ -113,13 +118,13 @@ class UserProfile extends Component {
 
     handleWithdrawMoney(event) {
         const { withdraw_amount } = this.state;
-        
+        this.props.tryPutWallet(0, parseFloat(withdraw_amount));
         event.preventDefault();
     }
 
-    handleAddMoney(event) {
-        const { add_amount } = this.state;
-        
+    handleDepositMoney(event) {
+        const { deposit_amount } = this.state;
+        this.props.tryPutWallet(parseFloat(deposit_amount), 0);
         event.preventDefault();
     }
 
@@ -153,7 +158,8 @@ class UserProfile extends Component {
                 bio: user.bio, 
                 gender: user.gender === null ? -2 : user.gender, 
                 type: user.type === null ? -1 : user.type,
-                portfolios: user.portfolios
+                portfolios: user.portfolios,
+                balance: user.wallet.balance || 0
             });
             this.props.profileReset();
         }
@@ -215,6 +221,43 @@ class UserProfile extends Component {
             }
             this.setState({updateProfile: false});
             this.props.updateProfileReset();
+        }
+
+        const { putWalletInProgress, putWalletHasError, putWalletCompleted, wallet } = this.props.user;
+
+        if (!putWalletInProgress && !putWalletHasError && putWalletCompleted) {
+            let type;
+            if (this.state.deposit_amount !== 0) {
+                type = 'deposit';
+            } else if (this.state.withdraw_amount !== 0) {
+                type = 'withdraw';
+            } else {
+                type = '';
+            }
+            if (response) {
+                this.setState({
+                    balance: wallet.balance,
+                    open: true,
+                    color: 'success',
+                    notificationMessage: type + ' is successful!'
+                });
+                setTimeout(function () {
+                    this.setState({ open: false });
+                }.bind(this), 6000);
+            } else {
+                this.setState({
+                    open: true,
+                    color: 'danger',
+                    notificationMessage: type + ' is not successful!'
+                });
+                setTimeout(function () {
+                    this.setState({ open: false });
+                }.bind(this), 6000);
+            }
+            this.setState({ deposit_amount: 0, withdraw_amount: 0 });
+            this.handleClose("withdrawModal");
+            this.handleClose("depositModal");
+            this.props.putWalletReset();
         }
     }
 
@@ -322,14 +365,14 @@ class UserProfile extends Component {
                                     <CardBody>
                                         <h3 className={classes.cardTitle}>Wallet</h3>
                                         <h4 className={classes.cardTitle}>
-                                            <b>Balance:</b> {34}$
+                                            <b>Balance:</b> {this.state.balance}$
                                         </h4>
                                         <Button variant="contained" color="primary" onClick={() => this.handleClickOpen("withdrawModal")}>
                                             Withdraw Money
                                         </Button>
 
-                                        <Button variant="contained" color="success" onClick={() => this.handleClickOpen("addMoneyModal")}>
-                                            Add Money
+                                        <Button variant="contained" color="success" onClick={() => this.handleClickOpen("depositModal")}>
+                                            Deposit Money
                                         </Button>
                                     </CardBody>
                                 </Card>
@@ -528,10 +571,10 @@ class UserProfile extends Component {
                         root: classes.center,
                         paper: classes.modal
                     }}
-                    open={this.state.addMoneyModal}
+                    open={this.state.depositModal}
                     TransitionComponent={Transition}
                     keepMounted
-                    onClose={() => this.handleClose("addMoneyModal")}
+                    onClose={() => this.handleClose("depositModal")}
                     aria-labelledby="modal-slide-title"
                     aria-describedby="modal-slide-description">
                     <DialogTitle
@@ -543,10 +586,10 @@ class UserProfile extends Component {
                             key="close"
                             aria-label="Close"
                             color="inherit"
-                            onClick={() => this.handleClose("addMoneyModal")}>
+                            onClick={() => this.handleClose("depositModal")}>
                             <Close className={classes.modalClose} />
                         </IconButton>
-                        <h4 className={classes.modalTitle}>Add Money</h4>
+                        <h4 className={classes.modalTitle}>Deposit Money</h4>
                     </DialogTitle>
                     <DialogContent
                         id="modal-slide-description"
@@ -563,7 +606,7 @@ class UserProfile extends Component {
                                             }}
                                             inputProps={{
                                                 type: 'number',
-                                                onChange: event => this.setState({ add_amount: event.target.value })
+                                                onChange: event => this.setState({ deposit_amount: event.target.value })
                                             }}
                                         />
                                     </GridItem>
@@ -574,10 +617,10 @@ class UserProfile extends Component {
                     <DialogActions
                         className={classes.modalFooter + " " + classes.modalFooterCenter}>
                         <OtherButton
-                            onClick={event => this.handleAddMoney(event)}
+                            onClick={event => this.handleDepositMoney(event)}
                             color={'primary'}
                         >
-                            Add
+                            Deposit
                         </OtherButton>
                     </DialogActions>
                 </Dialog>
@@ -606,7 +649,9 @@ function bindAction(dispatch) {
         tryChangePassword: (password) => dispatch(tryChangePassword(password)),
         changePasswordReset: () => dispatch(changePasswordReset()),
         tryUpdateProfile: (full_name, gender, bio, type) => dispatch(tryUpdateProfile(full_name, gender, bio, type)),
-        updateProfileReset: () => dispatch(updateProfileReset())
+        updateProfileReset: () => dispatch(updateProfileReset()),
+        tryPutWallet: (deposit, withdraw) => dispatch(tryPutWallet(deposit, withdraw)),
+        putWalletReset: () => dispatch(putWalletReset())
     };
 }
 
