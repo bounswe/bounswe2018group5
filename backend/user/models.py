@@ -74,4 +74,4 @@ class Wallet(BaseDocument):
     user = ReferenceField('User')
     balance = FloatField(min_value=0)
 
-    meta = {'collection': 'wallet'}
+    meta = {'collection': 'wallets'}
