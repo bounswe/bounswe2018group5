@@ -10,6 +10,7 @@ import {
     POST_PORTFOLIO_REQUEST,
     PUT_PORTFOLIO_REQUEST,
     DELETE_PORTFOLIO_REQUEST,
+    PUT_WALLET_REQUEST,
 } from "../user/actionTypes";
 import { 
     CREATE_PROJECT_REQUEST, 
@@ -65,7 +66,9 @@ import {
     putPortfolioSuccess,
     putPortfolioFailure,
     deletePortfolioFailure,
-    deletePortfolioSuccess
+    deletePortfolioSuccess,
+    putWalletSuccess,
+    putWalletFailure
 } from "../user/Actions";
 
 
@@ -668,6 +671,34 @@ const tryPutPortfolioSaga = function* (action) {
     }
 };
 
+const tryPutWalletSaga = function* (action) {
+    try {
+        const { deposit, withdraw } = action.payload;
+
+        const putWalletResponse = yield call(api.putWallet, deposit, withdraw);
+
+        if (putWalletResponse) {
+            console.log("putWalletResponse", putWalletResponse);
+
+            if (putWalletResponse.status === 200) {
+                yield put(putWalletSuccess(putWalletResponse.responseBody));
+            } else if (putWalletResponse.status === 400) {
+                console.log("Something wrong! Got a status 400", putWalletResponse.responseBody);
+                yield put(putWalletFailure(putWalletResponse.responseBody));
+            } else {
+                console.log("Something wrong! Got an unknown status.", putWalletResponse);
+                yield put(putWalletFailure({ detail: ["Unknown status. Check console!"] }));
+            }
+        } else {
+            console.log("put Wallet failed by api. No response !");
+            yield put(putWalletFailure({ detail: ["No response fetched. Please contact the API team!"] }));
+        }
+    } catch (err) {
+        console.log("put Wallet failed by api. Error => ", err);
+        yield put(putWalletFailure({ detail: [err.detail] }));
+    }
+};
+
 const saga = function* () {
     // AUTH
     yield takeLatest(LOGIN_REQUEST, tryLoginSaga);
@@ -679,6 +710,7 @@ const saga = function* () {
     yield takeLatest(GET_USER_PROFILE_REQUEST, tryGetUserProfileSaga);
     yield takeLatest(UPDATE_PROFILE_REQUEST, tryUpdateProfileSaga);
     yield takeLatest(CHANGE_PASSWORD_REQUEST, tryChangePasswordSaga);
+    yield takeLatest(PUT_WALLET_REQUEST, tryPutWalletSaga);
 
     // PROJECTS
     yield takeLatest(GET_PROJECTS_REQUEST, tryGetProjectsSaga);
