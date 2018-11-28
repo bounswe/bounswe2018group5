@@ -369,7 +369,6 @@ class UserProfile extends Component {
 
                                 <Card profile>
                                     <CardAvatar profile>
-
                                         <FilePond
                                             className="filepond"
                                             name={"profile_image"}
@@ -405,11 +404,7 @@ class UserProfile extends Component {
                                         >
                                             {profile_image}
                                         </FilePond>
-                                        <img src={process.env.REACT_APP_API_STATIC_URL + "profile_images/" + user.profile_image}
-                                            onError={(e) => {
-                                                e.target.onerror = null;
-                                                e.target.src = default_image
-                                            }} alt="..." />
+                                        <img src={default_image} alt="..." />
                                     </CardAvatar>
                                     <CardBody profile>
                                         <h6 className={classes.cardCategory}>
