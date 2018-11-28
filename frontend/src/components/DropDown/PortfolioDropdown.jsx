@@ -172,7 +172,7 @@ class PortfolioDropdown extends React.Component {
           buttonRef={node => {
             this.anchorEl = node;
           }}
-          color={"black"}
+          color={"primary"}
           justIcon
           simple
           aria-owns={open ? "menu-list-grow" : null}

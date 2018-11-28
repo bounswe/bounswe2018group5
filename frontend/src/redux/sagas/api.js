@@ -12,6 +12,7 @@ class api {
             sendToken: false
         });
     };
+
     doRegister = (username, email, password, full_name) => {
         return httpService.fetch({
             path: "api/user/auth/register",
@@ -25,6 +26,7 @@ class api {
             sendToken: false
         });
     };
+
     doLogout = () => {
         return httpService.fetch({
             path: "api/user/auth/logout",
@@ -32,6 +34,7 @@ class api {
             sendToken: true
         });
     };
+
     getProfile = () => {
         return httpService.fetch({
             path: "api/user/profile/",
@@ -39,6 +42,7 @@ class api {
             sendToken: true
         });
     };
+
     getUserProfile = (user_id) => {
         return httpService.fetch({
             path: "api/user/profile/",
@@ -49,6 +53,7 @@ class api {
             sendToken: true
         });
     };
+
     changePassword = (password) => {
         return httpService.fetch({
             path: "api/user/profile/",
@@ -59,6 +64,7 @@ class api {
             sendToken: true
         });
     };
+
     updateProfile = (full_name, gender, bio, type) => {
         return httpService.fetch({
             path: "api/user/profile/",
@@ -72,6 +78,7 @@ class api {
             sendToken: true
         });
     };
+
     getProjects = () => {
         return httpService.fetch({
             path: "api/project/",
@@ -79,6 +86,7 @@ class api {
             sendToken: true
         });
     };
+
     getProject = (project_id) => {
         return httpService.fetch({
             path: "api/project/",
@@ -89,6 +97,7 @@ class api {
             sendToken: true
         });
     };
+
     getOwnProjects = () => {
         return httpService.fetch({
             path: "api/project/own/",
@@ -96,6 +105,7 @@ class api {
             sendToken: true
         });
     };
+
     createProject = (title, description, project_deadline, budget) => {
         return httpService.fetch({
             path: "api/project/",
@@ -109,6 +119,7 @@ class api {
             sendToken: true
         });
     };
+
     editProject = (project_id, description) => {
         return httpService.fetch({
             path: "api/project/",
@@ -120,6 +131,7 @@ class api {
             sendToken: true
         });
     };
+
     discardProject = (project_id) => {
         return httpService.fetch({
             path: "api/project/",
@@ -131,6 +143,7 @@ class api {
             sendToken: true
         });
     };
+
     finishProject = (project_id) => {
         return httpService.fetch({
             path: "api/project/finish/",
@@ -141,6 +154,7 @@ class api {
             sendToken: true
         });
     };
+
     deleteProject = (project_id) => {
         return httpService.fetch({
             path: "api/project/",
@@ -151,6 +165,7 @@ class api {
             sendToken: true
         });
     };
+
     createBid = (project_id, freelancer_id, offer, note) => {
         return httpService.fetch({
             path: "api/project/bid/add/",
@@ -233,6 +248,18 @@ class api {
             method: "DELETE",
             params: {
                 id: portfolio_id
+            },
+            sendToken: true
+        });
+    };
+
+    putWallet = (deposit, withdraw) => {
+        return httpService.fetch({
+            path: "api/user/wallet/",
+            method: "PUT",
+            body: {
+                deposit,
+                withdraw,
             },
             sendToken: true
         });

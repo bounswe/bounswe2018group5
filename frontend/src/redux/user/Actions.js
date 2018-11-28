@@ -30,7 +30,11 @@ import {
     DELETE_PORTFOLIO_REQUEST,
     DELETE_PORTFOLIO_SUCCESS,
     DELETE_PORTFOLIO_FAILURE,
-    DELETE_PORTFOLIO_RESET
+    DELETE_PORTFOLIO_RESET,
+    PUT_WALLET_REQUEST,
+    PUT_WALLET_SUCCESS,
+    PUT_WALLET_FAILURE,
+    PUT_WALLET_RESET,
 } from "./actionTypes";
 
 export const tryGetProfile = () => ({
@@ -183,4 +187,23 @@ export const deletePortfolioFailure = errorData => ({
 });
 export const deletePortfolioReset = () => ({
     type: DELETE_PORTFOLIO_RESET
+});
+
+export const tryPutWallet = (deposit, withdraw) => ({
+    type: PUT_WALLET_REQUEST,
+    payload: {
+        deposit,
+        withdraw
+    }
+});
+export const putWalletSuccess = res => ({
+    type: PUT_WALLET_SUCCESS,
+    payload: res
+});
+export const putWalletFailure = errorData => ({
+    type: PUT_WALLET_FAILURE,
+    payload: errorData
+});
+export const putWalletReset = () => ({
+    type: PUT_WALLET_RESET
 });

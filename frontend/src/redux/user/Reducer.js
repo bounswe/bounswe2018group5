@@ -31,12 +31,17 @@ import {
     DELETE_PORTFOLIO_SUCCESS,
     DELETE_PORTFOLIO_FAILURE,
     DELETE_PORTFOLIO_RESET,
+    PUT_WALLET_REQUEST,
+    PUT_WALLET_SUCCESS,
+    PUT_WALLET_FAILURE,
+    PUT_WALLET_RESET,
 } from "./actionTypes";
 
 const initialState = {
     user: "",
     response: false,
     portfolio: "",
+    wallet: "",
 
     getProfileInProgress: false,
     getProfileHasError: false,
@@ -77,6 +82,11 @@ const initialState = {
     deletePortfolioHasError: false,
     deletePortfolioCompleted: false,
     deletePortfolioError: "",
+
+    putWalletInProgress: false,
+    putWalletHasError: false,
+    putWalletCompleted: false,
+    putWalletError: "",
 };
 
 export default function(state = initialState, action) {
@@ -345,6 +355,40 @@ export default function(state = initialState, action) {
             deletePortfolioInProgress: false,
             deletePortfolioHasError: false,
             deletePortfolioCompleted: false
+        };
+    }
+
+    if (action.type === PUT_WALLET_REQUEST) {
+        return {
+            ...state,
+            putWalletInProgress: true,
+            putWalletHasError: false,
+            putWalletCompleted: false
+        };
+    } else if (action.type === PUT_WALLET_SUCCESS) {
+        return {
+            ...state,
+            response: payload.response,
+            wallet: payload.wallet,
+            putWalletInProgress: false,
+            putWalletHasError: false,
+            putWalletCompleted: true
+        };
+    } else if (action.type === PUT_WALLET_FAILURE) {
+        return {
+            ...state,
+            putWalletInProgress: false,
+            putWalletHasError: true,
+            putWalletCompleted: true,
+            putWalletError: payload.detail[0]
+        };
+    } else if (action.type === PUT_WALLET_RESET) {
+        return {
+            ...state,
+            response: false,
+            putWalletInProgress: false,
+            putWalletHasError: false,
+            putWalletCompleted: false
         };
     }
 
