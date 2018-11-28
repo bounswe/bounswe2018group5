@@ -332,6 +332,7 @@ def wallet_handler(request):
                 if user_id == body['user_id']:
                     wallet = Wallet.objects.get(user=body['user_id'])
                     wallet.balance += body['add'] if 'add' in body else 0
+                    wallet.balance -= body['withdraw'] if 'withdraw' in body else 0
                     wallet.save()
                     return JsonResponse({'response': True, 'wallet': wallet_json(wallet)})
                 else:
