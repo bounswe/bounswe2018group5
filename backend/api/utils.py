@@ -40,7 +40,6 @@ def project_json(project,user_id):
     obj['title'] = project.title
     obj['budget'] = project.budget
     obj['description'] = project.description
-    obj['deadline'] = format_datetime(project.project_deadline) if project.project_deadline is None else None
     obj['created_at'] = format_datetime(project.created_at)
     obj['updated_at'] = format_datetime(project.updated_at)
     obj['owner'] = user_json(project.owner)
@@ -55,7 +54,17 @@ def project_json(project,user_id):
     obj['ratings'] = []
     for rating in ratings:
         obj['ratings'].append(rating_json(rating, from_model= "project"))
-    obj['milestones'] = project.milestones
+    obj['milestones'] = []
+    milestones = project_models.Milestone.objects.filter(project=project).order_by('deadline')
+    for milestone in milestones:
+        obj['milestones'].append({
+            "id": str(milestone.id),
+            "name": milestone.name,
+            "detail": milestone.detail,
+            "deadline": format_datetime(milestone.deadline),
+            "status": milestone.status,
+            "is_final": milestone.is_final
+        })
     return obj
 
 
@@ -135,6 +144,17 @@ def portfolio_json(portfolio, from_model=""):
     obj['created_at'] = format_datetime(portfolio.created_at)
     obj['updated_at'] = format_datetime(portfolio.updated_at)
     return obj
+
+def milestone_json(milestone):
+    return {
+        "id": str(milestone.id),
+        "name": milestone.name,
+        "detail": milestone.detail,
+        "deadline": format_datetime(milestone.deadline),
+        "status": milestone.status,
+        "is_final": milestone.is_final,
+        "project_id": str(milestone.project.id)
+    }
 
 def format_datetime(dt):
     return dt.strftime("%Y-%m-%d")
