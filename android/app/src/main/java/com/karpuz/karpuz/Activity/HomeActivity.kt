@@ -1,22 +1,27 @@
 package com.karpuz.karpuz.Activity
 
+import android.support.v4.app.Fragment
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.support.design.widget.NavigationView
 import android.support.design.widget.Snackbar
+import android.support.v4.app.FragmentTransaction
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import com.karpuz.karpuz.Fragment.ProjectsFragment
 import com.karpuz.karpuz.R
 import com.karpuz.karpuz.ViewModel.UserViewModel
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.activity_home.*
 import kotlinx.android.synthetic.main.app_bar_home.*
 import kotlinx.android.synthetic.main.nav_header_home.*
+import java.util.*
+import kotlin.collections.HashMap
 
 class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
@@ -26,11 +31,18 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     private val disposeBag = CompositeDisposable()
     private lateinit var userViewModel: UserViewModel
+    private val fragments = HashMap<Int, Fragment>()
+    private val titles = HashMap<Int, String>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
         setSupportActionBar(toolbar)
+
+        fragments.put(R.id.nav_homepage, ProjectsFragment())
+        titles.put(R.id.nav_homepage, "Homepage")
+
+        selectItem(R.id.nav_homepage)
 
         userViewModel = ViewModelProviders.of(this).get(UserViewModel::class.java)
         userViewModel.refreshUser { user, error ->
@@ -58,11 +70,6 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         nav_view.setNavigationItemSelectedListener(this)
     }
 
-    override fun onResume() {
-        super.onResume()
-
-    }
-
     override fun onPause() {
         super.onPause()
         disposeBag.clear()
@@ -83,29 +90,28 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
-        // Handle navigation view item clicks here.
-        /*when (item.itemId) {
-            R.id.nav_camera -> {
-                // Handle the camera action
-            }
-            R.id.nav_gallery -> {
+        return selectItem(item.itemId)
+    }
 
-            }
-            R.id.nav_slideshow -> {
-
-            }
-            R.id.nav_manage -> {
-
-            }
-            R.id.nav_share -> {
-
-            }
-            R.id.nav_send -> {
-
-            }
-        }*/
-
+    private fun selectItem(itemId: Int): Boolean {
         drawer_layout.closeDrawer(GravityCompat.START)
+
+        val fragment = fragments[itemId]
+        if (fragment != null) {
+            val fragmentTransaction = supportFragmentManager.beginTransaction()
+            fragmentTransaction.replace(R.id.frame_container, fragment)
+            fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+            fragmentTransaction.commit()
+        } else {
+            return false
+        }
+
+        setActionBarTitle(titles[itemId])
+
         return true
+    }
+
+    private fun setActionBarTitle(title: String?) {
+        supportActionBar?.title = title
     }
 }
