@@ -6,6 +6,7 @@ import android.os.Bundle
 import com.karpuz.karpuz.R
 import android.support.v4.app.NavUtils
 import android.view.MenuItem
+import android.view.View
 import android.widget.Toolbar
 import kotlinx.android.synthetic.main.app_bar_home.*
 
@@ -15,5 +16,9 @@ class CreateProjectActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_create_project)
+    }
+
+    fun createProjectTapped(button: View) {
+        //TODO create project??
     }
 }
