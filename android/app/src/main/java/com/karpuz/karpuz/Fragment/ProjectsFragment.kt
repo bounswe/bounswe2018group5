@@ -53,10 +53,6 @@ class ProjectsFragment : Fragment() {
         return view
     }
 
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-    }
-
     override fun onDetach() {
         super.onDetach()
         disposeBag.clear()
