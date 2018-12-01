@@ -37,7 +37,7 @@ class ProjectsAdapter(var projects: List<KarpuzAPIModels.Project>, val clickList
             itemView.project_cell_user_full_name.text = item.owner.full_name
             itemView.project_cell_title.text = item.title
             itemView.project_cell_description.text = item.description
-            itemView.project_cell_budget.text = item.budget.toString()
+            itemView.project_cell_budget.text = item.budget.toString() + "$"
             itemView.project_cell_deadline.text = item.deadline
             itemView.project_cell_created_at.text = item.created_at
             if (item.owner.profile_image != null) {

@@ -51,15 +51,15 @@
                 android:layout_height="match_parent" android:weightSum="1">
             <TextView
                     android:text="Budget:"
-                    android:layout_width="wrap_content"
+                    android:layout_width="100dp"
                     android:layout_height="wrap_content" android:id="@+id/project_cell_budget_title"
-                    android:layout_weight="1" android:textStyle="bold" android:textAlignment="textEnd"
+                    android:textStyle="bold" android:textAlignment="viewStart"
                     android:textSize="16sp"/>
             <TextView
                     android:text="100$"
-                    android:layout_width="100dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content" android:id="@+id/project_cell_budget"
-                    android:layout_weight="0.4" android:textAlignment="textEnd"/>
+                    android:layout_weight="0.4" android:textAlignment="viewStart" android:textSize="15sp"/>
         </LinearLayout>
         <LinearLayout
                 android:orientation="horizontal"
@@ -67,15 +67,15 @@
                 android:layout_height="match_parent" android:weightSum="1">
             <TextView
                     android:text="Deadline:"
-                    android:layout_width="wrap_content"
+                    android:layout_width="100dp"
                     android:layout_height="wrap_content" android:id="@+id/project_cell_deadline_title"
-                    android:layout_weight="1" android:textStyle="bold" android:textAlignment="textEnd"
+                    android:textStyle="bold" android:textAlignment="viewStart"
                     android:textSize="16sp"/>
             <TextView
                     android:text="31.11.2018"
-                    android:layout_width="100dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content" android:id="@+id/project_cell_deadline"
-                    android:layout_weight="0.4" android:textAlignment="textEnd"/>
+                    android:layout_weight="0.4" android:textAlignment="viewStart" android:textSize="15sp"/>
         </LinearLayout>
         <LinearLayout
                 android:orientation="horizontal"
@@ -83,15 +83,15 @@
                 android:layout_height="match_parent" android:weightSum="1">
             <TextView
                     android:text="Created At:"
-                    android:layout_width="wrap_content"
+                    android:layout_width="100dp"
                     android:layout_height="wrap_content" android:id="@+id/project_cell_created_title"
-                    android:layout_weight="1" android:textStyle="bold" android:textAlignment="textEnd"
+                    android:textStyle="bold" android:textAlignment="viewStart"
                     android:textSize="16sp"/>
             <TextView
                     android:text="28.11.2018"
-                    android:layout_width="100dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content" android:id="@+id/project_cell_created_at"
-                    android:layout_weight="0.4" android:textAlignment="textEnd"/>
+                    android:layout_weight="0.4" android:textAlignment="viewStart" android:textSize="15sp"/>
         </LinearLayout>
     </LinearLayout>
     <View
