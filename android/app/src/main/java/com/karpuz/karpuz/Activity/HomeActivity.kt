@@ -3,6 +3,7 @@ package com.karpuz.karpuz.Activity
 import android.support.v4.app.Fragment
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
+import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.NavigationView
 import android.support.design.widget.Snackbar
@@ -43,6 +44,7 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         titles.put(R.id.nav_homepage, "Homepage")
 
         selectItem(R.id.nav_homepage)
+        nav_view.setCheckedItem(R.id.nav_homepage)
 
         userViewModel = ViewModelProviders.of(this).get(UserViewModel::class.java)
         userViewModel.refreshUser { user, error ->
@@ -56,9 +58,9 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             }
         }
 
-        fab.setOnClickListener { view ->
-            Snackbar.make(view, "Project creation action will be here!", Snackbar.LENGTH_LONG)
-                .setAction("Action", null).show()
+        fab.setOnClickListener { _ ->
+            val createProjectIntent = Intent(this, CreateProjectActivity::class.java)
+            startActivity(createProjectIntent)
         }
 
         val toggle = ActionBarDrawerToggle(
