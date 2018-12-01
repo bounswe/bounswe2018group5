@@ -9,22 +9,26 @@
     <LinearLayout
             android:orientation="horizontal"
             android:layout_width="match_parent"
-            android:layout_height="78dp" android:layout_weight="0.2">
+            android:layout_height="78dp" android:layout_weight="0.2"
+            android:background="@drawable/project_header_gradient">
         <ImageView
-                android:layout_width="100dp"
-                android:layout_height="100dp" tools:srcCompat="@tools:sample/avatars"
-                android:id="@+id/project_cell_user_image" android:layout_weight="0" android:adjustViewBounds="false"/>
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent" tools:srcCompat="@tools:sample/avatars"
+                android:id="@+id/project_cell_user_image" android:layout_weight="0" android:adjustViewBounds="false"
+                android:padding="8dp"/>
         <TextView
                 android:text="Enis Simsar"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" android:id="@+id/project_cell_user_full_name"
                 android:layout_weight="0" android:textAppearance="@android:style/TextAppearance.Material.Headline"
-                android:textAlignment="center" android:gravity="center"/>
+                android:textAlignment="viewStart" android:gravity="center" android:paddingLeft="10dp"
+                android:textSize="21sp" android:textStyle="bold" android:textColor="@android:color/white"/>
     </LinearLayout>
     <LinearLayout
             android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" android:layout_weight="0.6" android:layout_marginTop="5dp">
+            android:layout_height="match_parent" android:layout_weight="0.6" android:layout_marginTop="5dp"
+            android:paddingLeft="10dp" android:paddingRight="19dp">
         <TextView
                 android:text="Freelancer Platform"
                 android:layout_width="match_parent"
@@ -40,7 +44,7 @@
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="match_parent" android:layout_weight="0.2" android:layout_marginBottom="5dp"
-            android:layout_marginTop="5dp">
+            android:layout_marginTop="5dp" android:paddingLeft="10dp" android:paddingRight="19dp">
         <LinearLayout
                 android:orientation="horizontal"
                 android:layout_width="match_parent"
@@ -49,7 +53,8 @@
                     android:text="Budget:"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" android:id="@+id/project_cell_budget_title"
-                    android:layout_weight="1" android:textStyle="bold" android:textAlignment="textEnd"/>
+                    android:layout_weight="1" android:textStyle="bold" android:textAlignment="textEnd"
+                    android:textSize="16sp"/>
             <TextView
                     android:text="100$"
                     android:layout_width="100dp"
@@ -64,7 +69,8 @@
                     android:text="Deadline:"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" android:id="@+id/project_cell_deadline_title"
-                    android:layout_weight="1" android:textStyle="bold" android:textAlignment="textEnd"/>
+                    android:layout_weight="1" android:textStyle="bold" android:textAlignment="textEnd"
+                    android:textSize="16sp"/>
             <TextView
                     android:text="31.11.2018"
                     android:layout_width="100dp"
@@ -79,7 +85,8 @@
                     android:text="Created At:"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" android:id="@+id/project_cell_created_title"
-                    android:layout_weight="1" android:textStyle="bold" android:textAlignment="textEnd"/>
+                    android:layout_weight="1" android:textStyle="bold" android:textAlignment="textEnd"
+                    android:textSize="16sp"/>
             <TextView
                     android:text="28.11.2018"
                     android:layout_width="100dp"

@@ -43,6 +43,7 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         titles.put(R.id.nav_homepage, "Homepage")
 
         selectItem(R.id.nav_homepage)
+        nav_view.setCheckedItem(R.id.nav_homepage)
 
         userViewModel = ViewModelProviders.of(this).get(UserViewModel::class.java)
         userViewModel.refreshUser { user, error ->
