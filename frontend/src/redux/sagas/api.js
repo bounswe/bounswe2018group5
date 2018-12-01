@@ -106,7 +106,7 @@ class api {
         });
     };
 
-    createProject = (title, description, project_deadline, budget) => {
+    createProject = (title, description, project_deadline, budget, milestones) => {
         return httpService.fetch({
             path: "api/project/",
             method: "POST",
@@ -114,7 +114,8 @@ class api {
                 title,
                 description,
                 project_deadline,
-                budget
+                budget,
+                milestones
             },
             sendToken: true
         });
