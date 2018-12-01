@@ -65,6 +65,9 @@ def project_json(project,user_id):
             "status": milestone.status,
             "is_final": milestone.is_final
         })
+        if milestone.is_final:
+            obj['deadline'] = milestone.deadline
+
     return obj
 
 

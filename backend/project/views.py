@@ -13,7 +13,6 @@ def modify_project(json, project):
     project.title = json['title'] if 'title' in json else project.title
     project.budget = json['budget'] if 'budget' in json else project.budget
     project.description = json['description'] if 'description' in json else project.description
-    project.project_deadline = json['project_deadline'] if 'project_deadline' in json else project.project_deadline
     project.freelancer = models.User.objects.get(id=json['freelancer']) if 'freelancer' in json\
         else project.freelancer
     project.status = json['status'] if 'status' in json else project.status
