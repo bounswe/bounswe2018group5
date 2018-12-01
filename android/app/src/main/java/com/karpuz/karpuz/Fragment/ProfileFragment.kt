@@ -18,8 +18,6 @@ import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.fragment_profile.view.*
 import kotlinx.android.synthetic.main.nav_header_home.*
 
-private const val USER_ID = "user_id"
-
 class ProfileFragment : Fragment() {
 
     companion object {
@@ -31,9 +29,6 @@ class ProfileFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arguments?.let {
-            userId = it.getString(USER_ID)
-        }
     }
 
     override fun onCreateView(
@@ -44,6 +39,20 @@ class ProfileFragment : Fragment() {
 
         userViewModel = ViewModelProviders.of(this).get(UserViewModel::class.java)
         userViewModel.setUser(userId)
+        refreshUser(view)
+
+        return view
+    }
+
+    fun setUserId(userId: String?) {
+        this.userId = userId
+        if (view != null) {
+            refreshUser(view!!)
+        }
+    }
+
+    private fun refreshUser(view: View) {
+        Log.v(TAG, "Refreshing user...")
         userViewModel.refreshUser { user, error ->
             when {
                 user != null -> {
@@ -63,7 +72,5 @@ class ProfileFragment : Fragment() {
                 else -> Log.e(TAG, "Error when refreshing user profile")
             }
         }
-
-        return view
     }
 }

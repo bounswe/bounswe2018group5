@@ -1,6 +1,7 @@
 package com.karpuz.karpuz.Fragment
 
 import android.content.Context
+import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.support.v4.app.Fragment
@@ -10,6 +11,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.karpuz.karpuz.Activity.ProfileActivity
 import com.karpuz.karpuz.Adapter.ProjectsAdapter
 import com.karpuz.karpuz.Network.KarpuzAPIModels
 import com.karpuz.karpuz.Network.KarpuzAPIService
@@ -89,7 +91,9 @@ class ProjectsFragment : Fragment() {
     }
 
     private fun userSelected(userId: String?) {
-        //TODO open profile
         Log.v(TAG, "User selected: $userId")
+        val profileIntent = Intent(this.context, ProfileActivity::class.java)
+        profileIntent.putExtra("USER_ID", userId)
+        startActivity(profileIntent)
     }
 }

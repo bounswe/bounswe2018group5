@@ -114,6 +114,9 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         val fragment = fragments[itemId]
         if (fragment != null) {
+            if (fragment is ProfileFragment) {
+                fragment.setUserId(null)
+            }
             val fragmentTransaction = supportFragmentManager.beginTransaction()
             fragmentTransaction.replace(R.id.frame_container, fragment)
             fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
