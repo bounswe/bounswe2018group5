@@ -21,7 +21,7 @@
         <activity
                 android:name=".Activity.HomeActivity"
                 android:label="@string/title_activity_home"
-                android:theme="@style/AppTheme">
+                android:theme="@style/AppTheme.NoActionBar">
         </activity>
         <activity android:name=".Activity.LaunchActivity">
             <intent-filter>
@@ -42,6 +42,11 @@
                     android:name="android.accounts.AccountAuthenticator"
                     android:resource="@xml/authenticator"/>
         </service>
+
+        <activity android:name=".Activity.CreateProjectActivity"
+                  android:parentActivityName=".Activity.HomeActivity"
+                  android:label="Create Project">
+        </activity>
     </application>
 
 </manifest>

@@ -14,10 +14,10 @@
         android:gravity="bottom">
 
     <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="40pt"
+            android:layout_height="40pt"
             android:paddingTop="@dimen/nav_header_vertical_spacing"
-            app:srcCompat="@mipmap/ic_launcher_round"
+            app:srcCompat="@drawable/profile_placeholder"
             android:contentDescription="@string/nav_header_desc"
             android:id="@+id/imageView_drawer_user_pic"/>
 

@@ -13,11 +13,30 @@ def modify_project(json, project):
     project.title = json['title'] if 'title' in json else project.title
     project.budget = json['budget'] if 'budget' in json else project.budget
     project.description = json['description'] if 'description' in json else project.description
-    project.project_deadline = json['project_deadline'] if 'project_deadline' in json else project.project_deadline
     project.freelancer = models.User.objects.get(id=json['freelancer']) if 'freelancer' in json\
         else project.freelancer
     project.status = json['status'] if 'status' in json else project.status
-    project.milestones = json['milestones'] if 'milestones' in json else project.milestones
+
+    if "milestones" in json:
+        new_milestones_ids = set()
+        old_milestones_ids = set( map(lambda x: str(x),Milestone.objects.filter(project=project, is_final=False).values_list('id')) )
+        for milestone in json['milestones']:
+            if 'id' in milestone:
+                new_milestones_ids.add(milestone['id'])
+                cur_milestone = Milestone.objects.get(id=milestone['id'])
+            else:
+                cur_milestone = Milestone(project=project)
+            if cur_milestone.status == 0:
+                cur_milestone.name = milestone['name']
+                cur_milestone.detail = milestone['detail'] if 'detail' in milestone else cur_milestone.detail
+                cur_milestone.deadline = milestone['deadline']
+                cur_milestone.save()
+        Milestone.objects.filter(id__in=list(old_milestones_ids-new_milestones_ids), status=0).update(status=-1) # .delete()
+
+    final_milestone = Milestone.objects.get(project=project, is_final=True)
+    final_milestone.deadline = json['project_deadline'] if ('project_deadline' in json and final_milestone.status == 0) else final_milestone.deadline
+    final_milestone.save()
+
     project.updated_at = datetime.now()
     return project
 
@@ -38,36 +57,6 @@ def make_payment(project):
             return 1
         except Exception as e:
             return JsonResponse({'response': False, 'error': str(e)})
-
-
-@csrf_exempt
-def create_project(request):
-    if request.method == 'POST':
-        token = request.META.get('HTTP_AUTHORIZATION', None)
-        if token and authentication.is_authenticated(token):
-            user_id = authentication.get_user_id(token)
-            body = json.loads(request.body.decode('utf-8'))
-            new_project = Project()
-            try:
-                new_project.owner = models.User.objects.get(id=authentication.get_user_id(token))
-                new_project.freelancer = None
-                new_project.description = body['description']
-                new_project.title = body['title']
-                new_project.budget = body['budget']
-                new_project.project_deadline = body['project_deadline']
-                if "milestones" in body:
-                    new_project.milestones = body['milestones']
-                new_project.status = 0  # default
-            except Exception as e:
-                return JsonResponse({'response': False, 'error': str(e)})
-            new_project.save()
-            return JsonResponse({"response": True, "project": project_json(new_project,user_id)})
-        else:
-            return JsonResponse({"response": False, "error": "Unauthorized"})
-    return JsonResponse({
-        "response": False,
-        "error": "wrong request method"
-    })
 
 
 @csrf_exempt
@@ -163,14 +152,23 @@ def project_handler(request):
                 new_project.description = body['description']
                 new_project.title = body['title']
                 new_project.budget = body['budget']
-                new_project.project_deadline = body['project_deadline']
-                if "milestones" in body:
-                    new_project.milestones = body['milestones']
                 new_project.status = 0  # default
+                new_project.save()
+
+                if "milestones" in body:
+                    for milestone in body['milestones']:
+                        new_milestone = Milestone()
+                        new_milestone.name = milestone['name']
+                        new_milestone.detail = milestone['detail'] if 'detail' in milestone else None
+                        new_milestone.deadline = milestone['deadline']
+                        new_milestone.project = new_project
+                        new_milestone.save()
+                final_milestone = Milestone(name='Final', detail='This is the final delivery of the project.', deadline=body['project_deadline'], project=new_project, is_final=True)
+                final_milestone.save()
+
+                return JsonResponse({"response": True, "project": project_json(new_project,user_id)})
             except Exception as e:
                 return JsonResponse({'response': False, 'error': str(e)})
-            new_project.save()
-            return JsonResponse({"response": True, "project": project_json(new_project, user_id)})
         else:
             return JsonResponse({"response": False, "error": "Unauthorized"})
     elif request.method == 'PUT':
@@ -193,8 +191,10 @@ def project_handler(request):
             user_id = authentication.get_user_id(token)
             try:
                 project = Project.objects.get(id=project_id)
+                milestones = Milestone.objects.filter(project = project)
                 if str(project.owner.id) == user_id:
                     project.delete()
+                    milestones.delete()
                 else:
                     return JsonResponse({'response': False, 'error': "Not allowed to delete this project"})
                 return JsonResponse({"response": True})
@@ -222,6 +222,8 @@ def finish_project(request):
                     if payment_status == 0:
                         return JsonResponse({"response": False, "error": "Insufficient funds"})
                     elif payment_status == 1:
+                        milestones = Milestone.objects.filter(project=project)
+                        milestones.update(status=3, updated_at=datetime.now())
                         project.status = 2
                         project.save()
                         return JsonResponse({"response": True, "project": project_json(project, user_id)})
@@ -323,6 +325,43 @@ def update_bid(request):
                 bid.status = body['status'] if 'status' in body else bid.status
                 bid.save()
                 return JsonResponse({'response': True})
+            except Exception as e:
+                return JsonResponse({'response': False, 'error': str(e)})
+        else:
+            return JsonResponse({"response": False, "error": "Unauthorized"})
+    return JsonResponse({
+        "response": False,
+        "error": "wrong request method"
+    })
+
+
+@csrf_exempt
+def milestone_handler(request):
+    if request.method == 'GET':
+        token = request.META.get('HTTP_AUTHORIZATION', None)
+        if token and authentication.is_authenticated(token):
+            milestone_id = request.GET.get('id')
+            try:
+                milestone = Milestone.objects.get(id=milestone_id)
+                return JsonResponse({'response': True, 'milestone': milestone_json(milestone)})
+            except Exception as e:
+                return JsonResponse({'response': False, 'error': str(e)})
+        else:
+            return JsonResponse({"response": False, "error": "Unauthorized"})
+    if request.method == 'PUT':
+        token = request.META.get('HTTP_AUTHORIZATION', None)
+        if token and authentication.is_authenticated(token):
+            body = json.loads(request.body.decode('utf-8'))
+            try:
+                milestone = Milestone.objects.get(id=body['milestone_id'])
+                if milestone.status < 1:
+                    milestone.name = body['name'] if 'name' in body else milestone.name
+                    milestone.detail = body['detail'] if 'detail' in body else milestone.detail
+                    milestone.deadline = body['deadline'] if 'deadline' in body else milestone.deadline
+                    milestone.status = body['status'] if 'status' in body else milestone.status
+                    milestone.save()
+                    return JsonResponse({'response': True, 'milestone': milestone_json(milestone)})
+                return JsonResponse({'response': False, 'error': 'Milestone cannot be changed anymore.'})
             except Exception as e:
                 return JsonResponse({'response': False, 'error': str(e)})
         else:

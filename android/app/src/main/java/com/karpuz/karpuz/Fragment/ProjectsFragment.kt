@@ -43,13 +43,14 @@ class ProjectsFragment : Fragment() {
         view.projects_recycle_view.adapter = adapter
         view.projects_recycle_view.layoutManager = LinearLayoutManager(this.context)
 
+        view.swipe_refresh_layout_projects.setOnRefreshListener {
+            refreshProjects()
+        }
+
+        view.swipe_refresh_layout_projects.isRefreshing = true
         refreshProjects()
 
         return view
-    }
-
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
     }
 
     override fun onDetach() {
@@ -59,6 +60,7 @@ class ProjectsFragment : Fragment() {
 
     private fun projectsUpdated(projects: List<KarpuzAPIModels.Project>) {
         adapter.setData(projects)
+        swipe_refresh_layout_projects.isRefreshing = false
     }
 
     private fun refreshProjects() {

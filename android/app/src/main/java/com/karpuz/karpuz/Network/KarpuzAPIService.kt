@@ -36,15 +36,19 @@ class KarpuzAPIService {
         this.provider = provider
     }
 
-    fun getAllProjects(): Observable<KarpuzAPIModels.ProjectsResponse> {
-        return provider.getAllProjects(authToken).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
-    }
-
     fun getUserProfile(userId: String?): Observable<KarpuzAPIModels.UserResponse> {
         return if (userId != null) {
             provider.getUserProfile(authToken, userId).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
         } else {
             provider.getUserProfile(authToken).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
         }
+    }
+
+    fun getAllProjects(): Observable<KarpuzAPIModels.ProjectsResponse> {
+        return provider.getAllProjects(authToken).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+    }
+
+    fun createProject(title: String, description: String, budget: Double, project_deadline: String): Observable<KarpuzAPIModels.CreateProjectResponse> {
+        return provider.createProject(authToken, KarpuzAPIModels.CreateProjectBody(title, description, budget, project_deadline)).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
     }
 }
