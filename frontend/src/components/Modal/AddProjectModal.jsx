@@ -3,6 +3,7 @@ import React from 'react';
 import withStyles from "@material-ui/core/styles/withStyles";
 import Slide from "@material-ui/core/Slide";
 import Dialog from "@material-ui/core/Dialog";
+import Divider from '@material-ui/core/Divider';
 import DialogTitle from "@material-ui/core/DialogTitle";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogActions from "@material-ui/core/DialogActions";
@@ -37,7 +38,8 @@ class AddProjectModal extends React.Component {
             cardAnimaton: "cardHidden",
             open: false,
             place: 'tr',
-            notificationMessage: ''
+            notificationMessage: '',
+            milestones: [{ name: "", date: "" , descr: ""}],
         };
     }
 
@@ -87,8 +89,31 @@ class AddProjectModal extends React.Component {
         }
     }
 
+    handleChange = (e) => {
+        if (["name", "date", "descr"].includes(e.target.className)) {
+            let milestones = [...this.state.milestones]
+            milestones[e.target.dataset.id][e.target.className] = e.target.value.toUpperCase()
+            this.setState({ milestones }, () => console.log(this.state.milestones))
+        } else {
+            this.setState({ [e.target.name]: e.target.value.toUpperCase() })
+        }
+    }
+    
+    addMilestones = (e) => {
+        this.setState((prevState) => ({
+            milestones: [...prevState.milestones, { name: "", date: "" , descr: ""}],
+        }));
+    }
+
+    handleRemove = (idx) => () => {
+        this.setState({
+          milestones: this.state.milestones.filter((s, sidx) => idx !== sidx)
+        });
+    }
+
     render() {
         const {classes} = this.props;
+        const { milestones } = this.state;
         return (
             <div>
                 <Button variant="fab" color="secondary" aria-label="Add"
@@ -172,6 +197,56 @@ class AddProjectModal extends React.Component {
                                                 onChange: event => this.setState({budget: event.target.value})
                                             }}
                                         />
+                                    </GridItem>
+                                    <GridItem xs={12} sm={12} md={12}>
+                                    <Divider style={{margin: "16px"}}/>
+                                    <Button variant="contained" color="primary" onClick={this.addMilestones}>
+                                        Add new milestone
+                                        <AddIcon className={classes.rightIcon} />
+                                    </Button>
+                                    {
+                                        milestones.map((val, idx) => {
+                                            return (
+                                                <GridContainer key={idx}>
+                                                    <GridItem xs={12} sm={12} md={5}>
+                                                        <CustomInput
+                                                            labelText={`Milestone #${idx + 1}`}
+                                                            formControlProps={{
+                                                                fullWidth: true
+                                                            }}
+                                                            inputProps={{
+                                                                type: 'text',
+                                                            }}
+                                                        />
+                                                    </GridItem>
+                                                    <GridItem xs={12} sm={12} md={5}>
+                                                        <DateTimePicker
+                                                            placeholder={"Date"}
+                                                        />
+                                                    </GridItem>
+                                                    <GridItem xs={12} sm={12} md={2}>
+                                                    <Button variant="contained" color="primary" onClick={this.handleRemove(idx)} className="small">
+                                                        <Close />
+                                                    </Button>
+                                                    </GridItem>
+                                                    <GridItem xs={12} sm={12} md={12}>
+                                                        <CustomInput
+                                                            labelText="Milestone Description"
+                                                            id="descr"
+                                                            formControlProps={{
+                                                                fullWidth: true
+                                                            }}
+                                                            inputProps={{
+                                                                multiline: true,
+                                                                rows: 3,
+                                                                onChange: event => this.setState({descr: event.target.value})
+                                                            }}
+                                                        />
+                                                    </GridItem>
+                                                </GridContainer>
+                                            )
+                                        })
+                                    }
                                     </GridItem>
                                 </GridContainer>
                             </GridItem>
