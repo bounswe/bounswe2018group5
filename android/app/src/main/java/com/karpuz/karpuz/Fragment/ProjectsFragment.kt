@@ -28,7 +28,7 @@ class ProjectsFragment : Fragment() {
     private val disposeBag = CompositeDisposable()
 
     private var projects = emptyList<KarpuzAPIModels.Project>()
-    private var adapter = ProjectsAdapter(emptyList()) { p: KarpuzAPIModels.Project -> projectSelected(p) }
+    private var adapter = ProjectsAdapter(emptyList(), { p: KarpuzAPIModels.Project -> projectSelected(p) }, { userId: String? -> userSelected(userId) })
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -85,5 +85,11 @@ class ProjectsFragment : Fragment() {
 
     private fun projectSelected(project: KarpuzAPIModels.Project) {
         //TODO open single project view
+        Log.v(TAG, "Project selected")
+    }
+
+    private fun userSelected(userId: String?) {
+        //TODO open profile
+        Log.v(TAG, "User selected: $userId")
     }
 }
