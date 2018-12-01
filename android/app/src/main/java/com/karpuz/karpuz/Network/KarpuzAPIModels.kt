@@ -45,5 +45,8 @@ object KarpuzAPIModels {
                        val created_at: String)
 
     data class UserResponse(val response: Boolean, val user: User?, val error: String?)
+
+    data class CreateProjectBody(val title: String, val description: String, val budget: Double, val project_deadline: String)
+    data class CreateProjectResponse(val response: Boolean, val project: Project?, val error: String?)
 }
 

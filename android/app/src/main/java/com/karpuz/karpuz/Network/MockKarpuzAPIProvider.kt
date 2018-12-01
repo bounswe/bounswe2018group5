@@ -32,4 +32,11 @@ class MockKarpuzAPIProvider : KarpuzAPI {
     override fun getUserProfile(auth: String, userId: String): Observable<KarpuzAPIModels.UserResponse> {
         TODO()
     }
+
+    override fun createProject(
+        auth: String,
+        project: KarpuzAPIModels.CreateProjectBody
+    ): Observable<KarpuzAPIModels.CreateProjectResponse> {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
 }

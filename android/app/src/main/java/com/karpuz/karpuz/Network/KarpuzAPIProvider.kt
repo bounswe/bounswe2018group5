@@ -40,4 +40,11 @@ class KarpuzAPIProvider : KarpuzAPI {
     override fun getUserProfile(auth: String, userId: String): Observable<KarpuzAPIModels.UserResponse> {
         return karpuzAPI.getUserProfile(auth, userId)
     }
+
+    override fun createProject(
+        auth: String,
+        project: KarpuzAPIModels.CreateProjectBody
+    ): Observable<KarpuzAPIModels.CreateProjectResponse> {
+        return karpuzAPI.createProject(auth, project)
+    }
 }
