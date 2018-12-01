@@ -336,9 +336,9 @@ const tryGetOwnProjectsSaga = function* () {
 
 const tryCreateProjectSaga = function* (action) {
     try {
-        const { title, description, project_deadline, budget } = action.payload;
+        const { title, description, project_deadline, budget, milestones } = action.payload;
 
-        const createProjectResponse = yield call(api.createProject, title, description, project_deadline, budget);
+        const createProjectResponse = yield call(api.createProject, title, description, project_deadline, budget, milestones);
 
         if (createProjectResponse) {
             console.log("createProjectResponse", createProjectResponse);

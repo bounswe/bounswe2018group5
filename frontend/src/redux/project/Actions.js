@@ -95,13 +95,14 @@ export const getOwnProjectsReset = () => ({
     type: GET_OWN_PROJECTS_RESET
 });
 
-export const tryCreateProject = (title, description, project_deadline, budget) => ({
+export const tryCreateProject = (title, description, project_deadline, budget, milestones) => ({
     type: CREATE_PROJECT_REQUEST,
     payload: {
         title,
         description,
         project_deadline,
-        budget
+        budget,
+        milestones
     }
 });
 export const createProjectSuccess = res => ({
