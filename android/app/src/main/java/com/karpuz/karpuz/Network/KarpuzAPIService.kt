@@ -11,11 +11,7 @@ class KarpuzAPIService {
         lateinit var instance: KarpuzAPIService
 
         fun create(authToken: String) {
-            val karpuzAPIProvider = when {
-                Config.useMockNetwork -> MockKarpuzAPIProvider.instance
-                else -> KarpuzAPIProvider.instance
-            }
-            instance = KarpuzAPIService(authToken, karpuzAPIProvider)
+            instance = KarpuzAPIService(authToken, provider)
         }
 
         private val provider = when {
