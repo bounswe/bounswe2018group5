@@ -106,10 +106,11 @@ class ProjectPage extends Component {
         const { classes } = this.props;
         const user_id = getCookie(LOGGEDIN_USERID_COOKIE);
 
-        let userOrAttachementBox;
+        let userBox, attachmentBox;
 
         if (this.state.project.owner.id === user_id) {
-            userOrAttachementBox = <GridItem xs={12} sm={12} md={12}>
+            userBox = '';
+            attachmentBox = <GridItem xs={12} sm={12} md={12}>
                 <h2 className={classes.title} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%', color: "black" }}>Project Attachments</h2>
                 <FilePond
                     className="filepond"
@@ -150,7 +151,8 @@ class ProjectPage extends Component {
                 </FilePond>
             </GridItem>;
         } else {
-            userOrAttachementBox = <GridItem xs={12} sm={12} md={12}>
+            attachmentBox = '';
+            userBox = <GridItem xs={12} sm={12} md={12}>
                 <h2 className={classes.title} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%', color: "black" }}>Project Owner</h2>
                 <br />
                 <Card profile>
@@ -274,10 +276,19 @@ class ProjectPage extends Component {
                             </GridItem>
                         </GridContainer>
                     </GridItem>
-                    <GridItem xs={12} sm={12} md={5}>
+                    <GridItem xs={12} sm={12} md={7}>
                         <GridContainer>
-                            {userOrAttachementBox}
-                        </GridContainer>                       
+                            <GridItem xs={12} sm={12} md={12}>
+                                <GridContainer>
+                                    {userBox}
+                                </GridContainer>
+                            </GridItem>
+                            <GridItem xs={12} sm={12} md={12}>
+                                <GridContainer>
+                                    {attachmentBox}
+                                </GridContainer>
+                            </GridItem>
+                        </GridContainer>
                     </GridItem>
                 </GridContainer>
             </div>

@@ -17,6 +17,8 @@ import CardFooter from "material-kit-react/components/Card/CardFooter";
 import CustomInput from "components/CustomInput/CustomInput";
 import { tryRegister, registerReset } from "redux/auth/Actions.js";
 import {connect} from "react-redux";
+import AddAlert from "@material-ui/icons/AddAlert";
+import Snackbar from "material-dashboard-react/dist/components/Snackbar/Snackbar";
 
 import { setCookie, LOGGEDIN_COOKIE, TOKEN_COOKIE } from "services/cookies.js";
 
@@ -32,7 +34,10 @@ class RegisterForm extends Component {
             username: "",
             email: "",
             password: "",
-            password_confirmation: ""
+            password_confirmation: "",
+            open: false,
+            place: 'tr',
+            notificationMessage: ''
         };
     }
 
@@ -54,14 +59,25 @@ class RegisterForm extends Component {
 
     componentDidUpdate(prevProps, prevState) {
         const { history } = this.props;
-        const { registerInProgress, registerHasError, registerCompleted, api_token, loggedIn } = this.props.auth;
+        const { registerInProgress, registerHasError, registerCompleted, api_token, loggedIn, error } = this.props.auth;
 
         if (registerInProgress && !registerHasError && !registerCompleted) {
         } else if (!registerInProgress && !registerHasError && registerCompleted) {
-            setCookie(TOKEN_COOKIE, api_token, { path: "/" });
-            setCookie(LOGGEDIN_COOKIE, loggedIn, { path: "/" });
+            if (loggedIn) {
+                setCookie(TOKEN_COOKIE, api_token, { path: "/" });
+                setCookie(LOGGEDIN_COOKIE, loggedIn, { path: "/" });
+                history.push("/home");
+            } else {
+                this.setState({
+                    open: true,
+                    color: 'danger',
+                    notificationMessage: error
+                });
+                setTimeout(function () {
+                    this.setState({ open: false });
+                }.bind(this), 6000);
+            }
             this.props.registerReset();
-            history.push("/home");
         } else if (!registerInProgress && registerHasError && registerCompleted) {
             this.props.registerReset();
         }
@@ -184,6 +200,15 @@ class RegisterForm extends Component {
                         </GridContainer>
                     </div>
                 </div>
+                <Snackbar
+                    place={this.state.place}
+                    icon={AddAlert}
+                    color={this.state.color}
+                    message={this.state.notificationMessage}
+                    open={this.state.open}
+                    closeNotification={() => this.setState({ open: false })}
+                    close
+                />
             </div>
         );
     }
