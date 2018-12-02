@@ -65,6 +65,8 @@ def project_json(project,user_id):
     milestones = project_models.Milestone.objects.filter(project=project).order_by('deadline')
     for milestone in milestones:
         obj['milestones'].append(milestone_json(milestone))
+        if milestone.is_final:
+            obj['deadline'] = milestone.deadline
     return obj
 
 
