@@ -8,11 +8,15 @@ import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
+import Tooltip from '@material-ui/core/Tooltip';
 import FiberManualRecord from "@material-ui/icons/FiberManualRecord";
+import CallMade from "@material-ui/icons/CallMade";
 import Card from "material-dashboard-react/dist/components/Card/Card";
 import CardFooter from "material-dashboard-react/dist/components/Card/CardFooter";
+import Button from "material-kit-react/components/CustomButtons/Button";
 
 import BidDropdown from "components/DropDown/BidDropdown"
+import combineStyles from "services/combineStyles";
 
 import CardAvatar from "material-dashboard-react/dist/components/Card/CardAvatar";
 import CardBody from "material-dashboard-react/dist/components/Card/CardBody";
@@ -22,7 +26,10 @@ import CreateBidModal from "components/Modal/CreateBidModal";
 import MessageCard from "components/Card/MessageCard";
 import { getCookie, LOGGEDIN_USERID_COOKIE, TOKEN_COOKIE } from "services/cookies";
 
+import tooltipStyle from "material-kit-react/assets/jss/material-kit-react/tooltipsStyle";
+
 import Paper from '@material-ui/core/Paper';
+import { Link } from "react-router-dom";
 
 import {
     tryGetProject,
@@ -97,7 +104,12 @@ class ProjectPage extends Component {
         const { getProjectInProgress, getProjectHasError, getProjectCompleted, project } = this.props.project;
 
         if (!getProjectInProgress && !getProjectHasError && getProjectCompleted) {
-            this.setState({ project });
+            const bids = project.bids.sort(function(a, b) {
+                return parseFloat(a.status) - parseFloat(b.status);
+            });
+            var current_project = { ...project, bids: bids };
+            this.setState({ project: current_project });
+
             this.props.getProjectReset();
         }
     }
@@ -105,6 +117,14 @@ class ProjectPage extends Component {
     render() {
         const { classes } = this.props;
         const user_id = getCookie(LOGGEDIN_USERID_COOKIE);
+
+        let createBid, sendMessage;
+        if (user_id === this.state.project.owner.id) {
+            createBid = sendMessage = '';
+        } else {
+            createBid = <CreateBidModal project_id={this.state.project.project_id}></CreateBidModal>;
+            sendMessage = <MessageCard projectOwner="Mete Kocaman"></MessageCard>;
+        }
 
         let userBox, attachmentBox;
 
@@ -168,48 +188,77 @@ class ProjectPage extends Component {
                         <h6 className={classes.title}>{this.state.project.owner.bio}</h6>
                     </CardBody>
                     <CardFooter>
-                        <MessageCard projectOwner="Mete Kocaman"></MessageCard>
+                        {sendMessage}
                     </CardFooter>
                 </Card>
             </GridItem>;
         }
 
-        let tableCol1, tableCol2, tableCol3;
+        let tableCol1, tableCol2, tableCol3, tableCol4;
         if (user_id === this.state.project.owner.id) {
             tableCol1 = <TableCell>Note</TableCell>;
             tableCol2 = <TableCell>Actions</TableCell>;
             tableCol3 = <TableCell>Status</TableCell>;
+            tableCol4 = <TableCell>Go Profile</TableCell>;
         } else {
             tableCol1 = "";
             tableCol2 = "";
             tableCol3 = "";
+            tableCol4 = "";
         }
 
         var bids = (
             <TableBody>
                 {this.state.project.bids.map((prop, key) => {
-                    let cell1, cell2, cell3, color;
+                    let cell1, cell2, cell3, color, tooltip, accepted, cell4;
+                    accepted = false;
                     if (user_id === this.state.project.owner.id) {
                         cell1 = <TableCell>{prop.note}</TableCell>;
                         cell2 = <TableCell><BidDropdown bid_info={prop} /></TableCell>;
                         if (prop.status === -1) {
                             color = "#d9534f";
+                            tooltip = "Bid Discarded!";
                         } else if (prop.status === 0) {
                             color = "#5bc0de";
+                            tooltip = "Bid Period!";
                         } else if (prop.status === 1) {
                             color = "#5cb85c";
+                            tooltip = "Bid Accepted!";
+                            accepted = true;
                         } else if (prop.status === 2) {
                             color = "#f0ad4e";
+                            tooltip = "Bid do not Accepted!";
                         }
 
-                        cell3 = <TableCell><FiberManualRecord style={{color: color}}/></TableCell>;
+                        cell3 = <TableCell>
+                            <Tooltip
+                                id="tooltip-top"
+                                title={tooltip}
+                                placement="top"
+                                classes={{ tooltip: classes.tooltip }}
+                            >
+                                    <FiberManualRecord style={{ color: color }} />
+                                </Tooltip>
+                            </TableCell>;
+                        cell4 = <TableCell>
+                            <Button
+                                color="github" simple
+                                justIcon
+                                component={Link} to={"/home/users/" + prop.freelancer.id + "/"}
+                                className={classes.buttonLink}
+                            >
+                                <CallMade />
+                            </Button>
+                        </TableCell>;
                     } else {
                         cell1 = "";
                         cell2 = "";
                         cell3 = "";
+                        cell4 = "";
                     }
+                    
                     return (
-                        <TableRow key={key}>
+                        <TableRow key={key} selected={accepted}>
                             <TableCell component="th" scope="row" numeric>
                                 {prop.offer}$
                             </TableCell>
@@ -218,6 +267,7 @@ class ProjectPage extends Component {
                             {cell1}
                             {cell3}
                             {cell2}
+                            {cell4}
                         </TableRow>
                     );
                 })}
@@ -239,16 +289,11 @@ class ProjectPage extends Component {
                             <GridItem xs={12} sm={12} md={12}>
                                 <h1 className={classes.title}>{this.state.project.title}</h1>
                                 <Paper className={classes.root} style={{ padding: "32px" }}>
-                                    <Chip label="python" clickable className={classes.chip} color="primary" />
-                                    <Chip label="backend" clickable className={classes.chip} color="secondary" />
-                                    <Chip label="tornado" clickable className={classes.chip} color="primary" />
-                                    <Chip label="api" clickable className={classes.chip} color="secondary" />
-
                                     <h4>
                                         {this.state.project.description}
                                     </h4>
                                     <br />
-                                    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%' }}>
+                                    <div style={{ display: 'flex', justifyContent: 'left', alignItems: 'center', width: '100%' }}>
                                         <Chip label={"Budget: $" + this.state.project.budget} className={classes.chip} />
                                         <Chip label={"Deadline: " + this.state.project.deadline} className={classes.chip} />
                                     </div>
@@ -266,17 +311,18 @@ class ProjectPage extends Component {
                                                 {tableCol1}
                                                 {tableCol3}
                                                 {tableCol2}
+                                                {tableCol4}
                                             </TableRow>
                                         </TableHead>
                                         {bids}
                                     </Table>
                                     <br />
-                                    <CreateBidModal project_id={this.state.project.project_id}></CreateBidModal>
+                                    {createBid}
                                 </Paper>
                             </GridItem>
                         </GridContainer>
                     </GridItem>
-                    <GridItem xs={12} sm={12} md={7}>
+                    <GridItem xs={12} sm={12} md={5}>
                         <GridContainer>
                             <GridItem xs={12} sm={12} md={12}>
                                 <GridContainer>
@@ -296,6 +342,7 @@ class ProjectPage extends Component {
     }
 }
 
+const combinedStyles = combineStyles(tooltipStyle, styles);
 
 function bindAction(dispatch) {
     return {
@@ -311,4 +358,4 @@ const mapStateToProps = state => ({
 export default connect(
     mapStateToProps,
     bindAction
-)(withStyles(styles)(ProjectPage));
+)(withStyles(combinedStyles)(ProjectPage));
