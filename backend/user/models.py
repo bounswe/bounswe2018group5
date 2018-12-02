@@ -62,6 +62,7 @@ class Portfolio(BaseDocument):
     description = StringField()
     user = ReferenceField('User', required=True)
     date = DateTimeField()
+    attachments = ListField(default=[])
     project_id = StringField(blank=True, null=True)
 
     meta = {'collection': 'portfolios'}
