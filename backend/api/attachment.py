@@ -37,7 +37,7 @@ def attachment_handler(request):
         return JsonResponse({'response': True})
     elif request.method == 'DELETE':
         try:
-            delete_this=request.GET.get('file_name', None)
+            delete_this = request.body.decode('utf-8')
             if delete_this:
                 attached.attachments.remove(str(delete_this))
                 os.remove('media/attachments/'+attach_to+'/'+delete_this)
