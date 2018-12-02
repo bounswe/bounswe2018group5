@@ -37,6 +37,7 @@ class Project(BaseDocument):
     title = StringField(max_length=50)
     budget = FloatField(min_value=0)
     milestones = DictField(null=True)
+    attachments = ListField(default=[])
     status = IntField()  # 0 bidding period, 1 project awarded to a freelancer, 2 project completed, -1 project discarded
 
     meta = {'collection': 'projects',
@@ -72,6 +73,5 @@ class Milestone(BaseDocument):
     status = IntField(default=0)  # -1 discarded 0 ongoing, 1 in review, 2 changes requested, 3 done
     attachments = ListField(default=[])
     is_final = BooleanField(default=False)
-
 
     meta = {'collection': 'milestones'}

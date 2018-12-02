@@ -122,7 +122,7 @@ def profile_handler(request):
             except Exception as e:
                 return JsonResponse({'response': False, 'error': str(e)})
         else:
-            return JsonResponse({"response": False, "error": "Unauthorized"})
+            return JsonResponse({"response": False, "error": "Unauthorized1"})
     elif request.method == 'PUT':
         if token and authentication.is_authenticated(token):
             body = json.loads(request.body.decode('utf-8'))
@@ -142,23 +142,9 @@ def profile_handler(request):
     })
 
 
-ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
-
-
 def allowed_file(filename):
     return '.' in filename and \
-           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
-
-
-def handle_uploaded_file(app_name, file, filename):
-    if not os.path.exists('media/'):
-        os.mkdir('media/')
-    if not os.path.exists('media/'+app_name):
-        os.mkdir('media/'+app_name)
-
-    with open('media/' + app_name + '/' + filename, 'wb+') as destination:
-        for chunk in file.chunks():
-            destination.write(chunk)
+           filename.rsplit('.', 1)[1].lower() in {'png', 'jpg', 'jpeg'}
 
 
 @csrf_exempt

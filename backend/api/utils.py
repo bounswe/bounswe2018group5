@@ -1,7 +1,10 @@
+import os
+
 from project import models as project_models
 from user import models as user_models
 from django.db.models import Avg, Window
 from datetime import datetime
+
 
 def user_json(user, user_id=""):
     obj = {}
@@ -36,6 +39,10 @@ def user_json(user, user_id=""):
 
 def project_json(project,user_id):
     obj = {}
+    attachments = []
+    for att in project.attachments:
+        attachments.append(att)
+    obj['attachments']=attachments
     obj['project_id'] = str(project.id)
     obj['title'] = project.title
     obj['budget'] = project.budget
@@ -57,17 +64,9 @@ def project_json(project,user_id):
     obj['milestones'] = []
     milestones = project_models.Milestone.objects.filter(project=project).order_by('deadline')
     for milestone in milestones:
-        obj['milestones'].append({
-            "id": str(milestone.id),
-            "name": milestone.name,
-            "detail": milestone.detail,
-            "deadline": format_datetime(milestone.deadline),
-            "status": milestone.status,
-            "is_final": milestone.is_final
-        })
+        obj['milestones'].append(milestone_json(milestone))
         if milestone.is_final:
             obj['deadline'] = milestone.deadline
-
     return obj
 
 
@@ -132,6 +131,9 @@ def hide_name(name):
 
 def portfolio_json(portfolio, from_model=""):
     obj = {}
+    attachments = []
+    for att in portfolio.attachments:
+        attachments.append(att)
     obj['id'] = str(portfolio.id)
     obj['title'] = portfolio.title
     obj['description'] = portfolio.description
@@ -143,21 +145,42 @@ def portfolio_json(portfolio, from_model=""):
             'full_name': portfolio.user.full_name,
             'profile_image': portfolio.user.profile_image
         }
+    obj['attachments'] = attachments
     obj['project_id'] = portfolio.project_id
     obj['created_at'] = format_datetime(portfolio.created_at)
     obj['updated_at'] = format_datetime(portfolio.updated_at)
     return obj
 
+
 def milestone_json(milestone):
+    attachments = []
+    for att in milestone.attachments:
+        attachments.append(att)
     return {
         "id": str(milestone.id),
         "name": milestone.name,
         "detail": milestone.detail,
         "deadline": format_datetime(milestone.deadline),
         "status": milestone.status,
+        "attachments": attachments,
         "is_final": milestone.is_final,
         "project_id": str(milestone.project.id)
     }
 
+
 def format_datetime(dt):
     return dt.strftime("%Y-%m-%d")
+
+
+def handle_uploaded_file(app_name, file, filename):
+    if not os.path.exists('media/'):
+        os.mkdir('media/')
+    cumulative = 'media/'
+    for name in app_name.rsplit('/'):
+        cumulative = os.path.join(cumulative, name)
+        if not os.path.exists(cumulative):
+            os.mkdir(cumulative)
+
+    with open(cumulative + '/' + filename, 'wb+') as destination:
+        for chunk in file.chunks():
+            destination.write(chunk)
