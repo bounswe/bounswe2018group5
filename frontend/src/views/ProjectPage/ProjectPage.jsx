@@ -87,7 +87,9 @@ class ProjectPage extends Component {
             cardAnimaton: "cardHidden",
             project: {
                 owner: {},
-                bids: []
+                bids: [],
+                attachments: [],
+                freelancer: {}
             },
         };
     }
@@ -107,7 +109,9 @@ class ProjectPage extends Component {
             const bids = project.bids.sort(function(a, b) {
                 return parseFloat(a.status) - parseFloat(b.status);
             });
-            var current_project = { ...project, bids: bids };
+            const freelancer = project.freelancer || {};
+            const attachments = project.attachments || [];
+            var current_project = { ...project, bids: bids, freelancer: freelancer, attachments: attachments };
             this.setState({ project: current_project });
 
             this.props.getProjectReset();
@@ -129,7 +133,26 @@ class ProjectPage extends Component {
         let userBox, attachmentBox;
 
         if (this.state.project.owner.id === user_id) {
-            userBox = '';
+            userBox = <GridItem xs={12} sm={12} md={12}>
+                <h2 className={classes.title} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%', color: "black" }}>Project Freelancer</h2>
+                <br />
+                <Card profile>
+                    <CardAvatar profile>
+                        <img src={process.env.REACT_APP_API_STATIC_URL + "profile_images/" + this.state.project.freelancer.profile_image}
+                            onError={(e) => {
+                                e.target.onerror = null;
+                                e.target.src = default_image
+                            }} alt="..." />
+                    </CardAvatar>
+                    <CardBody profile>
+                        <h4>{this.state.project.freelancer.full_name}</h4>
+                        <h6 className={classes.title}>{this.state.project.freelancer.bio}</h6>
+                    </CardBody>
+                    <CardFooter>
+                        {sendMessage}
+                    </CardFooter>
+                </Card>
+            </GridItem>;
             attachmentBox = <GridItem xs={12} sm={12} md={12}>
                 <h2 className={classes.title} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%', color: "black" }}>Project Attachments</h2>
                 <FilePond
@@ -171,7 +194,36 @@ class ProjectPage extends Component {
                 </FilePond>
             </GridItem>;
         } else {
-            attachmentBox = '';
+            attachmentBox = <GridItem xs={12} sm={12} md={12}>
+                <Paper className={classes.root}>
+                    <Table className={classes.table}>
+                        <TableHead>
+                            <TableRow>
+                                <TableCell style={{ width: '80%' }}>Attachhment Name</TableCell>
+                                <TableCell style={{ width: '20%' }}>Attachment Link</TableCell>
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            {this.state.project.attachments.map(file => (
+                                <TableRow key={file}>
+                                    <TableCell>{file}</TableCell>
+                                    <TableCell>
+                                        <Button
+                                            color="github" simple
+                                            justIcon
+                                            href={process.env.REACT_APP_API_URL + "media/attachments/" + this.state.project.project_id + "/" + file}
+                                            target="_blank"
+                                            className={classes.buttonLink}
+                                        >
+                                            <CallMade />
+                                        </Button>
+                                    </TableCell>
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
+                </Paper>
+            </GridItem>;
             userBox = <GridItem xs={12} sm={12} md={12}>
                 <h2 className={classes.title} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%', color: "black" }}>Project Owner</h2>
                 <br />
@@ -284,8 +336,8 @@ class ProjectPage extends Component {
                         ]} />
                 </div>
                 <GridContainer>
-                    <GridItem xs={12} sm={12} md={7}>
-                        <GridContainer xs={12} sm={12} md={12}>
+                    <GridItem xs={12} sm={12} md={8}>
+                        <GridContainer>
                             <GridItem xs={12} sm={12} md={12}>
                                 <h1 className={classes.title}>{this.state.project.title}</h1>
                                 <Paper className={classes.root} style={{ padding: "32px" }}>
@@ -322,7 +374,7 @@ class ProjectPage extends Component {
                             </GridItem>
                         </GridContainer>
                     </GridItem>
-                    <GridItem xs={12} sm={12} md={5}>
+                    <GridItem xs={12} sm={12} md={4}>
                         <GridContainer>
                             <GridItem xs={12} sm={12} md={12}>
                                 <GridContainer>
