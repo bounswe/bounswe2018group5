@@ -11,7 +11,9 @@ import com.karpuz.karpuz.R
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.project_cell.view.*
 
-class ProjectsAdapter(var projects: List<KarpuzAPIModels.Project>, val clickListener: (KarpuzAPIModels.Project) -> Unit): RecyclerView.Adapter<ProjectsAdapter.ProjectsViewHolder>() {
+class ProjectsAdapter(var projects: List<KarpuzAPIModels.Project>,
+                      val projectClickListener: (KarpuzAPIModels.Project) -> Unit,
+                      val userClickListener: (String?) -> Unit): RecyclerView.Adapter<ProjectsAdapter.ProjectsViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProjectsViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.project_cell, parent, false)
@@ -20,7 +22,7 @@ class ProjectsAdapter(var projects: List<KarpuzAPIModels.Project>, val clickList
 
     override fun onBindViewHolder(holder: ProjectsViewHolder, position: Int) {
         val item = projects.get(position)
-        holder.bind(item, clickListener)
+        holder.bind(item, projectClickListener, userClickListener)
     }
 
     override fun getItemCount(): Int {
@@ -33,7 +35,7 @@ class ProjectsAdapter(var projects: List<KarpuzAPIModels.Project>, val clickList
     }
 
     class ProjectsViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
-        fun bind(item: KarpuzAPIModels.Project, clickListener: (KarpuzAPIModels.Project) -> Unit) {
+        fun bind(item: KarpuzAPIModels.Project, projectClickListener: (KarpuzAPIModels.Project) -> Unit, userClickListener: (String?) -> Unit) {
             itemView.project_cell_user_full_name.text = item.owner.full_name
             itemView.project_cell_title.text = item.title
             itemView.project_cell_description.text = item.description
@@ -46,7 +48,9 @@ class ProjectsAdapter(var projects: List<KarpuzAPIModels.Project>, val clickList
                 Picasso.get().load(R.drawable.profile_icon).into(itemView.project_cell_user_image)
             }
 
-            itemView.setOnClickListener { clickListener(item) }
+            itemView.project_header.setOnClickListener { userClickListener(item.owner.id) }
+            itemView.project_body.setOnClickListener { projectClickListener(item) }
+            itemView.project_details.setOnClickListener { projectClickListener(item) }
         }
     }
 }

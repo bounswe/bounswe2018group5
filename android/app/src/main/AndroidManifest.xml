@@ -43,9 +43,14 @@
                     android:resource="@xml/authenticator"/>
         </service>
 
-        <activity android:name=".Activity.CreateProjectActivity"
-                  android:parentActivityName=".Activity.HomeActivity"
-                  android:label="Create Project">
+        <activity
+                android:name=".Activity.CreateProjectActivity"
+                android:label="Create Project"
+                android:parentActivityName=".Activity.HomeActivity">
+        </activity>
+        <activity android:name=".Activity.ProfileActivity"
+                  android:label="Profile"
+                  android:parentActivityName=".Activity.HomeActivity">
         </activity>
     </application>
 

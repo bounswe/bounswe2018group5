@@ -17,8 +17,8 @@ interface KarpuzAPI {
     @GET("api/user/profile/")
     fun getUserProfile(@Header("Authorization") auth: String): Observable<KarpuzAPIModels.UserResponse>
 
-    @GET("api/user/profile/{userId}/")
-    fun getUserProfile(@Header("Authorization") auth: String, @Path("userId") userId: String): Observable<KarpuzAPIModels.UserResponse>
+    @GET("api/user/profile/")
+    fun getUserProfile(@Header("Authorization") auth: String, @Query("user_id") userId: String): Observable<KarpuzAPIModels.UserResponse>
 
     @POST("api/project/")
     fun createProject(@Header("Authorization") auth: String, @Body project: KarpuzAPIModels.CreateProjectBody): Observable<KarpuzAPIModels.CreateProjectResponse>
