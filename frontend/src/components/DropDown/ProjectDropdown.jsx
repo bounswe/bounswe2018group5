@@ -274,6 +274,26 @@ class ProjectDropdown extends React.Component {
   render() {
     const { classes, project_info } = this.props;
     const { open } = this.state;
+    let finishOrRate;
+
+    if ( project_info.status === 2 ) {
+      finishOrRate = 
+        <MenuItem
+        onClick={() => this.handleClickOpen("rateModal")}
+        className={classes.dropdownItem}
+        >
+        Rate
+        </MenuItem> 
+    }
+    else {
+      finishOrRate = 
+        <MenuItem
+          onClick={() => this.handleClickOpen("finishModal")}
+          className={classes.dropdownItem}
+        >
+          Finish
+        </MenuItem>
+    }
     return (
       <div className={classes.manager}>
         <Button
@@ -325,12 +345,6 @@ class ProjectDropdown extends React.Component {
                       Edit
                     </MenuItem>
                     <MenuItem
-                      onClick={() => this.handleClickOpen("finishModal")}
-                      className={classes.dropdownItem}
-                    >
-                      Finish
-                    </MenuItem>
-                    <MenuItem
                       onClick={() => this.handleClickOpen("discardModal")}
                         className={classes.dropdownItem}
                     >
@@ -342,12 +356,7 @@ class ProjectDropdown extends React.Component {
                     >
                       Delete
                     </MenuItem>
-                    <MenuItem
-                      onClick={() => this.handleClickOpen("rateModal")}
-                        className={classes.dropdownItem}
-                    >
-                      Rate
-                    </MenuItem>
+                    {finishOrRate}
                   </MenuList>
                 </ClickAwayListener>
               </Paper>

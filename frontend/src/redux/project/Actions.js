@@ -177,7 +177,6 @@ export const finishProjectReset = () => ({
     type: FINISH_PROJECT_RESET
 });
 
-////////////////
 export const tryRateProject = (project_id, comment, value) => ({
     type: RATE_PROJECT_REQUEST,
     payload: {
@@ -197,7 +196,6 @@ export const rateProjectFailure = errorData => ({
 export const rateProjectReset = () => ({
     type: RATE_PROJECT_RESET
 });
-//////////
 
 export const tryDeleteProject = (project_id) => ({
     type: DELETE_PROJECT_REQUEST,
