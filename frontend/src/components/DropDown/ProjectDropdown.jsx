@@ -116,8 +116,8 @@ class ProjectDropdown extends React.Component {
   }
 
   handleRateProject(event) {
-    const { rate } = this.state;
-    this.props.tryRateProject(this.props.project_info.project_id, rate);
+    const { comment, value } = this.state;
+    this.props.tryRateProject(this.props.project_info.project_id, comment, parseFloat(value));
     this.setState({ project_id: this.props.project_info.project_id });
     event.preventDefault();
   }
@@ -221,7 +221,6 @@ class ProjectDropdown extends React.Component {
     const { rateProjectInProgress, rateProjectHasError, rateProjectCompleted } = this.props.project;
     if (!rateProjectInProgress && !rateProjectHasError && rateProjectCompleted && this.state.project_id === this.props.project_info.project_id) {
       if (response) {
-        this.props.handleToUpdate(project, 'edit');
         this.setState({
           alertOpen: true,
           color: 'success',
@@ -241,7 +240,7 @@ class ProjectDropdown extends React.Component {
         }.bind(this), 6000);
       }
       this.handleModalClose("rateModal");
-      this.setState({ project_id: null });
+      this.setState({ project_id: null, value: 0, comment: "" });
       this.props.rateProjectReset();
     }
 
@@ -276,6 +275,26 @@ class ProjectDropdown extends React.Component {
   render() {
     const { classes, project_info } = this.props;
     const { open } = this.state;
+    let finishOrRate;
+
+    if ( project_info.status === 2 ) {
+      finishOrRate = 
+        <MenuItem
+        onClick={() => this.handleClickOpen("rateModal")}
+        className={classes.dropdownItem}
+        >
+        Rate
+        </MenuItem> 
+    }
+    else {
+      finishOrRate = 
+        <MenuItem
+          onClick={() => this.handleClickOpen("finishModal")}
+          className={classes.dropdownItem}
+        >
+          Finish
+        </MenuItem>
+    }
     return (
       <div className={classes.manager}>
         <Button
@@ -327,12 +346,6 @@ class ProjectDropdown extends React.Component {
                       Edit
                     </MenuItem>
                     <MenuItem
-                      onClick={() => this.handleClickOpen("finishModal")}
-                      className={classes.dropdownItem}
-                    >
-                      Finish
-                    </MenuItem>
-                    <MenuItem
                       onClick={() => this.handleClickOpen("discardModal")}
                         className={classes.dropdownItem}
                     >
@@ -344,12 +357,7 @@ class ProjectDropdown extends React.Component {
                     >
                       Delete
                     </MenuItem>
-                    <MenuItem
-                      onClick={() => this.handleClickOpen("rateModal")}
-                        className={classes.dropdownItem}
-                    >
-                      Rate
-                    </MenuItem>
+                    {finishOrRate}
                   </MenuList>
                 </ClickAwayListener>
               </Paper>
@@ -683,8 +691,21 @@ class ProjectDropdown extends React.Component {
                   }}
                   inputProps={{
                     type: 'number',
-                    value: project_info.rate,
-                    onChange: event => this.setState({ rate: event.target.value })
+                    onChange: event => this.setState({ value: event.target.value })
+                  }}
+                />
+              </GridItem>
+              <GridItem xs={12} sm={12} md={12}>
+                <CustomInput
+                  labelText="Comment"
+                  id="comment"
+                  formControlProps={{
+                    fullWidth: true
+                  }}
+                  inputProps={{
+                    multiline: true,
+                    rows: 3,
+                    onChange: event => this.setState({ comment: event.target.value })
                   }}
                 />
               </GridItem>
@@ -726,7 +747,7 @@ function bindAction(dispatch) {
     deleteProjectReset: () => dispatch(deleteProjectReset()),
     tryFinishProject: (project_id) => dispatch(tryFinishProject(project_id)),
     finishProjectReset: () => dispatch(finishProjectReset()),
-    tryRateProject: (project_id) => dispatch(tryRateProject(project_id)),
+    tryRateProject: (project_id, comment, value) => dispatch(tryRateProject(project_id, comment, value)),
     rateProjectReset: () => dispatch(rateProjectReset()),
   };
 }
