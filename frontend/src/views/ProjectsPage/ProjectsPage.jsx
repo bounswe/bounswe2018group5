@@ -66,6 +66,7 @@ class ProjectsPage extends React.Component {
             projects_client: new_projects_client,
         });
     }
+    
 
     render() {
         const { projects_client, projects_freelancer } = this.state;
@@ -86,6 +87,7 @@ class ProjectsPage extends React.Component {
                                 owned={true}
                                 status={prop.status}
                                 handleToUpdate={this.handleToManageProject.bind(this)}
+                                milestones={prop.milestones}
                             />
                         </GridItem>
                     );
@@ -106,6 +108,7 @@ class ProjectsPage extends React.Component {
                                 owner={prop.owner}
                                 owner_id={prop.owner_id}
                                 project_id={prop.project_id}
+                                milestones={prop.milestones}
                             />
                         </GridItem>
                     );
