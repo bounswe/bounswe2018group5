@@ -44,6 +44,10 @@ class KarpuzAPIService {
         }
     }
 
+    fun getProjects(projectIds: List<String>): Observable<KarpuzAPIModels.ProjectsResponse> {
+        return provider.getProjects(authToken, projectIds.joinToString(",")).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+    }
+
     fun getAllProjects(): Observable<KarpuzAPIModels.ProjectsResponse> {
         return provider.getAllProjects(authToken).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
     }

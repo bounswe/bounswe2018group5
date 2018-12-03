@@ -21,6 +21,10 @@ class MockKarpuzAPIProvider : KarpuzAPI {
         return Observable.just(KarpuzAPIModels.LoginResponse(true, testToken, null)).delay(300, TimeUnit.MILLISECONDS)
     }
 
+    override fun getProjects(auth: String, projectIds: String): Observable<KarpuzAPIModels.ProjectsResponse> {
+        TODO()
+    }
+
     override fun getAllProjects(auth: String): Observable<KarpuzAPIModels.ProjectsResponse> {
         TODO()
     }

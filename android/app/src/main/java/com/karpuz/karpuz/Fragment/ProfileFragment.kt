@@ -12,6 +12,7 @@ import android.util.Log
 import android.view.*
 import com.karpuz.karpuz.Activity.HomeActivity
 import com.karpuz.karpuz.Activity.WelcomeActivity
+import com.karpuz.karpuz.Extensions.shortToast
 import com.karpuz.karpuz.Network.Config
 
 import com.karpuz.karpuz.R
@@ -99,8 +100,14 @@ class ProfileFragment : Fragment() {
                         Picasso.get().load(R.drawable.profile_icon).into(view.imageView_profile_image)
                     }
                 }
-                error != null -> Log.e(TAG, "Error when refreshing user profile: $error")
-                else -> Log.e(TAG, "Error when refreshing user profile")
+                error != null -> {
+                    Log.e(TAG, "Error when refreshing user profile: $error")
+                    activity?.shortToast("Error when getting user profile")
+                }
+                else -> {
+                    Log.e(TAG, "Error when refreshing user profile")
+                    activity?.shortToast("Error when getting user profile")
+                }
             }
         }
     }

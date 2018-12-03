@@ -11,15 +11,11 @@ class KarpuzAPIProvider : KarpuzAPI {
         val instance = KarpuzAPIProvider()
     }
 
-    private val karpuzAPI: KarpuzAPI
-
-    private constructor() {
-        karpuzAPI = Retrofit.Builder()
-            .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-            .addConverterFactory(GsonConverterFactory.create())
-            .baseUrl(Config.baseUrl)
-            .build().create(KarpuzAPI::class.java)
-    }
+    private val karpuzAPI: KarpuzAPI = Retrofit.Builder()
+        .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+        .addConverterFactory(GsonConverterFactory.create())
+        .baseUrl(Config.baseUrl)
+        .build().create(KarpuzAPI::class.java)
 
     override fun register(registerBody: KarpuzAPIModels.RegisterBody): Observable<KarpuzAPIModels.RegisterResponse> {
         return karpuzAPI.register(registerBody)
@@ -27,6 +23,10 @@ class KarpuzAPIProvider : KarpuzAPI {
 
     override fun login(loginBody: KarpuzAPIModels.LoginBody): Observable<KarpuzAPIModels.LoginResponse> {
         return karpuzAPI.login(loginBody)
+    }
+
+    override fun getProjects(auth: String, projectIds: String): Observable<KarpuzAPIModels.ProjectsResponse> {
+        return karpuzAPI.getProjects(auth, projectIds)
     }
 
     override fun getAllProjects(auth: String): Observable<KarpuzAPIModels.ProjectsResponse> {
