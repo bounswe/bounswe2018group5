@@ -31,7 +31,7 @@ class ProjectCard extends React.Component {
         this.props.handleToUpdate(project, type);
     }
     render() {
-        const { classes, project_id, title, description, project_deadline, budget, created_at, owner, owned, status } = this.props;
+        const { classes, project_id, title, description, project_deadline, budget, created_at, owner, owned, status, milestones } = this.props;
         const project = {
             project_id,
             title,
@@ -40,7 +40,8 @@ class ProjectCard extends React.Component {
             budget,
             created_at,
             status,
-            owner
+            owner,
+            milestones
         };
         let cardHeader;
         if (owned === true) {

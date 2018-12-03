@@ -10,8 +10,11 @@ import ClickAwayListener from "@material-ui/core/ClickAwayListener";
 import Hidden from "@material-ui/core/Hidden";
 import Poppers from "@material-ui/core/Popper";
 import Slide from "@material-ui/core/Slide";
+import Divider from '@material-ui/core/Divider';
+
 // @material-ui/icons
 import Menu from "@material-ui/icons/Menu";
+import AddIcon from '@material-ui/icons/Add';
 //core components
 import Button from "material-kit-react/components/CustomButtons/Button";
 import Dialog from "@material-ui/core/Dialog";
@@ -53,7 +56,8 @@ class ProjectDropdown extends React.Component {
             alertOpen: false,
             place: 'tr',
             notificationMessage: '',
-            description: ''
+            description: '',
+            milestones: []
         };
     }
 
@@ -82,11 +86,15 @@ class ProjectDropdown extends React.Component {
   };
 
   handleEditProject(event) {
-    const { description} = this.state;
-    this.props.tryEditProject(this.props.project_info.project_id, description);
+    const { description, milestones} = this.state;
+    this.props.tryEditProject(this.props.project_info.project_id, description, milestones);
     this.setState({ project_id: this.props.project_info.project_id });
     event.preventDefault();
   }
+
+  componentDidMount() {
+    this.setState({milestones: this.props.project_info.milestones})
+}
 
   handleDeleteProject(event) {
     this.props.tryDeleteProject(this.props.project_info.project_id);
@@ -105,6 +113,20 @@ class ProjectDropdown extends React.Component {
     this.setState({ project_id: this.props.project_info.project_id});
     event.preventDefault();
   }
+
+  handleRemove = (idx) => () => {
+    this.setState({
+        milestones: this.state.milestones.filter((s, sidx) => idx !== sidx)
+    });
+}
+
+  handleMilestoneChange = (value, idx, type) => {
+    let milestones = [...this.state.milestones]
+    console.log(milestones)
+    milestones[idx][type] = value;
+    this.setState({ milestones })
+  
+}
 
   componentDidUpdate(prevProps, prevState) {
     const { editProjectInProgress, editProjectHasError, editProjectCompleted, response, project } = this.props.project;
@@ -378,6 +400,62 @@ class ProjectDropdown extends React.Component {
                       }}
                     />
                   </GridItem>
+                  <GridItem xs={12} sm={12} md={12}>
+                      <Divider style={{ margin: "16px" }} />
+                      {/*<Button variant="contained" color="primary" onClick={this.addMilestones}>
+                          Add new milestone
+                      <AddIcon className={classes.rightIcon} />
+                    </Button>*/}
+                      {
+                          this.state.milestones.map((val, idx) => {
+                              return (
+                                  <GridContainer key={idx}>
+                                      <GridItem xs={12} sm={12} md={5}>
+                                          <CustomInput
+                                              labelText={`Milestone #${idx + 1}`}
+                                              formControlProps={{
+                                                  fullWidth: true
+                                              }}
+                                              inputProps={{
+                                                  type: 'text',
+                                                  defaultValue: val.name,
+                                                  onChange: event => this.handleMilestoneChange(event.target.value, idx, 'name')
+                                              }}
+                                          />
+                                      </GridItem>
+                                      <GridItem xs={12} sm={12} md={5}>
+                                          <DateTimePicker
+                                              placeholder={"Date"}
+                                              value={val.deadline}
+                                              onChange={event => this.handleMilestoneChange(event.format("YYYY-MM-DD"), idx, 'deadline')}
+                                      />
+                                      </GridItem>
+                                      <GridItem xs={12} sm={12} md={2}>
+                                          <Button variant="contained" color="primary" onClick={this.handleRemove(idx)} className="small">
+                                              <Close />
+                                          </Button>
+                                      </GridItem>
+                                      <GridItem xs={12} sm={12} md={12}>
+                                          <CustomInput
+                                              labelText="Milestone Description"
+                                              id="descr"
+                                              formControlProps={{
+                                                  fullWidth: true
+                                              }}
+                                              inputProps={{
+                                                  multiline: true,
+                                                  rows: 3,
+                                                  defaultValue: val.detail,
+                                                  onChange: event => this.handleMilestoneChange(event.target.value, idx, 'detail')
+                                              }}
+                                          />
+                                      </GridItem>
+                                  </GridContainer>
+                              )
+                          })
+                      }
+                  </GridItem>
+                              
                 </GridContainer>
               </GridItem>
             </GridContainer>
@@ -544,7 +622,7 @@ const combinedStyles = combineStyles(dropdownStyle, modalStyle);
 
 function bindAction(dispatch) {
   return {
-    tryEditProject: (project_id, description) => dispatch(tryEditProject(project_id, description)),
+    tryEditProject: (project_id, description, milestones) => dispatch(tryEditProject(project_id, description, milestones)),
     editProjectReset: () => dispatch(editProjectReset()),
     tryDiscardProject: (project_id) => dispatch(tryDiscardProject(project_id)),
     discardProjectReset: () => dispatch(discardProjectReset()),

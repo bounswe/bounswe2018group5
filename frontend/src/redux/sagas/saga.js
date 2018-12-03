@@ -364,9 +364,9 @@ const tryCreateProjectSaga = function* (action) {
 
 const tryEditProjectSaga = function* (action) {
     try {
-        const { project_id, description } = action.payload;
+        const { project_id, description, milestones } = action.payload;
 
-        const editProjectResponse = yield call(api.editProject, project_id, description);
+        const editProjectResponse = yield call(api.editProject, project_id, description, milestones);
 
         if (editProjectResponse) {
             console.log("editProjectResponse", editProjectResponse);
