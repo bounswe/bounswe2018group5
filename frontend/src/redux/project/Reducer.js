@@ -31,6 +31,10 @@ import {
     FINISH_PROJECT_FAILURE,
     FINISH_PROJECT_SUCCESS,
     FINISH_PROJECT_REQUEST,
+    RATE_PROJECT_RESET,
+    RATE_PROJECT_FAILURE,
+    RATE_PROJECT_SUCCESS,
+    RATE_PROJECT_REQUEST,
     CREATE_BID_FAILURE,
     CREATE_BID_REQUEST,
     CREATE_BID_RESET,
@@ -84,6 +88,11 @@ const initialState = {
     finishProjectHasError: false,
     finishProjectCompleted: false,
     finishProjectError: "",
+
+    rateProjectInProgress: false,
+    rateProjectHasError: false,
+    rateProjectCompleted: false,
+    rateProjectError: "",
 
     deleteProjectInProgress: false,
     deleteProjectHasError: false,
@@ -336,6 +345,39 @@ export default function(state = initialState, action) {
             finishProjectInProgress: false,
             finishProjectHasError: false,
             finishProjectCompleted: false
+        };
+    }
+
+    if (action.type === RATE_PROJECT_REQUEST) {
+        return {
+            ...state,
+            rateProjectInProgress: true,
+            rateProjectHasError: false,
+            rateProjectCompleted: false
+        };
+    } else if (action.type === RATE_PROJECT_SUCCESS) {
+        return {
+            ...state,
+            response: payload.response,
+            project: payload.project,
+            rateProjectInProgress: false,
+            rateProjectHasError: false,
+            rateProjectCompleted: true
+        };
+    } else if (action.type === RATE_PROJECT_FAILURE) {
+        return {
+            ...state,
+            rateProjectInProgress: false,
+            rateProjectHasError: true,
+            rateProjectCompleted: true,
+            rateProjectError: payload.detail[0]
+        };
+    } else if (action.type === RATE_PROJECT_RESET) {
+        return {
+            ...state,
+            rateProjectInProgress: false,
+            rateProjectHasError: false,
+            rateProjectCompleted: false
         };
     }
 

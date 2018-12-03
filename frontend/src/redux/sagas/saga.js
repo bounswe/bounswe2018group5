@@ -24,6 +24,7 @@ import {
     CREATE_BID_REQUEST,
     ACCEPT_BID_REQUEST,
     DISCARD_BID_REQUEST, 
+    RATE_PROJECT_REQUEST,
 } from "../project/actionTypes";
 import {
     getProjectsFailure, 
@@ -38,6 +39,8 @@ import {
     discardProjectFailure,
     finishProjectSuccess,
     finishProjectFailure,
+    rateProjectSuccess,
+    rateProjectFailure,
     deleteProjectSuccess,
     deleteProjectFailure,
     getOwnProjectsFailure, 
@@ -447,6 +450,34 @@ const tryFinishProjectSaga = function* (action) {
     }
 };
 
+const tryRateProjectSaga = function* (action) {
+    try {
+        const { project_id, comment, value } = action.payload;
+
+        const rateProjectResponse = yield call(api.rateProject, project_id, comment, value);
+
+        if (rateProjectResponse) {
+            console.log("rateProjectResponse", rateProjectResponse);
+
+            if (rateProjectResponse.status === 200) {
+                yield put(rateProjectSuccess(rateProjectResponse.responseBody));
+            } else if (rateProjectResponse.status === 400) {
+                console.log("Something wrong! Got a status 400", rateProjectResponse.responseBody);
+                yield put(rateProjectFailure(rateProjectResponse.responseBody));
+            } else {
+                console.log("Something wrong! Got an unknown status.", rateProjectResponse);
+                yield put(rateProjectFailure({ detail: ["Unknown status. Check console!"] }));
+            }
+        } else {
+            console.log("rate Project failed by api. No response !");
+            yield put(rateProjectFailure({ detail: ["No response fetched. Please contact the API team!"] }));
+        }
+    } catch (err) {
+        console.log("rate Project failed by api. Error => ", err);
+        yield put(rateProjectFailure({ detail: [err.detail] }));
+    }
+};
+
 const tryDeleteProjectSaga = function* (action) {
     try {
         const { project_id } = action.payload;
@@ -720,6 +751,7 @@ const saga = function* () {
     yield takeLatest(EDIT_PROJECT_REQUEST, tryEditProjectSaga);
     yield takeLatest(DISCARD_PROJECT_REQUEST, tryDiscardProjectSaga);
     yield takeLatest(FINISH_PROJECT_REQUEST, tryFinishProjectSaga);
+    yield takeLatest(RATE_PROJECT_REQUEST, tryRateProjectSaga);
     yield takeLatest(DELETE_PROJECT_REQUEST, tryDeleteProjectSaga);
 
     // BIDS

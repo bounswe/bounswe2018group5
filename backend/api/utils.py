@@ -74,6 +74,8 @@ def bid_json(bid, user_id):
     obj = {}
     obj['bid_id'] = str(bid.id)
     obj['freelancer'] = {}
+    ratings_rated = user_models.Rating.objects.filter(rated=bid.freelancer)
+    obj['freelancer']['avg_rating'] = ratings_rated.average('value')
     if (user_id == str(bid.project.owner.id)) or (user_id == str(bid.freelancer.id)):
         obj['freelancer']['id'] = str(bid.freelancer.id)
         obj['freelancer']['full_name'] = str(bid.freelancer.full_name)
