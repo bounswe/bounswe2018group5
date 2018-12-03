@@ -178,10 +178,12 @@ export const finishProjectReset = () => ({
 });
 
 ////////////////
-export const tryRateProject = (project_id) => ({
+export const tryRateProject = (project_id, comment, value) => ({
     type: RATE_PROJECT_REQUEST,
     payload: {
-        project_id
+        project_id,
+        comment,
+        value
     }
 });
 export const rateProjectSuccess = res => ({
