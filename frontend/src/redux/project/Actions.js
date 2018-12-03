@@ -31,6 +31,10 @@ import {
     FINISH_PROJECT_REQUEST,
     FINISH_PROJECT_RESET,
     FINISH_PROJECT_SUCCESS,
+    RATE_PROJECT_FAILURE,
+    RATE_PROJECT_REQUEST,
+    RATE_PROJECT_RESET,
+    RATE_PROJECT_SUCCESS,
     CREATE_BID_FAILURE,
     CREATE_BID_REQUEST,
     CREATE_BID_RESET,
@@ -172,6 +176,26 @@ export const finishProjectFailure = errorData => ({
 export const finishProjectReset = () => ({
     type: FINISH_PROJECT_RESET
 });
+
+////////////////
+export const tryRateProject = (project_id) => ({
+    type: RATE_PROJECT_REQUEST,
+    payload: {
+        project_id
+    }
+});
+export const rateProjectSuccess = res => ({
+    type: RATE_PROJECT_SUCCESS,
+    payload: res
+});
+export const rateProjectFailure = errorData => ({
+    type: RATE_PROJECT_FAILURE,
+    payload: errorData
+});
+export const rateProjectReset = () => ({
+    type: RATE_PROJECT_RESET
+});
+//////////
 
 export const tryDeleteProject = (project_id) => ({
     type: DELETE_PROJECT_REQUEST,
