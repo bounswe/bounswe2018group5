@@ -21,6 +21,8 @@ import {
 import default_image from "assets/img/faces/default_image.png";
 import connect from "react-redux/es/connect/connect";
 
+import { getCookie, LOGGEDIN_USERID_COOKIE } from "services/cookies";
+
 const styles = {
     cardCategoryWhite: {
         color: "rgba(255,255,255,.62)",
@@ -60,12 +62,19 @@ class OtherUserProfile extends Component {
 
     componentDidMount() {
         const { user_id } = this.props.match.params;
+        const loggedin_user_id = getCookie(LOGGEDIN_USERID_COOKIE);
+        const { history } = this.props;
+        if (user_id === loggedin_user_id) {
+            history.push("/home/profile");
+        }
+        if (user_id === undefined) {
+            history.push("/home/index");
+        }
         this.props.tryGetUserProfile(user_id);
     }
 
     componentDidUpdate(prevProps, prevState) {
         const { getUserProfileInProgress, getUserProfileHasError, getUserProfileCompleted, user} = this.props.user;
-
         if (!getUserProfileInProgress && !getUserProfileHasError && getUserProfileCompleted) {
             this.setState({
                 user: user, 
