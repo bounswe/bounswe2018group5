@@ -13,9 +13,15 @@ class UserViewModel: ViewModel() {
 
     val user = MutableLiveData<KarpuzAPIModels.User?>()
 
+    private var userId: String? = null
+
+    fun setUser(userId: String?) {
+        this.userId = userId
+    }
+
     fun refreshUser(onUserReadyCallback: ((KarpuzAPIModels.User?, Error?) -> Unit)) {
         disposeBag.add(
-            KarpuzAPIService.instance.getUserProfile(null)
+            KarpuzAPIService.instance.getUserProfile(userId)
                 .subscribe(
                     { result ->
                         if (result.response && result.user != null) {

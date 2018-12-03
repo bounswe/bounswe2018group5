@@ -1,6 +1,7 @@
 package com.karpuz.karpuz.Fragment
 
 import android.content.Context
+import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.support.v4.app.Fragment
@@ -10,6 +11,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.karpuz.karpuz.Activity.ProfileActivity
 import com.karpuz.karpuz.Adapter.ProjectsAdapter
 import com.karpuz.karpuz.Network.KarpuzAPIModels
 import com.karpuz.karpuz.Network.KarpuzAPIService
@@ -28,7 +30,7 @@ class ProjectsFragment : Fragment() {
     private val disposeBag = CompositeDisposable()
 
     private var projects = emptyList<KarpuzAPIModels.Project>()
-    private var adapter = ProjectsAdapter(emptyList()) { p: KarpuzAPIModels.Project -> projectSelected(p) }
+    private var adapter = ProjectsAdapter(emptyList(), { p: KarpuzAPIModels.Project -> projectSelected(p) }, { userId: String? -> userSelected(userId) })
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -85,5 +87,13 @@ class ProjectsFragment : Fragment() {
 
     private fun projectSelected(project: KarpuzAPIModels.Project) {
         //TODO open single project view
+        Log.v(TAG, "Project selected")
+    }
+
+    private fun userSelected(userId: String?) {
+        Log.v(TAG, "User selected: $userId")
+        val profileIntent = Intent(this.context, ProfileActivity::class.java)
+        profileIntent.putExtra("USER_ID", userId)
+        startActivity(profileIntent)
     }
 }

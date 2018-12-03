@@ -10,7 +10,7 @@
             android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="78dp" android:layout_weight="0.2"
-            android:background="@drawable/project_header_gradient">
+            android:background="@drawable/project_header_gradient" android:id="@+id/project_header">
         <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent" tools:srcCompat="@tools:sample/avatars"
@@ -24,11 +24,12 @@
                 android:textAlignment="viewStart" android:gravity="center" android:paddingLeft="10dp"
                 android:textSize="21sp" android:textStyle="bold" android:textColor="@android:color/white"/>
     </LinearLayout>
+
     <LinearLayout
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="match_parent" android:layout_weight="0.6" android:layout_marginTop="5dp"
-            android:paddingLeft="10dp" android:paddingRight="19dp">
+            android:paddingLeft="10dp" android:paddingRight="19dp" android:id="@+id/project_body">
         <TextView
                 android:text="Freelancer Platform"
                 android:layout_width="match_parent"
@@ -44,7 +45,8 @@
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="match_parent" android:layout_weight="0.2" android:layout_marginBottom="5dp"
-            android:layout_marginTop="5dp" android:paddingLeft="10dp" android:paddingRight="19dp">
+            android:layout_marginTop="5dp" android:paddingLeft="10dp" android:paddingRight="19dp"
+            android:id="@+id/project_details">
         <LinearLayout
                 android:orientation="horizontal"
                 android:layout_width="match_parent"
@@ -94,8 +96,8 @@
                     android:layout_weight="0.4" android:textAlignment="viewStart" android:textSize="15sp"/>
         </LinearLayout>
     </LinearLayout>
-    <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp" android:id="@+id/view" android:layout_weight="0.2"
-            android:background="@android:color/black"/>
+        <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp" android:id="@+id/view" android:layout_weight="0.2"
+                android:background="@android:color/black"/>
 </android.widget.LinearLayout>
