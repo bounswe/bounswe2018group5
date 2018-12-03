@@ -168,6 +168,19 @@ class api {
         });
     };
 
+    rateProject = (project_id, comment, value) => {
+        return httpService.fetch({
+            path: "api/user/rating/",
+            method: "POST",
+            body: {
+                project_id, 
+                comment, 
+                value
+            },
+            sendToken: true
+        });
+    };
+
     createBid = (project_id, freelancer_id, offer, note) => {
         return httpService.fetch({
             path: "api/project/bid/add/",

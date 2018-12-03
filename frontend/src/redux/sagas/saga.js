@@ -24,6 +24,7 @@ import {
     CREATE_BID_REQUEST,
     ACCEPT_BID_REQUEST,
     DISCARD_BID_REQUEST, 
+    RATE_PROJECT_REQUEST,
 } from "../project/actionTypes";
 import {
     getProjectsFailure, 
@@ -451,9 +452,9 @@ const tryFinishProjectSaga = function* (action) {
 
 const tryRateProjectSaga = function* (action) {
     try {
-        const { project_id } = action.payload;
+        const { project_id, comment, value } = action.payload;
 
-        const rateProjectResponse = yield call(api.rateProject, project_id);
+        const rateProjectResponse = yield call(api.rateProject, project_id, comment, value);
 
         if (rateProjectResponse) {
             console.log("rateProjectResponse", rateProjectResponse);
@@ -750,7 +751,7 @@ const saga = function* () {
     yield takeLatest(EDIT_PROJECT_REQUEST, tryEditProjectSaga);
     yield takeLatest(DISCARD_PROJECT_REQUEST, tryDiscardProjectSaga);
     yield takeLatest(FINISH_PROJECT_REQUEST, tryFinishProjectSaga);
-    yield takeLatest(FINISH_PROJECT_REQUEST, tryRateProjectSaga);
+    yield takeLatest(RATE_PROJECT_REQUEST, tryRateProjectSaga);
     yield takeLatest(DELETE_PROJECT_REQUEST, tryDeleteProjectSaga);
 
     // BIDS
