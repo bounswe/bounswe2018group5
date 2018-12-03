@@ -14,7 +14,6 @@ import Divider from '@material-ui/core/Divider';
 
 // @material-ui/icons
 import Menu from "@material-ui/icons/Menu";
-import AddIcon from '@material-ui/icons/Add';
 //core components
 import Button from "material-kit-react/components/CustomButtons/Button";
 import Dialog from "@material-ui/core/Dialog";
@@ -36,7 +35,7 @@ import modalStyle from "material-kit-react/assets/jss/material-kit-react/modalSt
 
 import connect from "react-redux/es/connect/connect";
 
-import { tryEditProject, editProjectReset, tryDiscardProject, discardProjectReset, tryDeleteProject, deleteProjectReset, tryFinishProject, finishProjectReset } from "redux/project/Actions.js";
+import { tryEditProject, editProjectReset, tryDiscardProject, discardProjectReset, tryDeleteProject, deleteProjectReset, tryFinishProject, finishProjectReset, tryRateProject, rateProjectReset } from "redux/project/Actions.js";
 
 
 function Transition(props) {
@@ -52,12 +51,14 @@ class ProjectDropdown extends React.Component {
             deleteModal: false,
             editModal: false,
             finishModal: false,
+            rateModal: false,
             cardAnimaton: "cardHidden",
             alertOpen: false,
             place: 'tr',
             notificationMessage: '',
             description: '',
-            milestones: []
+            milestones: [],
+            rate: '',
         };
     }
 
@@ -111,6 +112,13 @@ class ProjectDropdown extends React.Component {
   handleFinishProject(event) {
     this.props.tryFinishProject(this.props.project_info.project_id);
     this.setState({ project_id: this.props.project_info.project_id});
+    event.preventDefault();
+  }
+
+  handleRateProject(event) {
+    const { rate } = this.state;
+    this.props.tryRateProject(this.props.project_info.project_id, rate);
+    this.setState({ project_id: this.props.project_info.project_id });
     event.preventDefault();
   }
 
@@ -208,6 +216,33 @@ class ProjectDropdown extends React.Component {
       this.handleModalClose("finishModal");
       this.setState({ project_id: null });
       this.props.finishProjectReset();
+    }
+
+    const { rateProjectInProgress, rateProjectHasError, rateProjectCompleted } = this.props.project;
+    if (!rateProjectInProgress && !rateProjectHasError && rateProjectCompleted && this.state.project_id === this.props.project_info.project_id) {
+      if (response) {
+        this.props.handleToUpdate(project, 'edit');
+        this.setState({
+          alertOpen: true,
+          color: 'success',
+          notificationMessage: 'Your Project is successfully rated!'
+        });
+        setTimeout(function () {
+          this.setState({ alertOpen: false });
+        }.bind(this), 6000);
+      } else {
+        this.setState({
+          alertOpen: true,
+          color: 'danger',
+          notificationMessage: 'Your Project is not rated!'
+        });
+        setTimeout(function () {
+          this.setState({ alertOpen: false });
+        }.bind(this), 6000);
+      }
+      this.handleModalClose("rateModal");
+      this.setState({ project_id: null });
+      this.props.rateProjectReset();
     }
 
     const { deleteProjectInProgress, deleteProjectHasError, deleteProjectCompleted } = this.props.project;
@@ -308,6 +343,12 @@ class ProjectDropdown extends React.Component {
                       className={classes.dropdownItem}
                     >
                       Delete
+                    </MenuItem>
+                    <MenuItem
+                      onClick={() => this.handleClickOpen("rateModal")}
+                        className={classes.dropdownItem}
+                    >
+                      Rate
                     </MenuItem>
                   </MenuList>
                 </ClickAwayListener>
@@ -603,6 +644,61 @@ class ProjectDropdown extends React.Component {
         </Button>
           </DialogActions>
         </Dialog>
+        <Dialog
+          classes={{
+            root: classes.center,
+            paper: classes.modal
+          }}
+          open={this.state.rateModal}
+          TransitionComponent={Transition}
+          keepMounted
+          onClose={() => this.handleModalClose("rateModal")}
+          aria-labelledby="modal-slide-title"
+          aria-describedby="modal-slide-description">
+          <DialogTitle
+            id="classic-modal-slide-title"
+            disableTypography
+            className={classes.modalHeader}>
+            <IconButton
+              className={classes.modalCloseButton}
+              key="close"
+              aria-label="Close"
+              color="inherit"
+              onClick={() => this.handleModalClose("rateModal")}>
+              <Close className={classes.modalClose} />
+            </IconButton>
+            <h4 className={classes.modalTitle}>Rate Project</h4>
+          </DialogTitle>
+          <DialogContent
+            id="modal-slide-description"
+            className={classes.modalBody}>
+            <GridContainer>
+              <GridItem xs={12} sm={12} md={12}>
+                <CustomInput
+                  labelText="Rate"
+                  id="rate"
+                 
+                  formControlProps={{
+                    fullWidth: true
+                  }}
+                  inputProps={{
+                    type: 'number',
+                    value: project_info.rate,
+                    onChange: event => this.setState({ rate: event.target.value })
+                  }}
+                />
+              </GridItem>
+            </GridContainer>
+          </DialogContent>
+          <DialogActions
+            className={classes.modalFooter + " " + classes.modalFooterCenter}>
+            <Button
+              onClick={event => this.handleRateProject(event)}
+              >
+              Rate
+            </Button>
+          </DialogActions>
+        </Dialog>
         <Snackbar
             place={this.state.place}
             icon={AddAlert}
@@ -630,6 +726,8 @@ function bindAction(dispatch) {
     deleteProjectReset: () => dispatch(deleteProjectReset()),
     tryFinishProject: (project_id) => dispatch(tryFinishProject(project_id)),
     finishProjectReset: () => dispatch(finishProjectReset()),
+    tryRateProject: (project_id) => dispatch(tryRateProject(project_id)),
+    rateProjectReset: () => dispatch(rateProjectReset()),
   };
 }
 
