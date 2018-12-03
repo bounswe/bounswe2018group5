@@ -316,7 +316,7 @@ class ProjectPage extends Component {
                                 {prop.offer}$
                                 </TableCell>
                             <TableCell>{prop.freelancer.full_name}</TableCell>
-                            <TableCell numeric>{prop.rate}</TableCell>
+                            <TableCell numeric>{prop.freelancer.avg_rating}</TableCell>
                             {cell1}
                             {cell3}
                             {cell2}
