@@ -10,6 +10,7 @@ import com.karpuz.karpuz.Network.KarpuzAPIModels
 import com.karpuz.karpuz.R
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.project_cell.view.*
+import java.text.SimpleDateFormat
 
 class ProjectsAdapter(var projects: List<KarpuzAPIModels.Project>,
                       val projectClickListener: (KarpuzAPIModels.Project) -> Unit,
@@ -40,7 +41,7 @@ class ProjectsAdapter(var projects: List<KarpuzAPIModels.Project>,
             itemView.project_cell_title.text = item.title
             itemView.project_cell_description.text = item.description
             itemView.project_cell_budget.text = item.budget.toString() + "$"
-            itemView.project_cell_deadline.text = item.deadline
+            itemView.project_cell_deadline.text = item.deadline.subSequence(0, item.deadline.indexOf("T"))
             itemView.project_cell_created_at.text = item.created_at
             if (item.owner.profile_image != null) {
                 Picasso.get().load(Config.baseProfileImageUrl+item.owner.profile_image).into(itemView.project_cell_user_image)

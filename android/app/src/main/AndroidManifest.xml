@@ -12,11 +12,14 @@
             android:roundIcon="@mipmap/ic_launcher_round"
             android:supportsRtl="true"
             android:theme="@style/AppTheme">
-        <activity android:name=".Activity.WelcomeActivity">
+        <activity android:name=".Activity.WelcomeActivity"
+                  android:theme="@style/AppTheme.NoActionBar">
         </activity>
-        <activity android:name=".Activity.LoginActivity">
+        <activity android:name=".Activity.LoginActivity"
+                  android:theme="@style/AppTheme.NoActionBar">
         </activity>
-        <activity android:name=".Activity.SignupActivity">
+        <activity android:name=".Activity.SignupActivity"
+                  android:theme="@style/AppTheme.NoActionBar">
         </activity>
         <activity
                 android:name=".Activity.HomeActivity"
@@ -48,8 +51,13 @@
                 android:label="Create Project"
                 android:parentActivityName=".Activity.HomeActivity">
         </activity>
-        <activity android:name=".Activity.ProfileActivity"
-                  android:label="Profile"
+        <activity
+                android:name=".Activity.ProfileActivity"
+                android:label="Profile"
+                android:parentActivityName=".Activity.HomeActivity">
+        </activity>
+        <activity android:name=".Activity.ProjectActivity"
+                  android:label="Project"
                   android:parentActivityName=".Activity.HomeActivity">
         </activity>
     </application>
