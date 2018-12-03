@@ -58,7 +58,6 @@ class ProjectDropdown extends React.Component {
             notificationMessage: '',
             description: '',
             milestones: [],
-            rate: '',
         };
     }
 

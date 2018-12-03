@@ -106,6 +106,8 @@ class ProjectsPage extends React.Component {
                                 project_deadline={prop.deadline}
                                 created_at={prop.created_at}
                                 owner={prop.owner}
+                                status={prop.status}
+                                is_freelancer={true}
                                 owner_id={prop.owner_id}
                                 project_id={prop.project_id}
                                 milestones={prop.milestones}

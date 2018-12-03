@@ -5,6 +5,7 @@ import Chip from "@material-ui/core/Chip/Chip.js"
 import Helmet from 'react-helmet';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
+import Divider from '@material-ui/core/Divider';
 import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
@@ -289,9 +290,9 @@ class ProjectPage extends Component {
                                 placement="top"
                                 classes={{ tooltip: classes.tooltip }}
                             >
-                                    <FiberManualRecord style={{ color: color }} />
-                                </Tooltip>
-                            </TableCell>;
+                                <FiberManualRecord style={{ color: color }} />
+                            </Tooltip>
+                        </TableCell>;
                         cell4 = <TableCell>
                             <Button
                                 color="github" simple
@@ -308,14 +309,14 @@ class ProjectPage extends Component {
                         cell3 = "";
                         cell4 = "";
                     }
-                    
+
                     return (
                         <TableRow key={key} selected={accepted}>
                             <TableCell component="th" scope="row" numeric>
                                 {prop.offer}$
-                            </TableCell>
+                                </TableCell>
                             <TableCell>{prop.freelancer.full_name}</TableCell>
-                            <TableCell numeric>{prop.rate}</TableCell>
+                            <TableCell numeric>{prop.freelancer.avg_rating}</TableCell>
                             {cell1}
                             {cell3}
                             {cell2}
@@ -325,6 +326,136 @@ class ProjectPage extends Component {
                 })}
             </TableBody>
         );
+
+        let milestoneBidContainer;
+
+        if (this.state.project.status >= 1) {
+            if (this.state.project.owner.id === user_id) {
+                milestoneBidContainer = <GridItem xs={12} sm={12} md={12}>
+                    <h2 className={classes.title} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%', color: "black" }}>Milestones</h2>
+                    <Paper className={classes.root} style={{padding: "32px"}}>
+                        {this.state.project.milestones.map((prop, key) => {
+                            return (
+                                <div>
+                                    <GridContainer>
+                                        <GridItem xs={12} sm={12} md={8}><h3>{prop.name}</h3></GridItem>
+                                        <GridItem xs={12} sm={12} md={4}><h3 style={{textAlign: "right"}}>{prop.deadline}</h3></GridItem>
+                                    </GridContainer>
+                                    
+                                    <h5>{prop.detail}</h5>
+                                    <Table className={classes.table}>
+                                        <TableHead>
+                                            <TableRow>
+                                                <TableCell style={{ width: '80%' }}>Attachhment Name</TableCell>
+                                                <TableCell style={{ width: '20%' }}>Attachment Link</TableCell>
+                                            </TableRow>
+                                        </TableHead>
+                                        <TableBody>
+                                            {prop.attachments.map(file => (
+                                                <TableRow key={file}>
+                                                    <TableCell>{file}</TableCell>
+                                                    <TableCell>
+                                                        <Button
+                                                            color="github" simple
+                                                            justIcon
+                                                            href={process.env.REACT_APP_API_URL + "media/attachments/" + this.state.project.project_id + "/" + file}
+                                                            target="_blank"
+                                                            className={classes.buttonLink}
+                                                        >
+                                                            <CallMade />
+                                                        </Button>
+                                                    </TableCell>
+                                                </TableRow>
+                                            ))}
+                                        </TableBody>
+                                    </Table>
+                                    <br />
+                                    <Divider />
+                                </div>
+                            )
+                        })}
+                    </Paper>
+                </GridItem>;
+            } else if (this.state.project.freelancer.id === user_id) {
+                milestoneBidContainer = <GridItem xs={12} sm={12} md={12}>
+                    <h2 className={classes.title} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%', color: "black" }}>Milestones</h2>
+                    <Paper className={classes.root} style={{ padding: "32px" }}>
+                        {this.state.project.milestones.map((prop, key) => {
+                            return (
+                                <div>
+                                    <GridContainer>
+                                        <GridItem xs={12} sm={12} md={8}><h3>{prop.name}</h3></GridItem>
+                                        <GridItem xs={12} sm={12} md={4}><h3 style={{ textAlign: "right" }}>{prop.deadline}</h3></GridItem>
+                                    </GridContainer>
+
+                                    <h5>{prop.detail}</h5>
+                                    <FilePond
+                                        className="filepond"
+                                        name={"attachments"}
+                                        instantUpload={false}
+                                        allowMultiple={false}
+                                        maxFileSize={"20MB"}
+                                        server={{
+                                            url: process.env.REACT_APP_API_URL,
+                                            process: {
+                                                url: './api/attachment/?id=' + prop.id,
+                                                method: 'POST',
+                                                headers: {
+                                                    Authorization: getCookie(TOKEN_COOKIE)
+                                                },
+                                                timeout: 7000,
+                                                onload: null,
+                                                onerror: null
+                                            },
+                                            restore: {
+                                                url: "./media/attachments/" + prop.id + "/"
+                                            },
+                                            revert: {
+                                                url: './api/attachment/?id=' + prop.id,
+                                                headers: {
+                                                    Authorization: getCookie(TOKEN_COOKIE)
+                                                },
+                                            }
+                                        }}
+
+                                        labelIdle={`Drag & Drop your attachment or <span class="filepond--label-action">Browse</span>`}
+                                        acceptedFileTypes={"application/x-gzip, application/x-compressed, application/zip, application/x-zip-compressed, multipart/x-zip"}
+                                    >
+                                        {prop.attachments.map(file => (
+                                            <File key={file} id={file} src={file} origin="limbo" />
+                                        ))}
+                                    </FilePond>
+                                    <br />
+                                    <Divider />
+                                </div>
+                            )
+                        })}
+                    </Paper>
+                </GridItem>;
+            }
+        } else {
+            milestoneBidContainer = <GridItem xs={12} sm={12} md={12}>
+                <h2 className={classes.title} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%', color: "black" }}>Bids</h2>
+                <Paper className={classes.root}>
+                    <Table className={classes.table}>
+                        <TableHead>
+                            <TableRow>
+                                <TableCell>Suggested Price</TableCell>
+                                <TableCell>Bid Owner</TableCell>
+                                <TableCell numeric>Bid Owner's Rate</TableCell>
+                                {tableCol1}
+                                {tableCol3}
+                                {tableCol2}
+                                {tableCol4}
+                            </TableRow>
+                        </TableHead>
+                        {bids}
+                    </Table>
+                    <br />
+                    {createBid}
+                </Paper>
+            </GridItem>;
+        }
 
         return (
             <div>
@@ -351,27 +482,7 @@ class ProjectPage extends Component {
                                     </div>
                                 </Paper>
                             </GridItem>
-                            <GridItem xs={12} sm={12} md={12}>
-                                <h2 className={classes.title} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%', color: "black" }}>Bids</h2>
-                                <Paper className={classes.root}>
-                                    <Table className={classes.table}>
-                                        <TableHead>
-                                            <TableRow>
-                                                <TableCell numeric>Suggested Price</TableCell>
-                                                <TableCell>Bid Owner</TableCell>
-                                                <TableCell numeric>Bid Owner's Rate</TableCell>
-                                                {tableCol1}
-                                                {tableCol3}
-                                                {tableCol2}
-                                                {tableCol4}
-                                            </TableRow>
-                                        </TableHead>
-                                        {bids}
-                                    </Table>
-                                    <br />
-                                    {createBid}
-                                </Paper>
-                            </GridItem>
+                            {milestoneBidContainer}
                         </GridContainer>
                     </GridItem>
                     <GridItem xs={12} sm={12} md={4}>
