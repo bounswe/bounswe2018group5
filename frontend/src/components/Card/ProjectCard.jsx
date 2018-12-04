@@ -141,6 +141,9 @@ class ProjectCard extends React.Component {
             owner,
             milestones
         };
+        if (description.length > 25) {
+            description = description.substring(0, 200) + "...";
+        }
         let cardHeader, badgesStatus;;
         if (owned === true) {
             if (status === -1) {
