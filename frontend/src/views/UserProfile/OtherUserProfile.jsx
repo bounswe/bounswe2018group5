@@ -100,6 +100,7 @@ class OtherUserProfile extends Component {
                                 portfolio_id={prop.id}
                                 title={prop.title}
                                 description={prop.description}
+                                attachments={prop.attachments}
                                 date={prop.date}
                                 project_id={prop.project_id}
                             />
