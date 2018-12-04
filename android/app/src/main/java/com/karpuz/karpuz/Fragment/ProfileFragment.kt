@@ -50,7 +50,9 @@ class ProfileFragment : Fragment() {
     }
 
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
-        inflater?.inflate(R.menu.profile, menu)
+        if (userId == null) {
+            inflater?.inflate(R.menu.profile, menu)
+        }
         super.onCreateOptionsMenu(menu, inflater)
     }
 

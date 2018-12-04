@@ -84,6 +84,10 @@ class ProjectsFragment : Fragment() {
                 },
                 { error ->
                     Log.e(TAG, "Error when getting projects: {$error}")
+                    activity?.runOnUiThread {
+                        swipe_refresh_layout_projects.isRefreshing = false
+                        activity?.shortToast("Update error")
+                    }
                 }
             )
         )

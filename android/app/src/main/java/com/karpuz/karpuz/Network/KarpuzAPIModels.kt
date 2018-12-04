@@ -17,7 +17,7 @@ object KarpuzAPIModels {
                          val id: String,
                          val description: String)
     data class User(val avg_rating: Double?,
-                    val ratings: Ratings?,
+                    /*val ratings: Ratings?,*/
                     val email: String?,
                     val profile_image: String?,
                     val username: String?,
@@ -32,7 +32,7 @@ object KarpuzAPIModels {
                    val offer: Double,
                    val bid_id: String,
                    val freelancer: User)
-    data class Project(val ratings: List<Double>,
+    data class Project(/*val ratings: List<Double>,*/
                        val budget: Double,
                        val status: Int,
                        val description: String,
