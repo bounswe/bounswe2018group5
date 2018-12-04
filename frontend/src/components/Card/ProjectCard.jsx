@@ -141,8 +141,9 @@ class ProjectCard extends React.Component {
             owner,
             milestones
         };
-        if (description.length > 25) {
-            description = description.substring(0, 200) + "...";
+        let descriptionText = description;
+        if (descriptionText.length > 25) {
+            descriptionText = descriptionText.substring(0, 200) + "...";
         }
         let cardHeader, badgesStatus;;
         if (owned === true) {
@@ -210,7 +211,7 @@ class ProjectCard extends React.Component {
                     <CardBody>
                         <Link to={"/home/projects/"+ project_id +"/"} style={{color: "black"}}>
                             <h4 className={classes.cardTitle}>{title}</h4>
-                            <p>{description}</p>
+                            <p>{descriptionText}</p>
                             <p align="right">
                                 <b>Budget: </b> {budget}$<br/>
                                 <b>Deadline: </b> {project_deadline}<br/>
