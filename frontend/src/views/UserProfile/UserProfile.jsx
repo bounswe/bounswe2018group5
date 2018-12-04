@@ -319,6 +319,7 @@ class UserProfile extends Component {
                                 description={prop.description}
                                 date={prop.date}
                                 project_id={prop.project_id}
+                                attachments={prop.attachments}
                                 owned={true}
                                 handleToUpdate={this.handleToManagePortfolio.bind(this)}
                             />
