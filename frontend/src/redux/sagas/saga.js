@@ -1,17 +1,30 @@
 import {call, put, takeLatest} from "redux-saga/effects";
 
 import {LOGIN_REQUEST, LOGOUT_REQUEST, REGISTER_REQUEST} from "../auth/actionTypes";
-import {CHANGE_PASSWORD_REQUEST, GET_PROFILE_REQUEST, GET_USER_PROFILE_REQUEST, UPDATE_PROFILE_REQUEST} from "../user/actionTypes";
+import {
+    CHANGE_PASSWORD_REQUEST, 
+    GET_PROFILE_REQUEST, 
+    GET_USER_PROFILE_REQUEST, 
+    UPDATE_PROFILE_REQUEST,
+    GET_PORTFOLIO_REQUEST,
+    POST_PORTFOLIO_REQUEST,
+    PUT_PORTFOLIO_REQUEST,
+    DELETE_PORTFOLIO_REQUEST,
+    PUT_WALLET_REQUEST,
+} from "../user/actionTypes";
 import { 
     CREATE_PROJECT_REQUEST, 
     EDIT_PROJECT_REQUEST, 
     DISCARD_PROJECT_REQUEST, 
+    FINISH_PROJECT_REQUEST, 
     GET_PROJECTS_REQUEST, 
     GET_PROJECT_REQUEST, 
+    DELETE_PROJECT_REQUEST, 
     GET_OWN_PROJECTS_REQUEST,
     CREATE_BID_REQUEST,
     ACCEPT_BID_REQUEST,
     DISCARD_BID_REQUEST, 
+    RATE_PROJECT_REQUEST,
 } from "../project/actionTypes";
 import {
     getProjectsFailure, 
@@ -24,6 +37,12 @@ import {
     editProjectFailure,
     discardProjectSuccess,
     discardProjectFailure,
+    finishProjectSuccess,
+    finishProjectFailure,
+    rateProjectSuccess,
+    rateProjectFailure,
+    deleteProjectSuccess,
+    deleteProjectFailure,
     getOwnProjectsFailure, 
     getOwnProjectsSuccess,
     createBidSuccess,
@@ -42,7 +61,17 @@ import {
     changePasswordSuccess,
     changePasswordFailure,
     updateProfileFailure,
-    updateProfileSuccess
+    updateProfileSuccess,
+    getPortfolioFailure,
+    getPortfolioSuccess,
+    postPortfolioSuccess,
+    postPortfolioFailure,
+    putPortfolioSuccess,
+    putPortfolioFailure,
+    deletePortfolioFailure,
+    deletePortfolioSuccess,
+    putWalletSuccess,
+    putWalletFailure
 } from "../user/Actions";
 
 
@@ -310,9 +339,9 @@ const tryGetOwnProjectsSaga = function* () {
 
 const tryCreateProjectSaga = function* (action) {
     try {
-        const { title, description, project_deadline, budget } = action.payload;
+        const { title, description, project_deadline, budget, milestones } = action.payload;
 
-        const createProjectResponse = yield call(api.createProject, title, description, project_deadline, budget);
+        const createProjectResponse = yield call(api.createProject, title, description, project_deadline, budget, milestones);
 
         if (createProjectResponse) {
             console.log("createProjectResponse", createProjectResponse);
@@ -338,9 +367,9 @@ const tryCreateProjectSaga = function* (action) {
 
 const tryEditProjectSaga = function* (action) {
     try {
-        const { project_id, description } = action.payload;
+        const { project_id, description, milestones } = action.payload;
 
-        const editProjectResponse = yield call(api.editProject, project_id, description);
+        const editProjectResponse = yield call(api.editProject, project_id, description, milestones);
 
         if (editProjectResponse) {
             console.log("editProjectResponse", editProjectResponse);
@@ -390,6 +419,90 @@ const tryDiscardProjectSaga = function* (action) {
     } catch (err) {
         console.log("discard Project failed by api. Error => ", err);
         yield put(discardProjectFailure({ detail: [err.detail] }));
+    }
+};
+
+const tryFinishProjectSaga = function* (action) {
+    try {
+        const { project_id } = action.payload;
+
+        const finishProjectResponse = yield call(api.finishProject, project_id);
+
+        if (finishProjectResponse) {
+            console.log("finishProjectResponse", finishProjectResponse);
+
+            if (finishProjectResponse.status === 200) {
+                yield put(finishProjectSuccess(finishProjectResponse.responseBody));
+            } else if (finishProjectResponse.status === 400) {
+                console.log("Something wrong! Got a status 400", finishProjectResponse.responseBody);
+                yield put(finishProjectFailure(finishProjectResponse.responseBody));
+            } else {
+                console.log("Something wrong! Got an unknown status.", finishProjectResponse);
+                yield put(finishProjectFailure({ detail: ["Unknown status. Check console!"] }));
+            }
+        } else {
+            console.log("finish Project failed by api. No response !");
+            yield put(finishProjectFailure({ detail: ["No response fetched. Please contact the API team!"] }));
+        }
+    } catch (err) {
+        console.log("finish Project failed by api. Error => ", err);
+        yield put(finishProjectFailure({ detail: [err.detail] }));
+    }
+};
+
+const tryRateProjectSaga = function* (action) {
+    try {
+        const { project_id, comment, value } = action.payload;
+
+        const rateProjectResponse = yield call(api.rateProject, project_id, comment, value);
+
+        if (rateProjectResponse) {
+            console.log("rateProjectResponse", rateProjectResponse);
+
+            if (rateProjectResponse.status === 200) {
+                yield put(rateProjectSuccess(rateProjectResponse.responseBody));
+            } else if (rateProjectResponse.status === 400) {
+                console.log("Something wrong! Got a status 400", rateProjectResponse.responseBody);
+                yield put(rateProjectFailure(rateProjectResponse.responseBody));
+            } else {
+                console.log("Something wrong! Got an unknown status.", rateProjectResponse);
+                yield put(rateProjectFailure({ detail: ["Unknown status. Check console!"] }));
+            }
+        } else {
+            console.log("rate Project failed by api. No response !");
+            yield put(rateProjectFailure({ detail: ["No response fetched. Please contact the API team!"] }));
+        }
+    } catch (err) {
+        console.log("rate Project failed by api. Error => ", err);
+        yield put(rateProjectFailure({ detail: [err.detail] }));
+    }
+};
+
+const tryDeleteProjectSaga = function* (action) {
+    try {
+        const { project_id } = action.payload;
+
+        const deleteProjectResponse = yield call(api.deleteProject, project_id);
+
+        if (deleteProjectResponse) {
+            console.log("deleteProjectResponse", deleteProjectResponse);
+
+            if (deleteProjectResponse.status === 200) {
+                yield put(deleteProjectSuccess(deleteProjectResponse.responseBody));
+            } else if (deleteProjectResponse.status === 400) {
+                console.log("Something wrong! Got a status 400", deleteProjectResponse.responseBody);
+                yield put(deleteProjectFailure(deleteProjectResponse.responseBody));
+            } else {
+                console.log("Something wrong! Got an unknown status.", deleteProjectResponse);
+                yield put(deleteProjectFailure({ detail: ["Unknown status. Check console!"] }));
+            }
+        } else {
+            console.log("delete Project failed by api. No response !");
+            yield put(deleteProjectFailure({ detail: ["No response fetched. Please contact the API team!"] }));
+        }
+    } catch (err) {
+        console.log("delete Project failed by api. Error => ", err);
+        yield put(deleteProjectFailure({ detail: [err.detail] }));
     }
 };
 
@@ -477,6 +590,146 @@ const tryDiscardBidSaga = function* (action) {
     }
 };
 
+const tryGetPortfolioSaga = function* (action) {
+    try {
+        const { portfolio_id } = action.payload;
+
+        const getPortfolioResponse = yield call(api.getPortfolio, portfolio_id);
+
+        if (getPortfolioResponse) {
+            console.log("getPortfolioResponse", getPortfolioResponse);
+
+            if (getPortfolioResponse.status === 200) {
+                yield put(getPortfolioSuccess(getPortfolioResponse.responseBody));
+            } else if (getPortfolioResponse.status === 400) {
+                console.log("Something wrong! Got a status 400", getPortfolioResponse.responseBody);
+                yield put(getPortfolioFailure(getPortfolioResponse.responseBody));
+            } else {
+                console.log("Something wrong! Got an unknown status.", getPortfolioResponse);
+                yield put(getPortfolioFailure({ detail: ["Unknown status. Check console!"] }));
+            }
+        } else {
+            console.log("get Portfolio failed by api. No response !");
+            yield put(getPortfolioFailure({ detail: ["No response fetched. Please contact the API team!"] }));
+        }
+    } catch (err) {
+        console.log("get Portfolio failed by api. Error => ", err);
+        yield put(getPortfolioFailure({ detail: [err.detail] }));
+    }
+};
+
+const tryDeletePortfolioSaga = function* (action) {
+    try {
+        const { portfolio_id } = action.payload;
+
+        const deletePortfolioResponse = yield call(api.deletePortfolio, portfolio_id);
+
+        if (deletePortfolioResponse) {
+            console.log("deletePortfolioResponse", deletePortfolioResponse);
+
+            if (deletePortfolioResponse.status === 200) {
+                yield put(deletePortfolioSuccess(deletePortfolioResponse.responseBody));
+            } else if (deletePortfolioResponse.status === 400) {
+                console.log("Something wrong! Got a status 400", deletePortfolioResponse.responseBody);
+                yield put(deletePortfolioFailure(deletePortfolioResponse.responseBody));
+            } else {
+                console.log("Something wrong! Got an unknown status.", deletePortfolioResponse);
+                yield put(deletePortfolioFailure({ detail: ["Unknown status. Check console!"] }));
+            }
+        } else {
+            console.log("delete Portfolio failed by api. No response !");
+            yield put(deletePortfolioFailure({ detail: ["No response fetched. Please contact the API team!"] }));
+        }
+    } catch (err) {
+        console.log("delete Portfolio failed by api. Error => ", err);
+        yield put(deletePortfolioFailure({ detail: [err.detail] }));
+    }
+};
+
+const tryPostPortfolioSaga = function* (action) {
+    try {
+        const { title, description, date, project_id } = action.payload;
+
+        const postPortfolioResponse = yield call(api.postPortfolio, title, description, date, project_id);
+
+        if (postPortfolioResponse) {
+            console.log("postPortfolioResponse", postPortfolioResponse);
+
+            if (postPortfolioResponse.status === 200) {
+                yield put(postPortfolioSuccess(postPortfolioResponse.responseBody));
+            } else if (postPortfolioResponse.status === 400) {
+                console.log("Something wrong! Got a status 400", postPortfolioResponse.responseBody);
+                yield put(postPortfolioFailure(postPortfolioResponse.responseBody));
+            } else {
+                console.log("Something wrong! Got an unknown status.", postPortfolioResponse);
+                yield put(postPortfolioFailure({ detail: ["Unknown status. Check console!"] }));
+            }
+        } else {
+            console.log("post Portfolio failed by api. No response !");
+            yield put(postPortfolioFailure({ detail: ["No response fetched. Please contact the API team!"] }));
+        }
+    } catch (err) {
+        console.log("post Portfolio failed by api. Error => ", err);
+        yield put(postPortfolioFailure({ detail: [err.detail] }));
+    }
+};
+
+const tryPutPortfolioSaga = function* (action) {
+    try {
+        const { portfolio_id, title, description, date, project_id } = action.payload;
+
+        const putPortfolioResponse = yield call(api.putPortfolio, portfolio_id, title, description, date, project_id);
+
+        if (putPortfolioResponse) {
+            console.log("putPortfolioResponse", putPortfolioResponse);
+
+            if (putPortfolioResponse.status === 200) {
+                yield put(putPortfolioSuccess(putPortfolioResponse.responseBody));
+            } else if (putPortfolioResponse.status === 400) {
+                console.log("Something wrong! Got a status 400", putPortfolioResponse.responseBody);
+                yield put(putPortfolioFailure(putPortfolioResponse.responseBody));
+            } else {
+                console.log("Something wrong! Got an unknown status.", putPortfolioResponse);
+                yield put(putPortfolioFailure({ detail: ["Unknown status. Check console!"] }));
+            }
+        } else {
+            console.log("put Portfolio failed by api. No response !");
+            yield put(putPortfolioFailure({ detail: ["No response fetched. Please contact the API team!"] }));
+        }
+    } catch (err) {
+        console.log("put Portfolio failed by api. Error => ", err);
+        yield put(putPortfolioFailure({ detail: [err.detail] }));
+    }
+};
+
+const tryPutWalletSaga = function* (action) {
+    try {
+        const { deposit, withdraw } = action.payload;
+
+        const putWalletResponse = yield call(api.putWallet, deposit, withdraw);
+
+        if (putWalletResponse) {
+            console.log("putWalletResponse", putWalletResponse);
+
+            if (putWalletResponse.status === 200) {
+                yield put(putWalletSuccess(putWalletResponse.responseBody));
+            } else if (putWalletResponse.status === 400) {
+                console.log("Something wrong! Got a status 400", putWalletResponse.responseBody);
+                yield put(putWalletFailure(putWalletResponse.responseBody));
+            } else {
+                console.log("Something wrong! Got an unknown status.", putWalletResponse);
+                yield put(putWalletFailure({ detail: ["Unknown status. Check console!"] }));
+            }
+        } else {
+            console.log("put Wallet failed by api. No response !");
+            yield put(putWalletFailure({ detail: ["No response fetched. Please contact the API team!"] }));
+        }
+    } catch (err) {
+        console.log("put Wallet failed by api. Error => ", err);
+        yield put(putWalletFailure({ detail: [err.detail] }));
+    }
+};
+
 const saga = function* () {
     // AUTH
     yield takeLatest(LOGIN_REQUEST, tryLoginSaga);
@@ -488,6 +741,7 @@ const saga = function* () {
     yield takeLatest(GET_USER_PROFILE_REQUEST, tryGetUserProfileSaga);
     yield takeLatest(UPDATE_PROFILE_REQUEST, tryUpdateProfileSaga);
     yield takeLatest(CHANGE_PASSWORD_REQUEST, tryChangePasswordSaga);
+    yield takeLatest(PUT_WALLET_REQUEST, tryPutWalletSaga);
 
     // PROJECTS
     yield takeLatest(GET_PROJECTS_REQUEST, tryGetProjectsSaga);
@@ -496,11 +750,20 @@ const saga = function* () {
     yield takeLatest(CREATE_PROJECT_REQUEST, tryCreateProjectSaga);
     yield takeLatest(EDIT_PROJECT_REQUEST, tryEditProjectSaga);
     yield takeLatest(DISCARD_PROJECT_REQUEST, tryDiscardProjectSaga);
+    yield takeLatest(FINISH_PROJECT_REQUEST, tryFinishProjectSaga);
+    yield takeLatest(RATE_PROJECT_REQUEST, tryRateProjectSaga);
+    yield takeLatest(DELETE_PROJECT_REQUEST, tryDeleteProjectSaga);
 
     // BIDS
     yield takeLatest(CREATE_BID_REQUEST, tryCreateBidSaga);
     yield takeLatest(DISCARD_BID_REQUEST, tryDiscardBidSaga);
     yield takeLatest(ACCEPT_BID_REQUEST, tryAcceptBidSaga);
+
+    // PORTFOLIO
+    yield takeLatest(GET_PORTFOLIO_REQUEST, tryGetPortfolioSaga);
+    yield takeLatest(POST_PORTFOLIO_REQUEST, tryPostPortfolioSaga);
+    yield takeLatest(PUT_PORTFOLIO_REQUEST, tryPutPortfolioSaga);
+    yield takeLatest(DELETE_PORTFOLIO_REQUEST, tryDeletePortfolioSaga);
 };
 
 export default saga;

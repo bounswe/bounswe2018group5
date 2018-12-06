@@ -52,19 +52,21 @@ class ProjectsPage extends React.Component {
 
     handleToManageProject(project, type) {
         var { projects_client } = this.state;
+        let new_projects_client;
         if (type === 'edit') {
-            projects_client = projects_client.map((prop, key) => {
+            new_projects_client = projects_client.map((prop, key) => {
                 return project.project_id === prop.project_id ? project : prop;
             })
         } else if (type === 'delete') {
-            projects_client = projects_client.map((prop, key) => {
-                return project.project_id === prop.project_id ? null : prop;
+            new_projects_client = projects_client.filter(function (elem, index, portfolios) {
+                return project.project_id !== elem.project_id;
             })
         }
         this.setState({
-            projects_client: projects_client,
+            projects_client: new_projects_client,
         });
     }
+    
 
     render() {
         const { projects_client, projects_freelancer } = this.state;
@@ -85,6 +87,7 @@ class ProjectsPage extends React.Component {
                                 owned={true}
                                 status={prop.status}
                                 handleToUpdate={this.handleToManageProject.bind(this)}
+                                milestones={prop.milestones}
                             />
                         </GridItem>
                     );
@@ -103,8 +106,11 @@ class ProjectsPage extends React.Component {
                                 project_deadline={prop.deadline}
                                 created_at={prop.created_at}
                                 owner={prop.owner}
+                                status={prop.status}
+                                is_freelancer={true}
                                 owner_id={prop.owner_id}
                                 project_id={prop.project_id}
+                                milestones={prop.milestones}
                             />
                         </GridItem>
                     );

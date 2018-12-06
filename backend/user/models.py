@@ -52,3 +52,27 @@ class Rating(BaseDocument):
     value = FloatField(min_value=0, max_value=5)
 
     meta = {'collection': 'ratings'}
+
+
+class Portfolio(BaseDocument):
+    def schema(self):
+        pass
+
+    title = StringField(required=True)
+    description = StringField()
+    user = ReferenceField('User', required=True)
+    date = DateTimeField()
+    attachments = ListField(default=[])
+    project_id = StringField(blank=True, null=True)
+
+    meta = {'collection': 'portfolios'}
+
+
+class Wallet(BaseDocument):
+    def schema(self):
+        pass
+
+    user = ReferenceField('User')
+    balance = FloatField(min_value=0)
+
+    meta = {'collection': 'wallets'}

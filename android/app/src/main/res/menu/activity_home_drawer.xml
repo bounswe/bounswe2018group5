@@ -12,14 +12,14 @@
                 android:id="@+id/nav_profile"
                 android:icon="@drawable/profile_icon"
                 android:title="Profile"/>
-        <item
+        <!--item
                 android:id="@+id/nav_messages"
                 android:icon="@android:drawable/ic_dialog_email"
-                android:title="Messages"/>
+                android:title="Messages"/-->
         <!--item
                 android:id="@+id/nav_manage"
                 android:icon="@drawable/ic_menu_manage"
-                android:title="Tools"/>-->
+                android:title="Tools"/-->
     </group>
 
     <!--

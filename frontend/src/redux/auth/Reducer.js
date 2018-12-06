@@ -74,6 +74,7 @@ export default function(state = initialState, action) {
             ...state,
             api_token: payload.api_token,
             loggedIn: payload.response,
+            error: payload.error,
             registerInProgress: false,
             registerHasError: false,
             registerCompleted: true

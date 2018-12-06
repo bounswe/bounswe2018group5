@@ -36,7 +36,8 @@ class Project(BaseDocument):
     description = StringField(max_length=2000)
     title = StringField(max_length=50)
     budget = FloatField(min_value=0)
-    project_deadline = DateTimeField()
+    milestones = DictField(null=True)
+    attachments = ListField(default=[])
     status = IntField()  # 0 bidding period, 1 project awarded to a freelancer, 2 project completed, -1 project discarded
 
     meta = {'collection': 'projects',
@@ -59,3 +60,18 @@ class Bid(BaseDocument):
     status = IntField(default=0)  # 0 bidding period, 1 won, 2 lost, -1 discarded
 
     meta = {'collection': 'bids'}
+
+
+class Milestone(BaseDocument):
+    def schema(self):
+        pass
+
+    project = ReferenceField('Project')
+    detail = StringField(max_length=2000, default="", blank=True)
+    name = StringField(max_length=200)
+    deadline = DateTimeField()
+    status = IntField(default=0)  # -1 discarded 0 ongoing, 1 in review, 2 changes requested, 3 done
+    attachments = ListField(default=[])
+    is_final = BooleanField(default=False)
+
+    meta = {'collection': 'milestones'}

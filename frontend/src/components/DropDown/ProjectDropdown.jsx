@@ -10,6 +10,8 @@ import ClickAwayListener from "@material-ui/core/ClickAwayListener";
 import Hidden from "@material-ui/core/Hidden";
 import Poppers from "@material-ui/core/Popper";
 import Slide from "@material-ui/core/Slide";
+import Divider from '@material-ui/core/Divider';
+
 // @material-ui/icons
 import Menu from "@material-ui/icons/Menu";
 //core components
@@ -33,7 +35,7 @@ import modalStyle from "material-kit-react/assets/jss/material-kit-react/modalSt
 
 import connect from "react-redux/es/connect/connect";
 
-import { tryEditProject, editProjectReset, tryDiscardProject, discardProjectReset } from "redux/project/Actions.js";
+import { tryEditProject, editProjectReset, tryDiscardProject, discardProjectReset, tryDeleteProject, deleteProjectReset, tryFinishProject, finishProjectReset, tryRateProject, rateProjectReset } from "redux/project/Actions.js";
 
 
 function Transition(props) {
@@ -48,11 +50,14 @@ class ProjectDropdown extends React.Component {
             discardModal: false,
             deleteModal: false,
             editModal: false,
+            finishModal: false,
+            rateModal: false,
             cardAnimaton: "cardHidden",
             alertOpen: false,
             place: 'tr',
             notificationMessage: '',
-            description: ''
+            description: '',
+            milestones: [],
         };
     }
 
@@ -81,15 +86,19 @@ class ProjectDropdown extends React.Component {
   };
 
   handleEditProject(event) {
-    const { description} = this.state;
-    this.props.tryEditProject(this.props.project_info.project_id, description);
+    const { description, milestones} = this.state;
+    this.props.tryEditProject(this.props.project_info.project_id, description, milestones);
     this.setState({ project_id: this.props.project_info.project_id });
     event.preventDefault();
   }
 
+  componentDidMount() {
+    this.setState({milestones: this.props.project_info.milestones})
+}
+
   handleDeleteProject(event) {
-    const { title, description, project_deadline, budget } = this.state;
-    this.props.tryCreateProject(title, description, project_deadline, parseFloat(budget));
+    this.props.tryDeleteProject(this.props.project_info.project_id);
+    this.setState({ project_id: this.props.project_info.project_id });
     event.preventDefault();
   }
 
@@ -98,6 +107,33 @@ class ProjectDropdown extends React.Component {
     this.setState({ project_id: this.props.project_info.project_id});
     event.preventDefault();
   }
+
+  handleFinishProject(event) {
+    this.props.tryFinishProject(this.props.project_info.project_id);
+    this.setState({ project_id: this.props.project_info.project_id});
+    event.preventDefault();
+  }
+
+  handleRateProject(event) {
+    const { comment, value } = this.state;
+    this.props.tryRateProject(this.props.project_info.project_id, comment, parseFloat(value));
+    this.setState({ project_id: this.props.project_info.project_id });
+    event.preventDefault();
+  }
+
+  handleRemove = (idx) => () => {
+    this.setState({
+        milestones: this.state.milestones.filter((s, sidx) => idx !== sidx)
+    });
+}
+
+  handleMilestoneChange = (value, idx, type) => {
+    let milestones = [...this.state.milestones]
+    console.log(milestones)
+    milestones[idx][type] = value;
+    this.setState({ milestones })
+  
+}
 
   componentDidUpdate(prevProps, prevState) {
     const { editProjectInProgress, editProjectHasError, editProjectCompleted, response, project } = this.props.project;
@@ -130,7 +166,6 @@ class ProjectDropdown extends React.Component {
     const { discardProjectInProgress, discardProjectHasError, discardProjectCompleted } = this.props.project;
     if (!discardProjectInProgress && !discardProjectHasError && discardProjectCompleted && this.state.project_id === this.props.project_info.project_id) {
       if (response) {
-        const project = {...this.props.project_info, status: -1};
         this.props.handleToUpdate(project, 'edit');
         this.setState({
           alertOpen: true,
@@ -154,11 +189,111 @@ class ProjectDropdown extends React.Component {
       this.setState({ project_id: null });
       this.props.discardProjectReset();
     }
+
+    const { finishProjectInProgress, finishProjectHasError, finishProjectCompleted } = this.props.project;
+    if (!finishProjectInProgress && !finishProjectHasError && finishProjectCompleted && this.state.project_id === this.props.project_info.project_id) {
+      if (response) {
+        this.props.handleToUpdate(project, 'edit');
+        this.setState({
+          alertOpen: true,
+          color: 'success',
+          notificationMessage: 'Your Project is successfully finished!'
+        });
+        setTimeout(function () {
+          this.setState({ alertOpen: false });
+        }.bind(this), 6000);
+      } else {
+        this.setState({
+          alertOpen: true,
+          color: 'danger',
+          notificationMessage: 'Your Project is not finished!'
+        });
+        setTimeout(function () {
+          this.setState({ alertOpen: false });
+        }.bind(this), 6000);
+      }
+      this.handleModalClose("finishModal");
+      this.setState({ project_id: null });
+      this.props.finishProjectReset();
+    }
+
+    const { rateProjectInProgress, rateProjectHasError, rateProjectCompleted } = this.props.project;
+    if (!rateProjectInProgress && !rateProjectHasError && rateProjectCompleted && this.state.project_id === this.props.project_info.project_id) {
+      if (response) {
+        this.setState({
+          alertOpen: true,
+          color: 'success',
+          notificationMessage: 'Your Project is successfully rated!'
+        });
+        setTimeout(function () {
+          this.setState({ alertOpen: false });
+        }.bind(this), 6000);
+      } else {
+        this.setState({
+          alertOpen: true,
+          color: 'danger',
+          notificationMessage: 'Your Project is not rated!'
+        });
+        setTimeout(function () {
+          this.setState({ alertOpen: false });
+        }.bind(this), 6000);
+      }
+      this.handleModalClose("rateModal");
+      this.setState({ project_id: null, value: 0, comment: "" });
+      this.props.rateProjectReset();
+    }
+
+    const { deleteProjectInProgress, deleteProjectHasError, deleteProjectCompleted } = this.props.project;
+    if (!deleteProjectInProgress && !deleteProjectHasError && deleteProjectCompleted && this.state.project_id === this.props.project_info.project_id) {
+      if (response) {
+        this.props.handleToUpdate(this.props.project_info, 'delete');
+        this.setState({
+          alertOpen: true,
+          color: 'success',
+          notificationMessage: 'Your Project is successfully deleted!'
+        });
+        setTimeout(function () {
+          this.setState({ alertOpen: false });
+        }.bind(this), 6000);
+      } else {
+        this.setState({
+          alertOpen: true,
+          color: 'danger',
+          notificationMessage: 'Your Project is not deleted!'
+        });
+        setTimeout(function () {
+          this.setState({ alertOpen: false });
+        }.bind(this), 6000);
+      }
+      this.handleModalClose("deleteModal");
+      this.setState({ project_id: null });
+      this.props.deleteProjectReset();
+    }
   }
 
   render() {
     const { classes, project_info } = this.props;
     const { open } = this.state;
+    let finishOrRate;
+
+    if ( project_info.status === 2 ) {
+      finishOrRate = 
+        <MenuItem
+        onClick={() => this.handleClickOpen("rateModal")}
+        className={classes.dropdownItem}
+        >
+        Rate
+        </MenuItem> 
+    }
+    else {
+      finishOrRate = 
+        <MenuItem
+          onClick={() => this.handleClickOpen("finishModal")}
+          className={classes.dropdownItem}
+        >
+          Finish
+        </MenuItem>
+    }
     return (
       <div className={classes.manager}>
         <Button
@@ -221,6 +356,7 @@ class ProjectDropdown extends React.Component {
                     >
                       Delete
                     </MenuItem>
+                    {finishOrRate}
                   </MenuList>
                 </ClickAwayListener>
               </Paper>
@@ -284,12 +420,14 @@ class ProjectDropdown extends React.Component {
                       inputProps={{
                         multiline: true,
                         rows: 3,
+                        defaultValue: project_info.description,
                         onChange: event => this.setState({ description: event.target.value }),
                       }}
                     />
                   </GridItem>
                   <GridItem xs={12} sm={12} md={6}>
                     <DateTimePicker
+                      placeholder={"Project Deadline"}
                       value={project_info.project_deadline}
                       onChange={event => this.setState({ project_deadline: event.format("YYYY-MM-DD") })}
                       disabled={true}
@@ -310,6 +448,62 @@ class ProjectDropdown extends React.Component {
                       }}
                     />
                   </GridItem>
+                  <GridItem xs={12} sm={12} md={12}>
+                      <Divider style={{ margin: "16px" }} />
+                      {/*<Button variant="contained" color="primary" onClick={this.addMilestones}>
+                          Add new milestone
+                      <AddIcon className={classes.rightIcon} />
+                    </Button>*/}
+                      {
+                          this.state.milestones.map((val, idx) => {
+                              return (
+                                  <GridContainer key={idx}>
+                                      <GridItem xs={12} sm={12} md={5}>
+                                          <CustomInput
+                                              labelText={`Milestone #${idx + 1}`}
+                                              formControlProps={{
+                                                  fullWidth: true
+                                              }}
+                                              inputProps={{
+                                                  type: 'text',
+                                                  defaultValue: val.name,
+                                                  onChange: event => this.handleMilestoneChange(event.target.value, idx, 'name')
+                                              }}
+                                          />
+                                      </GridItem>
+                                      <GridItem xs={12} sm={12} md={5}>
+                                          <DateTimePicker
+                                              placeholder={"Date"}
+                                              value={val.deadline}
+                                              onChange={event => this.handleMilestoneChange(event.format("YYYY-MM-DD"), idx, 'deadline')}
+                                      />
+                                      </GridItem>
+                                      <GridItem xs={12} sm={12} md={2}>
+                                          <Button variant="contained" color="primary" onClick={this.handleRemove(idx)} className="small">
+                                              <Close />
+                                          </Button>
+                                      </GridItem>
+                                      <GridItem xs={12} sm={12} md={12}>
+                                          <CustomInput
+                                              labelText="Milestone Description"
+                                              id="descr"
+                                              formControlProps={{
+                                                  fullWidth: true
+                                              }}
+                                              inputProps={{
+                                                  multiline: true,
+                                                  rows: 3,
+                                                  defaultValue: val.detail,
+                                                  onChange: event => this.handleMilestoneChange(event.target.value, idx, 'detail')
+                                              }}
+                                          />
+                                      </GridItem>
+                                  </GridContainer>
+                              )
+                          })
+                      }
+                  </GridItem>
+                              
                 </GridContainer>
               </GridItem>
             </GridContainer>
@@ -322,6 +516,50 @@ class ProjectDropdown extends React.Component {
             >
               Edit Project
                         </Button>
+          </DialogActions>
+        </Dialog>
+        <Dialog
+          classes={{
+            root: classes.center,
+            paper: classes.modal
+          }}
+          open={this.state.finishModal}
+          TransitionComponent={Transition}
+          keepMounted
+          onClose={() => this.handleModalClose("finishModal")}
+          aria-labelledby="modal-slide-title"
+          aria-describedby="modal-slide-description">
+          <DialogTitle
+            id="classic-modal-slide-title"
+            disableTypography
+            className={classes.modalHeader}>
+            <IconButton
+              className={classes.modalCloseButton}
+              key="close"
+              aria-label="Close"
+              color="inherit"
+              onClick={() => this.handleModalClose("finishModal")}>
+              <Close className={classes.modalClose} />
+            </IconButton>
+            <h4 className={classes.modalTitle}>Finish Project</h4>
+          </DialogTitle>
+          <DialogContent
+            id="modal-slide-description"
+            className={classes.modalBody}>
+            <h5>Are you sure you want to finish "{project_info.title}"?</h5>
+          </DialogContent>
+          <DialogActions
+            className={classes.modalFooter + " " + classes.modalFooterCenter}>
+            <Button
+              onClick={() => this.handleModalClose("finishModal")}
+            >
+              No
+        </Button>
+            <Button
+              onClick={event => this.handleFinishProject(event)}
+              color="danger">
+              Yes
+        </Button>
           </DialogActions>
         </Dialog>
 
@@ -413,6 +651,74 @@ class ProjectDropdown extends React.Component {
         </Button>
           </DialogActions>
         </Dialog>
+        <Dialog
+          classes={{
+            root: classes.center,
+            paper: classes.modal
+          }}
+          open={this.state.rateModal}
+          TransitionComponent={Transition}
+          keepMounted
+          onClose={() => this.handleModalClose("rateModal")}
+          aria-labelledby="modal-slide-title"
+          aria-describedby="modal-slide-description">
+          <DialogTitle
+            id="classic-modal-slide-title"
+            disableTypography
+            className={classes.modalHeader}>
+            <IconButton
+              className={classes.modalCloseButton}
+              key="close"
+              aria-label="Close"
+              color="inherit"
+              onClick={() => this.handleModalClose("rateModal")}>
+              <Close className={classes.modalClose} />
+            </IconButton>
+            <h4 className={classes.modalTitle}>Rate Project</h4>
+          </DialogTitle>
+          <DialogContent
+            id="modal-slide-description"
+            className={classes.modalBody}>
+            <GridContainer>
+              <GridItem xs={12} sm={12} md={12}>
+                <CustomInput
+                  labelText="Rate"
+                  id="rate"
+                 
+                  formControlProps={{
+                    fullWidth: true
+                  }}
+                  inputProps={{
+                    type: 'number',
+                    onChange: event => this.setState({ value: event.target.value })
+                  }}
+                />
+              </GridItem>
+              <GridItem xs={12} sm={12} md={12}>
+                <CustomInput
+                  labelText="Comment"
+                  id="comment"
+                  formControlProps={{
+                    fullWidth: true
+                  }}
+                  inputProps={{
+                    multiline: true,
+                    rows: 3,
+                    onChange: event => this.setState({ comment: event.target.value })
+                  }}
+                />
+              </GridItem>
+            </GridContainer>
+          </DialogContent>
+          <DialogActions
+            className={classes.modalFooter + " " + classes.modalFooterCenter}>
+            <Button
+              onClick={event => this.handleRateProject(event)}
+              >
+              Rate
+            </Button>
+          </DialogActions>
+        </Dialog>
         <Snackbar
             place={this.state.place}
             icon={AddAlert}
@@ -432,10 +738,16 @@ const combinedStyles = combineStyles(dropdownStyle, modalStyle);
 
 function bindAction(dispatch) {
   return {
-    tryEditProject: (project_id, description) => dispatch(tryEditProject(project_id, description)),
+    tryEditProject: (project_id, description, milestones) => dispatch(tryEditProject(project_id, description, milestones)),
     editProjectReset: () => dispatch(editProjectReset()),
     tryDiscardProject: (project_id) => dispatch(tryDiscardProject(project_id)),
-    discardProjectReset: () => dispatch(discardProjectReset())
+    discardProjectReset: () => dispatch(discardProjectReset()),
+    tryDeleteProject: (project_id) => dispatch(tryDeleteProject(project_id)),
+    deleteProjectReset: () => dispatch(deleteProjectReset()),
+    tryFinishProject: (project_id) => dispatch(tryFinishProject(project_id)),
+    finishProjectReset: () => dispatch(finishProjectReset()),
+    tryRateProject: (project_id, comment, value) => dispatch(tryRateProject(project_id, comment, value)),
+    rateProjectReset: () => dispatch(rateProjectReset()),
   };
 }
 

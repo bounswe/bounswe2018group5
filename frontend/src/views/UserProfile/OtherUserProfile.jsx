@@ -4,9 +4,12 @@ import Helmet from "react-helmet";
 import withStyles from "@material-ui/core/styles/withStyles";
 import AddAlert from "@material-ui/icons/AddAlert";
 // core components
+import PortfolioCard from "components/Card/PortfolioCard";
+import Grid from '@material-ui/core/Grid';
 import GridItem from "material-dashboard-react/dist/components/Grid/GridItem";
 import GridContainer from "material-dashboard-react/dist/components/Grid/GridContainer";
 import Card from "material-dashboard-react/dist/components/Card/Card";
+import CardHeader from "material-dashboard-react/dist/components/Card/CardHeader";
 import CardAvatar from "material-dashboard-react/dist/components/Card/CardAvatar";
 import CardBody from "material-dashboard-react/dist/components/Card/CardBody";
 import Snackbar from "material-dashboard-react/dist/components/Snackbar/Snackbar";
@@ -17,6 +20,8 @@ import {
 
 import default_image from "assets/img/faces/default_image.png";
 import connect from "react-redux/es/connect/connect";
+
+import { getCookie, LOGGEDIN_USERID_COOKIE } from "services/cookies";
 
 const styles = {
     cardCategoryWhite: {
@@ -50,27 +55,60 @@ class OtherUserProfile extends Component {
             updateProfile: false,
             updatePassword: false,
             gender: -2,
-            type: -1
+            type: -1,
+            portfolios: []
         };
     }
 
     componentDidMount() {
         const { user_id } = this.props.match.params;
+        const loggedin_user_id = getCookie(LOGGEDIN_USERID_COOKIE);
+        const { history } = this.props;
+        if (user_id === loggedin_user_id) {
+            history.push("/home/profile");
+        }
+        if (user_id === undefined) {
+            history.push("/home/index");
+        }
         this.props.tryGetUserProfile(user_id);
     }
 
     componentDidUpdate(prevProps, prevState) {
         const { getUserProfileInProgress, getUserProfileHasError, getUserProfileCompleted, user} = this.props.user;
-
         if (!getUserProfileInProgress && !getUserProfileHasError && getUserProfileCompleted) {
-            this.setState({user: user, full_name: user.full_name, bio: user.bio, gender: user.gender, type: user.type});
+            this.setState({
+                user: user, 
+                full_name: user.full_name, 
+                bio: user.bio, 
+                gender: user.gender, 
+                type: user.type,
+                portfolios: user.portfolios
+            });
             this.props.userProfileReset();
         }
     }
 
     render() {
         const {classes} = this.props;
-        const user = this.state.user;
+        const { user, portfolios } = this.state;
+        var porfolio_grid = (
+            <GridContainer>
+                {portfolios.map((prop, key) => {
+                    return (
+                        <GridItem xs={12} sm={12} md={12} key={key}>
+                            <PortfolioCard
+                                portfolio_id={prop.id}
+                                title={prop.title}
+                                description={prop.description}
+                                attachments={prop.attachments}
+                                date={prop.date}
+                                project_id={prop.project_id}
+                            />
+                        </GridItem>
+                    );
+                })}
+            </GridContainer>
+        );
         return (
             <div>
                 <div>
@@ -82,11 +120,17 @@ class OtherUserProfile extends Component {
                 </div>
                 <GridContainer>
                     <GridItem xs={12} sm={12} md={8}>
-                        <Card profile>
-                            <CardBody profile>
-                                <h6 className={classes.cardCategory}>
-                                    {"Portfolio"}
-                                </h6>
+                        <Card>
+                            <CardHeader color="primary">
+                                <Grid container>
+                                    <Grid item xs={11}>
+                                        <h4 className={classes.cardTitleWhite}>{"Portfolio"}</h4>
+                                        <p className={classes.cardCategoryWhite}>Fill your portfolio</p>
+                                    </Grid>
+                                </Grid>
+                            </CardHeader>
+                            <CardBody>
+                                {porfolio_grid}
                             </CardBody>
                         </Card>
                     </GridItem>

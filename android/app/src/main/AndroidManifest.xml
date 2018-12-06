@@ -21,7 +21,7 @@
         <activity
                 android:name=".Activity.HomeActivity"
                 android:label="@string/title_activity_home"
-                android:theme="@style/AppTheme">
+                android:theme="@style/AppTheme.NoActionBar">
         </activity>
         <activity android:name=".Activity.LaunchActivity">
             <intent-filter>
@@ -45,6 +45,16 @@
                     android:name="io.fabric.ApiKey"
                     android:value="ae5d97998975888a8d056ab942711a9554ce232c" />
         </service>
+
+        <activity
+                android:name=".Activity.CreateProjectActivity"
+                android:label="Create Project"
+                android:parentActivityName=".Activity.HomeActivity">
+        </activity>
+        <activity android:name=".Activity.ProfileActivity"
+                  android:label="Profile"
+                  android:parentActivityName=".Activity.HomeActivity">
+        </activity>
     </application>
 
 </manifest>

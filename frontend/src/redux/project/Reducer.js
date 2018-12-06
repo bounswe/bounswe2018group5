@@ -27,7 +27,14 @@ import {
     DELETE_PROJECT_FAILURE,
     DELETE_PROJECT_SUCCESS,
     DELETE_PROJECT_REQUEST,
-
+    FINISH_PROJECT_RESET,
+    FINISH_PROJECT_FAILURE,
+    FINISH_PROJECT_SUCCESS,
+    FINISH_PROJECT_REQUEST,
+    RATE_PROJECT_RESET,
+    RATE_PROJECT_FAILURE,
+    RATE_PROJECT_SUCCESS,
+    RATE_PROJECT_REQUEST,
     CREATE_BID_FAILURE,
     CREATE_BID_REQUEST,
     CREATE_BID_RESET,
@@ -76,6 +83,21 @@ const initialState = {
     discardProjectHasError: false,
     discardProjectCompleted: false,
     discardProjectError: "",
+
+    finishProjectInProgress: false,
+    finishProjectHasError: false,
+    finishProjectCompleted: false,
+    finishProjectError: "",
+
+    rateProjectInProgress: false,
+    rateProjectHasError: false,
+    rateProjectCompleted: false,
+    rateProjectError: "",
+
+    deleteProjectInProgress: false,
+    deleteProjectHasError: false,
+    deleteProjectCompleted: false,
+    deleteProjectError: "",
 
     createBidInProgress: false,
     createBidHasError: false,
@@ -271,6 +293,7 @@ export default function(state = initialState, action) {
         return {
             ...state,
             response: payload.response,
+            project: payload.project,
             discardProjectInProgress: false,
             discardProjectHasError: false,
             discardProjectCompleted: true
@@ -289,6 +312,72 @@ export default function(state = initialState, action) {
             discardProjectInProgress: false,
             discardProjectHasError: false,
             discardProjectCompleted: false
+        };
+    }
+
+    if (action.type === FINISH_PROJECT_REQUEST) {
+        return {
+            ...state,
+            finishProjectInProgress: true,
+            finishProjectHasError: false,
+            finishProjectCompleted: false
+        };
+    } else if (action.type === FINISH_PROJECT_SUCCESS) {
+        return {
+            ...state,
+            response: payload.response,
+            project: payload.project,
+            finishProjectInProgress: false,
+            finishProjectHasError: false,
+            finishProjectCompleted: true
+        };
+    } else if (action.type === FINISH_PROJECT_FAILURE) {
+        return {
+            ...state,
+            finishProjectInProgress: false,
+            finishProjectHasError: true,
+            finishProjectCompleted: true,
+            finishProjectError: payload.detail[0]
+        };
+    } else if (action.type === FINISH_PROJECT_RESET) {
+        return {
+            ...state,
+            finishProjectInProgress: false,
+            finishProjectHasError: false,
+            finishProjectCompleted: false
+        };
+    }
+
+    if (action.type === RATE_PROJECT_REQUEST) {
+        return {
+            ...state,
+            rateProjectInProgress: true,
+            rateProjectHasError: false,
+            rateProjectCompleted: false
+        };
+    } else if (action.type === RATE_PROJECT_SUCCESS) {
+        return {
+            ...state,
+            response: payload.response,
+            project: payload.project,
+            rateProjectInProgress: false,
+            rateProjectHasError: false,
+            rateProjectCompleted: true
+        };
+    } else if (action.type === RATE_PROJECT_FAILURE) {
+        return {
+            ...state,
+            rateProjectInProgress: false,
+            rateProjectHasError: true,
+            rateProjectCompleted: true,
+            rateProjectError: payload.detail[0]
+        };
+    } else if (action.type === RATE_PROJECT_RESET) {
+        return {
+            ...state,
+            rateProjectInProgress: false,
+            rateProjectHasError: false,
+            rateProjectCompleted: false
         };
     }
 
@@ -385,6 +474,39 @@ export default function(state = initialState, action) {
             discardBidInProgress: false,
             discardBidHasError: false,
             discardBidCompleted: false
+        };
+    }
+
+    if (action.type === DELETE_PROJECT_REQUEST) {
+        return {
+            ...state,
+            deleteProjectInProgress: true,
+            deleteProjectHasError: false,
+            deleteProjectCompleted: false
+        };
+    } else if (action.type === DELETE_PROJECT_SUCCESS) {
+        return {
+            ...state,
+            response: payload.response,
+            deleteProjectInProgress: false,
+            deleteProjectHasError: false,
+            deleteProjectCompleted: true
+        };
+    } else if (action.type === DELETE_PROJECT_FAILURE) {
+        return {
+            ...state,
+            deleteProjectInProgress: false,
+            deleteProjectHasError: true,
+            deleteProjectCompleted: true,
+            deleteProjectError: payload.detail[0]
+        };
+    } else if (action.type === DELETE_PROJECT_RESET) {
+        return {
+            ...state,
+            response: false,
+            deleteProjectInProgress: false,
+            deleteProjectHasError: false,
+            deleteProjectCompleted: false
         };
     }
 

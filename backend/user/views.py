@@ -2,6 +2,7 @@ import hashlib
 import uuid
 
 from django.http import JsonResponse,HttpResponse,Http404
+from django.utils.dateparse import parse_datetime
 from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
 from . import authentication
@@ -11,8 +12,8 @@ import os
 import re
 from django.core import validators
 from api.utils import *
-from .models import User, DoesNotExist, Rating
-from project import models
+from .models import *
+from project.models import *
 
 
 def hash_password(password):
@@ -37,6 +38,22 @@ def modify_user(json, user):
     user.bio = json['bio'] if 'bio' in json else user.bio
     user.updated_at = datetime.now()
     return user
+
+
+def modify_portfolio(json, portfolio):
+    portfolio.title = json['title'] if 'title' in json else portfolio.title
+    portfolio.description = json['description'] if 'description' in json else portfolio.description
+    portfolio.date = parse_datetime(json['date']) if 'date' in json else portfolio.date
+    portfolio.project_id = json['project_id'] if 'project_id' in json else portfolio.project_id
+    portfolio.updated_at = datetime.now()
+    return portfolio
+
+
+def create_wallet(user):
+    wallet = Wallet()
+    wallet.user = User.objects.get(id=user.id)
+    wallet.balance = 0
+    wallet.save()
 
 
 @csrf_exempt
@@ -70,6 +87,7 @@ def register(request):
             new_user.full_name = body['full_name']
             new_user.email = body['email']
             new_user.save()
+            create_wallet(new_user)
         except Exception as e:
             return JsonResponse({'response': False, 'error': str(e)})
         return JsonResponse({"response": True, 'api_token': authentication.generate_token(new_user)})
@@ -104,7 +122,7 @@ def profile_handler(request):
             except Exception as e:
                 return JsonResponse({'response': False, 'error': str(e)})
         else:
-            return JsonResponse({"response": False, "error": "Unauthorized"})
+            return JsonResponse({"response": False, "error": "Unauthorized1"})
     elif request.method == 'PUT':
         if token and authentication.is_authenticated(token):
             body = json.loads(request.body.decode('utf-8'))
@@ -124,23 +142,9 @@ def profile_handler(request):
     })
 
 
-ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
-
-
 def allowed_file(filename):
     return '.' in filename and \
-           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
-
-
-def handle_uploaded_file(app_name, file, filename):
-    if not os.path.exists('media/'):
-        os.mkdir('media/')
-    if not os.path.exists('media/'+app_name):
-        os.mkdir('media/'+app_name)
-
-    with open('media/' + app_name + '/' + filename, 'wb+') as destination:
-        for chunk in file.chunks():
-            destination.write(chunk)
+           filename.rsplit('.', 1)[1].lower() in {'png', 'jpg', 'jpeg'}
 
 
 @csrf_exempt
@@ -171,28 +175,6 @@ def upload_image(request):
     })
 
 
-@csrf_exempt
-def update_user(request):
-    if request.method == 'POST':
-        token = request.META.get('HTTP_AUTHORIZATION', None)
-        if token and authentication.is_authenticated(token):
-            body = json.loads(request.body.decode('utf-8'))
-            user_id = authentication.get_user_id(token)
-            user = User.objects.get(id=user_id)
-            modify_user(body, user)
-            try:
-                user.save()
-                return JsonResponse({"response": True})
-            except Exception as e:
-                return JsonResponse({'response': False, 'error': str(e)})
-        else:
-            return JsonResponse({"response": False, "error": "Unauthorized"})
-    return JsonResponse({
-        "response": False,
-        "error": request.method
-    })
-
-
 # returns rating with given id if GET request, adds new rating if POST request
 @csrf_exempt
 def rating_handler(request):
@@ -213,7 +195,7 @@ def rating_handler(request):
         if token and authentication.is_authenticated(token):
             body = json.loads(request.body.decode('utf-8'))
             user_id = authentication.get_user_id(token)
-            project = models.Project.objects.get(id=body['project_id'])
+            project = Project.objects.get(id=body['project_id'])
             new_rating = Rating()
             if user_id == str(project.owner.id):
                 new_rating.rater = project.owner
@@ -238,3 +220,112 @@ def rating_handler(request):
             "response": False,
             "error": "wrong request method"
         })
+
+
+@csrf_exempt
+def portfolio_handler(request):
+    if request.method == 'POST':
+        token = request.META.get('HTTP_AUTHORIZATION', None)
+        if token and authentication.is_authenticated(token):
+            body = json.loads(request.body.decode('utf-8'))
+            user_id = authentication.get_user_id(token)
+            new_portfolio = Portfolio()
+            new_portfolio.title = body['title']
+            new_portfolio.description = body['description']
+            new_portfolio.date = parse_datetime(body['date']) if "date" in body else None
+            if "project_id" in body:
+                new_portfolio.project_id = body['project_id']
+            new_portfolio.user = User.objects.get(id=user_id)
+            try:
+                new_portfolio.save()
+                return JsonResponse({"response": True, "portfolio": portfolio_json(new_portfolio)})
+            except Exception as e:
+                return JsonResponse({'response': False, 'error': str(e), "das": portfolio_json(new_portfolio)})
+        else:
+            return JsonResponse({"response": False, "error": "Unauthorized"})
+
+    if request.method == 'PUT':
+        token = request.META.get('HTTP_AUTHORIZATION', None)
+        if token and authentication.is_authenticated(token):
+            body = json.loads(request.body.decode('utf-8'))
+            user_id = authentication.get_user_id(token)
+            try:
+                portfolio = Portfolio.objects.get(id=body["portfolio_id"])
+                if str(portfolio.user.id) == user_id:
+                    portfolio = modify_portfolio(body, portfolio)
+                    portfolio.save()
+                    return JsonResponse({"response": True, "portfolio": portfolio_json(portfolio)})
+                else:
+                    return JsonResponse({'response': False, 'error': "Not allowed to edit this portfolio"})
+            except Exception as e:
+                return JsonResponse({'response': False, 'error': str(e)})
+        else:
+            return JsonResponse({"response": False, "error": "Unauthorized"})
+
+    if request.method == 'GET':
+        portfolio_id = request.GET.get('id', '')
+        token = request.META.get('HTTP_AUTHORIZATION', None)
+        if token and authentication.is_authenticated(token):
+            try:
+                portfolio = Portfolio.objects.get(id=portfolio_id)
+                return JsonResponse({"response": True, "portfolio": portfolio_json(portfolio)})
+            except Exception as e:
+                return JsonResponse({'response': False, 'error': str(e)})
+        else:
+            return JsonResponse({"response": False, "error": "Unauthorized"})
+
+    if request.method == 'DELETE':
+        portfolio_id = request.GET.get('id', '')
+        token = request.META.get('HTTP_AUTHORIZATION', None)
+        if token and authentication.is_authenticated(token):
+            user_id = authentication.get_user_id(token)
+            try:
+                portfolio = Portfolio.objects.get(id=portfolio_id)
+                if str(portfolio.user.id) == user_id:
+                    portfolio.delete()
+                else:
+                    return JsonResponse({'response': False, 'error': "Not allowed to delete this portfolio"})
+                return JsonResponse({"response": True})
+            except Exception as e:
+                return JsonResponse({'response': False, 'error': str(e)})
+        else:
+            return JsonResponse({"response": False, "error": "Unauthorized"})
+    return JsonResponse({
+        "response": False,
+        "error": "wrong request method"
+    })
+
+
+@csrf_exempt
+def wallet_handler(request):
+    token = request.META.get('HTTP_AUTHORIZATION', None)
+    if request.method == 'GET':
+        if token and authentication.is_authenticated(token):
+            user_id = authentication.get_user_id(token)
+            try:
+                wallet = Wallet.objects.get(user=user_id)
+                return JsonResponse({'response': True, 'wallet': wallet_json(wallet)})
+            except Exception as e:
+                return JsonResponse({'response': False, 'error': str(e)})
+        else:
+            return JsonResponse({"response": False, "error": "Unauthorized"})
+    elif request.method == 'PUT':
+        if token and authentication.is_authenticated(token):
+            user_id = authentication.get_user_id(token)
+            body = json.loads(request.body.decode('utf-8'))
+            try:
+                wallet = Wallet.objects.get(user=user_id)
+                wallet.balance += body['deposit'] if 'deposit' in body else 0
+                wallet.balance -= body['withdraw'] if 'withdraw' in body else 0
+                wallet.save()
+                return JsonResponse({'response': True, 'wallet': wallet_json(wallet)})
+            except Exception as e:
+                return JsonResponse({'response': False, 'error': str(e)})
+        else:
+            return JsonResponse({"response": False, "error": "Unauthorized"})
+    else:
+        return JsonResponse({
+            "response": False,
+            "error": "wrong request method"
+        })
+

@@ -7,8 +7,10 @@ urlpatterns = [
     path('', views.project_handler, name="get_projects"),
     path('own/', views.get_own_projects, name="get_own_projects"),
     path('search/', views.search_projects, name="search_projects"),
+    path('finish/', views.finish_project, name="finish_project"),
     path('bid/add/', views.add_bid, name="add_bid"),
     path('bid/accept/', views.accept_bid, name="accept_bid"),
     path('bid/discard/', views.discard_bid, name="discard_bid"),
     path('bid/update/', views.update_bid, name="get_bids"),
+    path('milestone/', views.milestone_handler, name="milestone"),
 ]
