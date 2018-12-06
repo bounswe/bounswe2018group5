@@ -16,9 +16,6 @@ import com.karpuz.karpuz.Network.KarpuzAPIService
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.activity_signup.*
 import java.util.concurrent.TimeUnit
-import com.crashlytics.android.Crashlytics
-import io.fabric.sdk.android.Fabric
-import com.crashlytics.android.answers.Answers
 
 
 
@@ -35,8 +32,6 @@ class SignupActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Fabric.with(this, Crashlytics())
-        Fabric.with(this, Answers())
         setContentView(R.layout.activity_signup)
     }
 

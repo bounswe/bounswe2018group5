@@ -24,9 +24,6 @@ import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.activity_home.*
 import kotlinx.android.synthetic.main.app_bar_home.*
 import kotlinx.android.synthetic.main.nav_header_home.*
-import com.crashlytics.android.Crashlytics
-import io.fabric.sdk.android.Fabric
-import com.crashlytics.android.answers.Answers
 import kotlinx.android.synthetic.main.project_cell.view.*
 import java.util.*
 import kotlin.collections.HashMap
@@ -45,8 +42,6 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Fabric.with(this, Crashlytics())
-        Fabric.with(this, Answers())
         setContentView(R.layout.activity_home)
         setSupportActionBar(toolbar)
 
