@@ -19,10 +19,12 @@ from django.conf.urls import url
 from django.conf import settings
 from django.conf.urls.static import static
 from . import attachment
+from . import semantic_tags
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     url(r'^api/user/', include('user.urls')),
     url(r'^api/project/', include('project.urls')),
     path('api/attachment/', attachment.attachment_handler, name="attachment"),
+    path('api/tag/', semantic_tags.tag_handler, name="semantic_tags")
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
