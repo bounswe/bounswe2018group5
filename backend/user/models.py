@@ -37,6 +37,7 @@ class User(BaseDocument):
     profile_image = StringField()
     gender = IntField(min_value=-1, max_value=1) # -1 male 0 other 1 female
     bio = StringField(max_length=400)
+    tags = ListField(ReferenceField('SemanticTag'), default=[])
 
     meta = {'collection': 'users'}
 
@@ -64,6 +65,7 @@ class Portfolio(BaseDocument):
     date = DateTimeField()
     attachments = ListField(default=[])
     project_id = StringField(blank=True, null=True)
+    tags = ListField(ReferenceField('SemanticTag'), default=[])
 
     meta = {'collection': 'portfolios'}
 

@@ -1,5 +1,4 @@
 from mongoengine import *
-from user import models
 from datetime import datetime
 
 
@@ -38,6 +37,7 @@ class Project(BaseDocument):
     budget = FloatField(min_value=0)
     milestones = DictField(null=True)
     attachments = ListField(default=[])
+    tags = ListField(ReferenceField('SemanticTag'), default=[])
     status = IntField()  # 0 bidding period, 1 project awarded to a freelancer, 2 project completed, -1 project discarded
 
     meta = {'collection': 'projects',
@@ -75,3 +75,14 @@ class Milestone(BaseDocument):
     is_final = BooleanField(default=False)
 
     meta = {'collection': 'milestones'}
+
+
+class SemanticTag(BaseDocument):
+    def schema(self):
+        pass
+
+    wikidata_id = StringField(unique=True)
+    label = StringField()
+    description = StringField()
+
+    meta = {'collection': 'tags'}
