@@ -37,12 +37,15 @@ def user_json(user, user_id=""):
     return obj
 
 
-def project_json(project,user_id):
+def project_json(project, user_id):
     obj = {}
     attachments = []
     for att in project.attachments:
         attachments.append(att)
-    obj['attachments']=attachments
+    obj['tags'] = []
+    for tag in project.tags:
+        obj['tags'].append(tag_json(tag))
+    obj['attachments'] = attachments
     obj['project_id'] = str(project.id)
     obj['title'] = project.title
     obj['budget'] = project.budget
@@ -60,7 +63,7 @@ def project_json(project,user_id):
     ratings = user_models.Rating.objects.filter(project=project)
     obj['ratings'] = []
     for rating in ratings:
-        obj['ratings'].append(rating_json(rating, from_model= "project"))
+        obj['ratings'].append(rating_json(rating, from_model="project"))
     obj['milestones'] = []
     milestones = project_models.Milestone.objects.filter(project=project).order_by('deadline')
     for milestone in milestones:
@@ -124,18 +127,23 @@ def wallet_json(wallet):
     obj['balance'] = wallet.balance
     return obj
 
+
 def hide_name(name):
     divs = name.split(" ")
     res = ""
     for div in divs:
-        res = res + div[0] + len(div[1:])*"*" + " "
+        res = res + div[0] + len(div[1:]) * "*" + " "
     return res
+
 
 def portfolio_json(portfolio, from_model=""):
     obj = {}
     attachments = []
     for att in portfolio.attachments:
         attachments.append(att)
+    obj['tags'] = []
+    for tag in portfolio.tags:
+        obj['tags'].append(tag_json(tag))
     obj['id'] = str(portfolio.id)
     obj['title'] = portfolio.title
     obj['description'] = portfolio.description
@@ -167,6 +175,14 @@ def milestone_json(milestone):
         "attachments": attachments,
         "is_final": milestone.is_final,
         "project_id": str(milestone.project.id)
+    }
+
+
+def tag_json(tag):
+    return {
+        "wikidata_id": tag.wikidata_id,
+        "label": tag.label,
+        "description": tag.description
     }
 
 
