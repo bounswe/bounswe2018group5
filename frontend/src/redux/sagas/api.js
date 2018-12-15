@@ -121,14 +121,16 @@ class api {
         });
     };
 
-    editProject = (project_id, description, milestones) => {
+    editProject = (project_id, description, milestones, title, budget) => {
         return httpService.fetch({
             path: "api/project/",
             method: "PUT",
             body: {
                 project_id,
                 description,
-                milestones
+                milestones, 
+                title, 
+                budget
             },
             sendToken: true
         });

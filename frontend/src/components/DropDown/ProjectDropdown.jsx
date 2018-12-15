@@ -56,8 +56,10 @@ class ProjectDropdown extends React.Component {
             alertOpen: false,
             place: 'tr',
             notificationMessage: '',
-            description: '',
-            milestones: [],
+            description: props.project_info.description,
+            milestones: props.project_info.milestones,
+            budget: props.project_info.budget,
+            project_deadline: props.project_info.project_deadline,
         };
     }
 
@@ -86,8 +88,8 @@ class ProjectDropdown extends React.Component {
   };
 
   handleEditProject(event) {
-    const { description, milestones} = this.state;
-    this.props.tryEditProject(this.props.project_info.project_id, description, milestones);
+    const { description, milestones, title, budget } = this.state;
+    this.props.tryEditProject(this.props.project_info.project_id, description, milestones, title, parseFloat(budget));
     this.setState({ project_id: this.props.project_info.project_id });
     event.preventDefault();
   }
@@ -404,8 +406,7 @@ class ProjectDropdown extends React.Component {
                       }}
                       inputProps={{
                         type: "text",
-                        value: project_info.title,
-                        disabled: true,
+                        defaultValue: project_info.title,
                         onChange: event => this.setState({ title: event.target.value })
                       }}
                     />
@@ -430,7 +431,6 @@ class ProjectDropdown extends React.Component {
                       placeholder={"Project Deadline"}
                       value={project_info.project_deadline}
                       onChange={event => this.setState({ project_deadline: event.format("YYYY-MM-DD") })}
-                      disabled={true}
                     />
                   </GridItem>
                   <GridItem xs={12} sm={12} md={6}>
@@ -442,8 +442,7 @@ class ProjectDropdown extends React.Component {
                       }}
                       inputProps={{
                         type: 'number',
-                        disabled: true,
-                        value: project_info.budget,
+                        defaultValue: project_info.budget,
                         onChange: event => this.setState({ budget: event.target.value })
                       }}
                     />
@@ -738,7 +737,7 @@ const combinedStyles = combineStyles(dropdownStyle, modalStyle);
 
 function bindAction(dispatch) {
   return {
-    tryEditProject: (project_id, description, milestones) => dispatch(tryEditProject(project_id, description, milestones)),
+    tryEditProject: (project_id, description, milestones, title, budget) => dispatch(tryEditProject(project_id, description, milestones, title, budget)),
     editProjectReset: () => dispatch(editProjectReset()),
     tryDiscardProject: (project_id) => dispatch(tryDiscardProject(project_id)),
     discardProjectReset: () => dispatch(discardProjectReset()),

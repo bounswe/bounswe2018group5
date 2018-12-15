@@ -121,12 +121,14 @@ export const createProjectReset = () => ({
     type: CREATE_PROJECT_RESET
 });
 
-export const tryEditProject = (project_id, description, milestones) => ({
+export const tryEditProject = (project_id, description, milestones, title, budget) => ({
     type: EDIT_PROJECT_REQUEST,
     payload: {
         project_id,
         description,
-        milestones
+        milestones,
+        title,
+        budget
     }
 });
 export const editProjectSuccess = res => ({
