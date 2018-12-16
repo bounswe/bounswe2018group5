@@ -42,6 +42,8 @@ import default_image from "assets/img/faces/default_image.png";
 import connect from "react-redux/es/connect/connect";
 import combineStyles from "services/combineStyles";
 
+import LinkedIn from 'services/LinkedIn'
+
 import modalStyle from "material-kit-react/assets/jss/material-kit-react/modalStyle";
 
 
@@ -119,7 +121,8 @@ class UserProfile extends Component {
             depositModal: false,
             withdraw: 0,
             deposit_amount: 0,
-            withdraw_amount: 0
+            withdraw_amount: 0,
+            currentPosition: null
         };
     }
 
@@ -305,6 +308,22 @@ class UserProfile extends Component {
         });
     }
 
+    responseLinkedin(response) {
+        console.log(this);
+        let currentPosition;
+        if (response.positions.values) {
+            currentPosition = response.positions.values[0];
+            console.log(currentPosition);
+            this.setState({ currentPosition });
+        }
+    }
+
+    handleToLinkedIn() {
+        this.setState({
+            currentPosition: null,
+        });
+    }
+
     render() {
         const {classes} = this.props;
         const {user, portfolios} = this.state;
@@ -348,12 +367,26 @@ class UserProfile extends Component {
                                 <Card>
                                 <CardHeader color="primary">
                                     <Grid container>
-                                        <Grid item xs={11}>
+                                        <Grid item xs={10}>
                                             <h4 className={classes.cardTitleWhite}>{"Portfolio"}</h4>
                                             <p className={classes.cardCategoryWhite}>Fill your portfolio</p>
                                         </Grid>
                                         <Grid item xs={1}>
-                                            <AddPortfolioModal handleToUpdate={this.handleToUpdate.bind(this)}/>
+                                            <AddPortfolioModal 
+                                                currentPosition={this.state.currentPosition}
+                                                handleToUpdate={this.handleToUpdate.bind(this)}
+                                                handleToLinkedIn={this.handleToLinkedIn.bind(this)}/>
+                                        </Grid>
+                                        <Grid item xs={1}>
+                                            <LinkedIn
+                                                clientId={process.env.REACT_APP_LINKEDIN_CLIENT}
+                                                callBack={this.responseLinkedin.bind(this)}
+                                                fields=":(first-name,last-name,public-profile-url,location,headline,picture-url,positions,summary,num-connections)"
+                                                className={'className'}
+                                                loginButtonText={'Fetch From LinkedIn'}
+                                                logoutButtonText={''}
+                                                buttonType={'button'}
+                                            />
                                         </Grid>
                                     </Grid>
                                     </CardHeader>
