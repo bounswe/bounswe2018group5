@@ -38,10 +38,10 @@ class AddPortfolioModal extends React.Component {
             open: false,
             place: 'tr',
             notificationMessage: '',
-            title: '', 
+            title: '',
             description: '', 
             date: null, 
-            project_id: null
+            project_id: null,
         };
     }
 
@@ -55,6 +55,7 @@ class AddPortfolioModal extends React.Component {
         var x = [];
         x[modal] = false;
         this.setState(x);
+        this.props.handleToLinkedIn();
     }
 
     handleCreatePortfolio(event) {
@@ -89,10 +90,21 @@ class AddPortfolioModal extends React.Component {
             this.handleClose("modal");
             this.props.postPortfolioReset();
         }
+        let currentPosition = this.props.currentPosition;
+
+        if (currentPosition) {
+            this.setState({
+                title: currentPosition.title + ' at ' + currentPosition.company.name,
+                description: currentPosition.company.industry + '; ' + currentPosition.location.name + '; since ' + currentPosition.startDate.month + ', ' + currentPosition.startDate.year,
+                modal: true
+            });
+            this.props.handleToLinkedIn();
+        }
     }
 
     render() {
-        const {classes} = this.props;
+        const { classes } = this.props;
+        
         return (
             <div>
                 <Button variant="fab" mini color="default" aria-label="Add"
@@ -140,6 +152,7 @@ class AddPortfolioModal extends React.Component {
                                             }}
                                             inputProps={{
                                                 type: "text",
+                                                value: this.state.title,
                                                 onChange: event => this.setState({title: event.target.value})
                                             }}
                                         />
@@ -154,6 +167,7 @@ class AddPortfolioModal extends React.Component {
                                             inputProps={{
                                                 multiline: true,
                                                 rows: 3,
+                                                value: this.state.description,
                                                 onChange: event => this.setState({description: event.target.value})
                                             }}
                                         />
