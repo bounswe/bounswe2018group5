@@ -198,9 +198,13 @@ def rating_handler(request):
             project = Project.objects.get(id=body['project_id'])
             new_rating = Rating()
             if user_id == str(project.owner.id):
+                if get_rating(rater=project.owner, rated=project.freelancer, project=project):
+                    return JsonResponse({'response': False, 'error': "There is already a rating for this specifics"})
                 new_rating.rater = project.owner
                 new_rating.rated = project.freelancer
             elif user_id == str(project.freelancer.id):
+                if get_rating(rater=project.freelancer, rated=project.owner, project=project):
+                    return JsonResponse({'response': False, 'error': "There is already a rating for this specifics"})
                 new_rating.rater = project.freelancer
                 new_rating.rated = project.owner
             else:
@@ -220,6 +224,14 @@ def rating_handler(request):
             "response": False,
             "error": "wrong request method"
         })
+
+
+def get_rating(rater, rated, project):
+    ratings = Rating.objects.filter(rater=rater, rated=rated, project=project)
+    if len(ratings) > 0:
+        return ratings[0]
+    else:
+        return None
 
 
 @csrf_exempt
@@ -328,4 +340,3 @@ def wallet_handler(request):
             "response": False,
             "error": "wrong request method"
         })
-
