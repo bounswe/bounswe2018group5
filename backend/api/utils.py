@@ -11,41 +11,50 @@ def user_json(user, user_id=""):
     obj['id'] = str(user.id)
     obj['full_name'] = user.full_name
     obj['username'] = user.username
-    obj['email'] = user.email
     obj['type'] = user.type
-    obj['gender'] = user.gender
     obj['bio'] = user.bio
     obj['profile_image'] = user.profile_image
-    obj['created_at'] = format_datetime(user.created_at)
-    obj['updated_at'] = format_datetime(user.updated_at)
-    ratings_rater = user_models.Rating.objects.filter(rater=user)
-    ratings_rated = user_models.Rating.objects.filter(rated=user)
+
     obj['ratings'] = {}
-    obj['ratings']['rater'] = []
-    for rating in ratings_rater:
-        obj['ratings']['rater'].append(rating_json(rating, "user"))
+    ratings_rated = user_models.Rating.objects.filter(rated=user)
     obj['ratings']['rated'] = []
     for rating in ratings_rated:
         obj['ratings']['rated'].append(rating_json(rating, "user"))
     obj['avg_rating'] = ratings_rated.average('value')
+
+    # exit here for public calls
+    if user_id == "":
+        return obj
+
+    obj['email'] = user.email
+    obj['gender'] = user.gender
+
+    obj['created_at'] = format_datetime(user.created_at)
+    obj['updated_at'] = format_datetime(user.updated_at)
+
+    ratings_rater = user_models.Rating.objects.filter(rater=user)
+    obj['ratings']['rater'] = []
+    for rating in ratings_rater:
+        obj['ratings']['rater'].append(rating_json(rating, "user"))
+
     portfolios = user_models.Portfolio.objects.filter(user=user)
     obj['portfolios'] = []
     for portfolio in portfolios:
         obj['portfolios'].append(portfolio_json(portfolio, from_model="user"))
+
     wallet = user_models.Wallet.objects.get(user=user)
     obj['wallet'] = wallet_json(wallet)
+
     return obj
 
 
 def project_json(project, user_id):
     obj = {}
-    attachments = []
-    for att in project.attachments:
-        attachments.append(att)
+
     obj['tags'] = []
     for tag in project.tags:
         obj['tags'].append(tag_json(tag))
-    obj['attachments'] = attachments
+
     obj['project_id'] = str(project.id)
     obj['title'] = project.title
     obj['budget'] = project.budget
@@ -53,23 +62,37 @@ def project_json(project, user_id):
     obj['created_at'] = format_datetime(project.created_at)
     obj['updated_at'] = format_datetime(project.updated_at)
     obj['owner'] = user_json(project.owner)
-    obj['freelancer'] = None if project.freelancer is None \
-        else user_json(project.freelancer)
     obj['status'] = project.status
-    bids = project_models.Bid.objects.filter(project=project)
-    obj['bids'] = []
-    for bid in bids:
-        obj['bids'].append(bid_json(bid, user_id))
-    ratings = user_models.Rating.objects.filter(project=project)
-    obj['ratings'] = []
-    for rating in ratings:
-        obj['ratings'].append(rating_json(rating, from_model="project"))
+
     obj['milestones'] = []
     milestones = project_models.Milestone.objects.filter(project=project).order_by('deadline')
     for milestone in milestones:
         obj['milestones'].append(milestone_json(milestone))
         if milestone.is_final:
             obj['deadline'] = milestone.deadline
+
+    ratings = user_models.Rating.objects.filter(project=project)
+    obj['ratings'] = []
+    for rating in ratings:
+        obj['ratings'].append(rating_json(rating, from_model="project"))
+
+    bids = project_models.Bid.objects.filter(project=project)
+    obj['bids'] = []
+    for bid in bids:
+        obj['bids'].append(bid_json(bid, user_id))
+
+    # exit here for public calls
+    if user_id == None:
+        return obj
+
+    attachments = []
+    for att in project.attachments:
+        attachments.append(att)
+    obj['attachments'] = attachments
+
+    obj['freelancer'] = None if project.freelancer is None \
+        else user_json(project.freelancer)
+
     return obj
 
 
