@@ -86,3 +86,14 @@ class SemanticTag(BaseDocument):
     description = StringField()
 
     meta = {'collection': 'tags'}
+
+
+class TagRelation(BaseDocument):
+    def schema(self):
+        pass
+
+    tag1 = ReferenceField(SemanticTag)
+    tag2 = ReferenceField(SemanticTag)
+    value = FloatField()
+
+    meta = {'collection': 'tag_relations'}
