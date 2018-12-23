@@ -24,8 +24,7 @@ def find_freelancers(project):
     max_match = temp[0][0]
     ret = []
     for score, user in temp:
-        if score * 2 >= max_match:
-            ret.append(utils.user_json(user))
+        ret.append(utils.user_json(user))
     return ret
 
 
@@ -47,8 +46,7 @@ def find_projects(user, requester):
     max_match = temp[0][0]
     ret = []
     for score, project in temp:
-        if score * 2 >= max_match:
-            ret.append(utils.project_json(project, requester))
+        ret.append(utils.project_json(project, requester))
     return ret
 
 
