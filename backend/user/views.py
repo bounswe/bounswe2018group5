@@ -114,15 +114,16 @@ def profile_handler(request):
     if request.method == 'GET':
         user_id = request.GET.get('user_id', '')
         if token and authentication.is_authenticated(token):
+            caller_id = authentication.get_user_id(token)
             if user_id == '':
-                user_id = authentication.get_user_id(token)
+                user_id = caller_id
             user = User.objects.get(id=user_id)
             try:
-                return JsonResponse({"response": True, "user": user_json(user, user_id)})
+                return JsonResponse({"response": True, "user": user_json(user, caller_id)})
             except Exception as e:
                 return JsonResponse({'response': False, 'error': str(e)})
         else:
-            return JsonResponse({"response": False, "error": "Unauthorized1"})
+            return JsonResponse({"response": False, "error": "Unauthorized"})
     elif request.method == 'PUT':
         if token and authentication.is_authenticated(token):
             body = json.loads(request.body.decode('utf-8'))
@@ -198,9 +199,13 @@ def rating_handler(request):
             project = Project.objects.get(id=body['project_id'])
             new_rating = Rating()
             if user_id == str(project.owner.id):
+                if get_rating(rater=project.owner, rated=project.freelancer, project=project):
+                    return JsonResponse({'response': False, 'error': "There is already a rating for this specifics"})
                 new_rating.rater = project.owner
                 new_rating.rated = project.freelancer
             elif user_id == str(project.freelancer.id):
+                if get_rating(rater=project.freelancer, rated=project.owner, project=project):
+                    return JsonResponse({'response': False, 'error': "There is already a rating for this specifics"})
                 new_rating.rater = project.freelancer
                 new_rating.rated = project.owner
             else:
@@ -220,6 +225,14 @@ def rating_handler(request):
             "response": False,
             "error": "wrong request method"
         })
+
+
+def get_rating(rater, rated, project):
+    ratings = Rating.objects.filter(rater=rater, rated=rated, project=project)
+    if len(ratings) > 0:
+        return ratings[0]
+    else:
+        return None
 
 
 @csrf_exempt
@@ -328,4 +341,3 @@ def wallet_handler(request):
             "response": False,
             "error": "wrong request method"
         })
-
