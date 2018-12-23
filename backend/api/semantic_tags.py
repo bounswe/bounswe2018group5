@@ -1,7 +1,5 @@
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
-from nltk.corpus import wordnet
-import nltk
 import json
 import requests
 import string
@@ -10,6 +8,7 @@ from user import authentication
 from . import utils
 from user.models import *
 from project.models import *
+from difflib import SequenceMatcher
 
 
 def wikidata_query(key):
@@ -36,58 +35,48 @@ def reunion(user):
 
 
 def get_distance(new_tag, other_tag):
-    lemmer = nltk.stem.WordNetLemmatizer()
-    documents = [new_tag.description, new_tag.label, other_tag.description, other_tag.label]
-
-    def LemTokens(tokens):
-        return [lemmer.lemmatize(token) for token in tokens]
-
-    remove_punct_dict = dict((ord(punct), None) for punct in string.punctuation)
-
-    def LemNormalize(text):
-        return LemTokens(nltk.word_tokenize(text.lower().translate(remove_punct_dict)))
-
-    from sklearn.feature_extraction.text import CountVectorizer
-    LemVectorizer = CountVectorizer(tokenizer=LemNormalize, stop_words='english')
-    LemVectorizer.fit_transform(documents)
-    tf_matrix = LemVectorizer.transform(documents).toarray()
-    from sklearn.feature_extraction.text import TfidfTransformer
-    tfidfTran = TfidfTransformer(norm="l2")
-    tfidfTran.fit(tf_matrix)
-    import math
-    def idf(n, df):
-        result = math.log((n + 1.0) / (df + 1.0)) + 1
-        return result
-
-    tfidf_matrix = tfidfTran.transform(tf_matrix)
-    cos_similarity_matrix = (tfidf_matrix * tfidf_matrix.T).toarray()
-    print(cos_similarity_matrix)
-    res = 0
-    for i in range(0, 1):
-        for j in range(2, 3):
-            res = max(cos_similarity_matrix[i][j], res)
-    return res
+    match_score = 0.0
+    if new_tag.wikidata_id == other_tag.wikidata_id:
+        return 100.0
+    for element, weight in new_tag.relations:
+        if SequenceMatcher(None, other_tag.label, element).ratio() > 0.8:
+            match_score += weight
+    for element, weight in other_tag.relations:
+        if SequenceMatcher(None, new_tag.label, element).ratio() > 0.8:
+            match_score += weight
+    for element1, weight1 in new_tag.relations:
+        for element2, weight2 in other_tag.relations:
+            if SequenceMatcher(None, element1, element2).ratio() > 0.8:
+                match_score += min(weight1, weight2)
+    if SequenceMatcher(None, new_tag.label, other_tag.label).ratio() > 0.8:
+        match_score += 50
+    return match_score
 
 
 def calculate_similarities(new_tag):
     for other_tag in SemanticTag.objects:
-        if other_tag.wikidata_id != new_tag.wikidata_id:
-            new_relation = TagRelation()
-            new_relation.tag1 = other_tag
-            new_relation.tag2 = new_tag
-            new_relation.value = get_distance(new_tag, other_tag)
-            new_relation.save()
+        new_relation = TagRelation()
+        new_relation.tag1 = other_tag
+        new_relation.tag2 = new_tag
+        new_relation.value = get_distance(new_tag, other_tag)
+        new_relation.save()
 
 
 def create_tag(tag):
-    if not SemanticTag.objects(wikidata_id=tag):
-        new_tag = SemanticTag()
-        response = wikidata_query(tag)
-        new_tag.wikidata_id = response[0]['wikidata_id']
-        new_tag.label = response[0]['label'].lower().strip().replace(" ", "")
-        new_tag.description = response[0]['description']
-        new_tag.save()
-        calculate_similarities(new_tag)
+    if SemanticTag.objects(wikidata_id=tag):
+        return
+    new_tag = SemanticTag()
+    response = wikidata_query(tag)
+    new_tag.wikidata_id = response[0]['wikidata_id']
+    new_tag.label = response[0]['label'].lower().strip().replace(" ", "_")
+    new_tag.description = response[0]['description']
+    response = requests.get('http://api.conceptnet.io/related/c/en/' + new_tag.label + '?filter=/c/en&limit=1000')
+    obj = response.json()
+    for element in obj['related']:
+        related = element['@id'].rsplit('/')[-1]
+        new_tag.relations.append((related, element['weight']))
+    new_tag.save()
+    calculate_similarities(new_tag)
 
 
 @csrf_exempt

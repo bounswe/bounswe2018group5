@@ -84,6 +84,7 @@ class SemanticTag(BaseDocument):
     wikidata_id = StringField(unique=True)
     label = StringField()
     description = StringField()
+    relations = ListField(default=[])
 
     meta = {'collection': 'tags'}
 

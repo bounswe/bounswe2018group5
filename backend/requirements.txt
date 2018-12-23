@@ -6,5 +6,3 @@ python-decouple==3.1
 PyJWT
 django-cors-headers
 sentry_sdk
-nltk
-sklearn

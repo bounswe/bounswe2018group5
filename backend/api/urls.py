@@ -20,11 +20,13 @@ from django.conf import settings
 from django.conf.urls.static import static
 from . import attachment
 from . import semantic_tags
+from . import recommendation_engine
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     url(r'^api/user/', include('user.urls')),
     url(r'^api/project/', include('project.urls')),
     path('api/attachment/', attachment.attachment_handler, name="attachment"),
-    path('api/tag/', semantic_tags.tag_handler, name="semantic_tags")
+    path('api/tag/', semantic_tags.tag_handler, name="semantic_tags"),
+    path('api/recommend/', recommendation_engine.recommend, name="recommendation")
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
