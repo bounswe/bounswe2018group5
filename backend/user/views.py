@@ -114,15 +114,16 @@ def profile_handler(request):
     if request.method == 'GET':
         user_id = request.GET.get('user_id', '')
         if token and authentication.is_authenticated(token):
+            caller_id = authentication.get_user_id(token)
             if user_id == '':
-                user_id = authentication.get_user_id(token)
+                user_id = caller_id
             user = User.objects.get(id=user_id)
             try:
-                return JsonResponse({"response": True, "user": user_json(user, user_id)})
+                return JsonResponse({"response": True, "user": user_json(user, caller_id)})
             except Exception as e:
                 return JsonResponse({'response': False, 'error': str(e)})
         else:
-            return JsonResponse({"response": False, "error": "Unauthorized1"})
+            return JsonResponse({"response": False, "error": "Unauthorized"})
     elif request.method == 'PUT':
         if token and authentication.is_authenticated(token):
             body = json.loads(request.body.decode('utf-8'))

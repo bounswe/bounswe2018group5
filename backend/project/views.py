@@ -118,29 +118,26 @@ def project_handler(request):
     token = request.META.get('HTTP_AUTHORIZATION', None)
     if request.method == 'GET':
         ids = request.GET.get('ids')
-        if token and authentication.is_authenticated(token):
-            user_id = authentication.get_user_id(token)
-            if ids:
-                ids = ids.split(',')
-                projects = Project.objects.filter(id__in=ids) # TODO: order as given id list
-                res = []
-                for project in projects:
-                    res.append(project_json(project,user_id))
-                try:
-                    return JsonResponse({"response": True, "projects": res})
-                except Exception as e:
-                    return JsonResponse({'response': False, 'error': str(e)})
-            else:
-                projects = Project.objects.filter(status__gte=0)  # excludes discarded projects
-                res = []
-                for project in projects:
-                    res.append(project_json(project, user_id))
-                try:
-                    return JsonResponse({"response": True, "projects": res})
-                except Exception as e:
-                    return JsonResponse({'response': False, 'error': str(e)})
+        user_id = (authentication.get_user_id(token) if token else None)
+        if ids:
+            ids = ids.split(',')
+            projects = Project.objects.filter(id__in=ids) # TODO: order as given id list
+            res = []
+            for project in projects:
+                res.append(project_json(project,user_id))
+            try:
+                return JsonResponse({"response": True, "projects": res})
+            except Exception as e:
+                return JsonResponse({'response': False, 'error': str(e)})
         else:
-            return JsonResponse({"response": False, "error": "Unauthorized"})
+            projects = Project.objects.filter(status__gte=0)  # excludes discarded projects
+            res = []
+            for project in projects:
+                res.append(project_json(project, user_id))
+            try:
+                return JsonResponse({"response": True, "projects": res})
+            except Exception as e:
+                return JsonResponse({'response': False, 'error': str(e)})
     elif request.method == 'POST':
         if token and authentication.is_authenticated(token):
             user_id = authentication.get_user_id(token)
