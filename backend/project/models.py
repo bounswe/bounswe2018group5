@@ -84,5 +84,17 @@ class SemanticTag(BaseDocument):
     wikidata_id = StringField(unique=True)
     label = StringField()
     description = StringField()
+    relations = ListField(default=[])
 
     meta = {'collection': 'tags'}
+
+
+class TagRelation(BaseDocument):
+    def schema(self):
+        pass
+
+    tag1 = ReferenceField(SemanticTag)
+    tag2 = ReferenceField(SemanticTag)
+    value = FloatField()
+
+    meta = {'collection': 'tag_relations'}
