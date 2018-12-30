@@ -39,6 +39,7 @@ class Project(BaseDocument):
     attachments = ListField(default=[])
     tags = ListField(ReferenceField('SemanticTag'), default=[])
     status = IntField()  # 0 bidding period, 1 project awarded to a freelancer, 2 project completed, -1 project discarded
+    location = PointField()
 
     meta = {'collection': 'projects',
             'indexes': [

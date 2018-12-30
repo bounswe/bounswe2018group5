@@ -63,6 +63,7 @@ def project_json(project, user_id):
     obj['updated_at'] = format_datetime(project.updated_at)
     obj['owner'] = user_json(project.owner)
     obj['status'] = project.status
+    obj['location'] = project.location
 
     obj['milestones'] = []
     milestones = project_models.Milestone.objects.filter(project=project).order_by('deadline')

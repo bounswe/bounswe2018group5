@@ -16,10 +16,12 @@ def modify_project(json, project):
     project.freelancer = models.User.objects.get(id=json['freelancer']) if 'freelancer' in json\
         else project.freelancer
     project.status = json['status'] if 'status' in json else project.status
+    project.location = json['location'] if 'location' in json else project.location
 
     if "milestones" in json:
         new_milestones_ids = set()
-        old_milestones_ids = set( map(lambda x: str(x),Milestone.objects.filter(project=project, is_final=False).values_list('id')) )
+        old_milestones_ids = set(map(lambda x: str(x), Milestone.objects.filter(project=project, is_final=False)\
+                                     .values_list('id')))
         for milestone in json['milestones']:
             if 'id' in milestone:
                 new_milestones_ids.add(milestone['id'])
@@ -31,7 +33,7 @@ def modify_project(json, project):
                 cur_milestone.detail = milestone['detail'] if 'detail' in milestone else cur_milestone.detail
                 cur_milestone.deadline = milestone['deadline']
                 cur_milestone.save()
-        Milestone.objects.filter(id__in=list(old_milestones_ids-new_milestones_ids), status=0).update(status=-1) # .delete()
+        Milestone.objects.filter(id__in=list(old_milestones_ids-new_milestones_ids), status=0).update(status=-1) # delete()
 
     final_milestone = Milestone.objects.get(project=project, is_final=True)
     final_milestone.deadline = json['project_deadline'] if ('project_deadline' in json and final_milestone.status == 0) else final_milestone.deadline
@@ -150,6 +152,7 @@ def project_handler(request):
                 new_project.title = body['title']
                 new_project.budget = body['budget']
                 new_project.status = 0  # default
+                new_project.location = body['location'] if 'location' in body else None
                 new_project.save()
 
                 if "milestones" in body:
