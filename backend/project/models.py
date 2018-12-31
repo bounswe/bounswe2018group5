@@ -39,6 +39,7 @@ class Project(BaseDocument):
     attachments = ListField(default=[])
     tags = ListField(ReferenceField('SemanticTag'), default=[])
     status = IntField()  # 0 bidding period, 1 project awarded to a freelancer, 2 project completed, -1 project discarded
+    location = PointField()
 
     meta = {'collection': 'projects',
             'indexes': [
@@ -84,5 +85,17 @@ class SemanticTag(BaseDocument):
     wikidata_id = StringField(unique=True)
     label = StringField()
     description = StringField()
+    relations = ListField(default=[])
 
     meta = {'collection': 'tags'}
+
+
+class TagRelation(BaseDocument):
+    def schema(self):
+        pass
+
+    tag1 = ReferenceField(SemanticTag)
+    tag2 = ReferenceField(SemanticTag)
+    value = FloatField()
+
+    meta = {'collection': 'tag_relations'}
