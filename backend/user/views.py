@@ -1,7 +1,7 @@
 import hashlib
 import uuid
 
-from django.http import JsonResponse,HttpResponse,Http404
+from django.http import JsonResponse, HttpResponse, Http404
 from django.utils.dateparse import parse_datetime
 from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
@@ -336,6 +336,80 @@ def wallet_handler(request):
                 return JsonResponse({'response': False, 'error': str(e)})
         else:
             return JsonResponse({"response": False, "error": "Unauthorized"})
+    else:
+        return JsonResponse({
+            "response": False,
+            "error": "wrong request method"
+        })
+
+
+@csrf_exempt
+def message_handler(request):
+    token = request.META.get('HTTP_AUTHORIZATION', None)
+    if not (token and authentication.is_authenticated(token)):
+        return JsonResponse({
+            "response": False,
+            "error": "Unauthorized"
+        })
+    requested_id = request.GET.get('id', None)
+    requester = User.objects.get(id=authentication.get_user_id(token))
+    if request.method == 'GET':
+        if requested_id:
+            if User.objects(id=requested_id):
+                requested = User.objects.get(id=requested_id)
+                conversation = Conversation.objects.filter(
+                    ((Q(user1=requester) & Q(user2=requested)) | (Q(user1=requested) & Q(user2=requester))))[0]
+                return JsonResponse({
+                    "response": True,
+                    "conversation": conversation_json(conversation)
+                })
+            else:
+                return JsonResponse({
+                    "response": False,
+                    "error": "wrong user id"
+                })
+        else:
+            conversations = Conversation.objects.filter((Q(user1=requester) | Q(user2=requester)))
+            ret = []
+            for conversation in conversations:
+                ret.append(conversation_json(conversation))
+            return JsonResponse({
+                "response": True,
+                "conversations": ret
+            })
+    elif request.method == 'POST':
+        if not requested_id:
+            return JsonResponse({
+                "response": False,
+                "error": "Provide a user id"
+            })
+        message = request.GET.get('message', None)
+        if not message:
+            return JsonResponse({
+                "response": False,
+                "error": "There is no message"
+            })
+        requested = User.objects.get(id=requested_id)
+        conversation = Conversation.objects.filter(
+            ((Q(user1=requester) & Q(user2=requested)) | (Q(user1=requested) & Q(user2=requester))) )
+        if not conversation:
+            conversation = Conversation()
+            conversation.user1 = requester
+            conversation.user2 = requested
+            conversation.messages = []
+            conversation.save()
+        else:
+            conversation = conversation[0]
+        new_message = Message()
+        new_message.body = message
+        new_message.sender = requester
+        new_message.receiver = requested
+        new_message.save()
+        conversation.messages.append(new_message)
+        conversation.save()
+        return JsonResponse({
+            "response": True
+        })
     else:
         return JsonResponse({
             "response": False,

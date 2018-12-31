@@ -210,6 +210,24 @@ def tag_json(tag):
     }
 
 
+def conversation_json(conversation):
+    obj = {}
+    obj['user1'] = user_json(conversation.user1)
+    obj['user2'] = user_json(conversation.user2)
+    obj['messages'] = []
+    for message in conversation.messages:
+        obj['messages'].append(message_json(message))
+    return obj
+
+
+def message_json(message):
+    return {
+        "sender": user_json(message.sender),
+        "receiver": user_json(message.receiver),
+        "body": message.body
+    }
+
+
 def format_datetime(dt):
     return dt.strftime("%Y-%m-%d")
 

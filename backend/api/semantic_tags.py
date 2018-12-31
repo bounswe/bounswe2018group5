@@ -81,12 +81,12 @@ def create_tag(tag):
 
 @csrf_exempt
 def tag_handler(request):
-    # token = request.META.get('HTTP_AUTHORIZATION', None)
-    # if not (token and authentication.is_authenticated(token)):
-    #     return JsonResponse({
-    #         "response": False,
-    #         "error": "Unauthorized"
-    #     })
+    token = request.META.get('HTTP_AUTHORIZATION', None)
+    if not (token and authentication.is_authenticated(token)):
+        return JsonResponse({
+            "response": False,
+            "error": "Unauthorized"
+        })
     tagged = request.GET.get('id', None)
     is_portfolio = False
     if tagged and Portfolio.objects(id=tagged):

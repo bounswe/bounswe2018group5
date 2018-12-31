@@ -57,8 +57,8 @@ def recommend(request):
         return JsonResponse({
             "response": False,
             "error": "Unauthorized"
-    })
-    recommend_id = request.GET.get('id', None )
+        })
+    recommend_id = request.GET.get('id', None)
     if not recommend_id:
         recommend_id = authentication.get_user_id(token)
     if Project.objects(id=recommend_id):
