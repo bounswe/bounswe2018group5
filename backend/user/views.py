@@ -250,13 +250,13 @@ def portfolio_handler(request):
             if "project_id" in body:
                 new_portfolio.project_id = body['project_id']
             new_portfolio.user = User.objects.get(id=user_id)
-            new_portfolio.tags = []
-            for tag in body['tags']:
-                tag = str(tag)
-                create_tag(tag)
-                new_portfolio.tags.append(SemanticTag.objects.get(wikidata_id=tag))
             try:
                 new_portfolio.save()
+                for tag in body['tags']:
+                    tag = str(tag)
+                    create_tag(tag)
+                    new_portfolio.update(add_to_set__tags=SemanticTag.objects.get(wikidata_id=tag))
+                    new_portfolio.user.update(add_to_set__tags=SemanticTag.objects.get(wikidata_id=tag))
                 return JsonResponse({"response": True, "portfolio": portfolio_json(new_portfolio)})
             except Exception as e:
                 return JsonResponse({'response': False, 'error': str(e), "das": portfolio_json(new_portfolio)})
