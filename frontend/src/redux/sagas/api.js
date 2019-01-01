@@ -83,7 +83,7 @@ class api {
         return httpService.fetch({
             path: "api/project/",
             method: "GET",
-            sendToken: true
+            sendToken: false
         });
     };
 
@@ -94,7 +94,7 @@ class api {
             params: {
                 ids: project_id
             },
-            sendToken: true
+            sendToken: false
         });
     };
 
