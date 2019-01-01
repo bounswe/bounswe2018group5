@@ -2,6 +2,7 @@ import React, {Component} from "react";
 import PropTypes from "prop-types";
 import {Switch, Route, Redirect} from "react-router-dom";
 import UserProfile from "views/UserProfile/UserProfile.jsx";
+import Messages from "views/UserProfile/Messages.jsx";
 import ProjectPage from "views/ProjectPage/ProjectPage.jsx";
 import ProjectsPage from "views/ProjectsPage/ProjectsPage.jsx";
 import SearchProjectsPage from "views/ProjectsPage/SearchProjectsPage.jsx";
@@ -13,6 +14,7 @@ import Person from "@material-ui/icons/Person";
 import Group from "@material-ui/icons/Group";
 import Home from "@material-ui/icons/Home";
 import Layers from "@material-ui/icons/Layers";
+import Message from "@material-ui/icons/Message";
 
 //import PerfectScrollbar from "perfect-scrollbar";
 import "perfect-scrollbar/css/perfect-scrollbar.css";
@@ -46,6 +48,13 @@ const dashboardRoutes = [
         navbarName: "Profile",
         icon: Person,
         component: UserProfile
+    },
+    {
+        path: "/home/messages",
+        sidebarName: "Messages",
+        navbarName: "Messages",
+        icon: Message,
+        component: Messages
     },
     {
         path: "/home/projects",

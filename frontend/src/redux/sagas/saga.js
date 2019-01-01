@@ -11,6 +11,9 @@ import {
     PUT_PORTFOLIO_REQUEST,
     DELETE_PORTFOLIO_REQUEST,
     PUT_WALLET_REQUEST,
+    GET_CONVERSATIONS_REQUEST,
+    GET_CONVERSATION_REQUEST,
+    SEND_MESSAGE_REQUEST,
 } from "../user/actionTypes";
 import { 
     CREATE_PROJECT_REQUEST, 
@@ -80,7 +83,13 @@ import {
     deletePortfolioFailure,
     deletePortfolioSuccess,
     putWalletSuccess,
-    putWalletFailure
+    putWalletFailure,
+    conversationsFailure,
+    conversationsSuccess,
+    conversationFailure,
+    conversationSuccess,
+    sendMessageFailure,
+    sendMessageSuccess,
 } from "../user/Actions";
 
 
@@ -823,6 +832,88 @@ const tryGetTagsSaga = function* (action) {
     }
 };
 
+const tryGetConversationsSaga = function* () {
+    try {
+        const getConversationsResponse = yield call(api.getConversations);
+
+        if (getConversationsResponse) {
+            console.log("getConversationsResponse", getConversationsResponse);
+
+            if (getConversationsResponse.status === 200) {
+                yield put(conversationsSuccess(getConversationsResponse.responseBody));
+            } else if (getConversationsResponse.status === 400) {
+                console.log("Something wrong! Got a status 400", getConversationsResponse.responseBody);
+                yield put(conversationsFailure(getConversationsResponse.responseBody));
+            } else {
+                console.log("Something wrong! Got an unknown status.", getConversationsResponse);
+                yield put(conversationsFailure({ detail: ["Unknown status. Check console!"] }));
+            }
+        } else {
+            console.log("Get Profile failed by api. No response !");
+            yield put(conversationsFailure({ detail: ["No response fetched. Please contact the API team!"] }));
+        }
+    } catch (err) {
+        console.log("Get Profile failed by api. Error => ", err);
+        yield put(conversationsFailure({ detail: [err.detail] }));
+    }
+};
+
+const tryGetConversationSaga = function* (action) {
+    try {
+        const { user_id } = action.payload;
+
+        const getConversationResponse = yield call(api.getConversation, user_id);
+
+        if (getConversationResponse) {
+            console.log("getConversationResponse", getConversationResponse);
+
+            if (getConversationResponse.status === 200) {
+                yield put(conversationSuccess(getConversationResponse.responseBody));
+            } else if (getConversationResponse.status === 400) {
+                console.log("Something wrong! Got a status 400", getConversationResponse.responseBody);
+                yield put(conversationFailure(getConversationResponse.responseBody));
+            } else {
+                console.log("Something wrong! Got an unknown status.", getConversationResponse);
+                yield put(conversationFailure({ detail: ["Unknown status. Check console!"] }));
+            }
+        } else {
+            console.log("Get Profile failed by api. No response !");
+            yield put(conversationFailure({ detail: ["No response fetched. Please contact the API team!"] }));
+        }
+    } catch (err) {
+        console.log("Get Profile failed by api. Error => ", err);
+        yield put(conversationFailure({ detail: [err.detail] }));
+    }
+};
+
+const trySendMessageSaga = function* (action) {
+    try {
+        const { user_id, message } = action.payload;
+
+        const sendMessageResponse = yield call(api.sendMessage, user_id, message);
+
+        if (sendMessageResponse) {
+            console.log("sendMessageResponse", sendMessageResponse);
+
+            if (sendMessageResponse.status === 200) {
+                yield put(sendMessageSuccess(sendMessageResponse.responseBody));
+            } else if (sendMessageResponse.status === 400) {
+                console.log("Something wrong! Got a status 400", sendMessageResponse.responseBody);
+                yield put(sendMessageFailure(sendMessageResponse.responseBody));
+            } else {
+                console.log("Something wrong! Got an unknown status.", sendMessageResponse);
+                yield put(sendMessageFailure({ detail: ["Unknown status. Check console!"] }));
+            }
+        } else {
+            console.log("Get Profile failed by api. No response !");
+            yield put(sendMessageFailure({ detail: ["No response fetched. Please contact the API team!"] }));
+        }
+    } catch (err) {
+        console.log("Get Profile failed by api. Error => ", err);
+        yield put(sendMessageFailure({ detail: [err.detail] }));
+    }
+};
+
 const saga = function* () {
     // AUTH
     yield takeLatest(LOGIN_REQUEST, tryLoginSaga);
@@ -831,6 +922,9 @@ const saga = function* () {
 
     // USER
     yield takeLatest(GET_PROFILE_REQUEST, tryGetProfileSaga);
+    yield takeLatest(GET_CONVERSATIONS_REQUEST, tryGetConversationsSaga);
+    yield takeLatest(GET_CONVERSATION_REQUEST, tryGetConversationSaga);
+    yield takeLatest(SEND_MESSAGE_REQUEST, trySendMessageSaga);
     yield takeLatest(GET_USER_PROFILE_REQUEST, tryGetUserProfileSaga);
     yield takeLatest(UPDATE_PROFILE_REQUEST, tryUpdateProfileSaga);
     yield takeLatest(CHANGE_PASSWORD_REQUEST, tryChangePasswordSaga);
