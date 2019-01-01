@@ -4,6 +4,7 @@ import {Switch, Route, Redirect} from "react-router-dom";
 import UserProfile from "views/UserProfile/UserProfile.jsx";
 import ProjectPage from "views/ProjectPage/ProjectPage.jsx";
 import ProjectsPage from "views/ProjectsPage/ProjectsPage.jsx";
+import SearchProjectsPage from "views/ProjectsPage/SearchProjectsPage.jsx";
 import HomePage from "views/HomePage/HomePage.jsx";
 import OtherUserProfile from "views/UserProfile/OtherUserProfile.jsx";
 import withStyles from "@material-ui/core/styles/withStyles";
@@ -30,6 +31,14 @@ const dashboardRoutes = [
         navbarName: "Home",
         icon: Home,
         component: HomePage
+    },
+    {
+        path: "/home/index/:query",
+        sidebarName: "Result Projects",
+        navbarName: "Projects",
+        active: false,
+        icon: Home,
+        component: SearchProjectsPage
     },
     {
         path: "/home/profile",

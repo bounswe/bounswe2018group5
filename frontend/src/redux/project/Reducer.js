@@ -3,6 +3,14 @@ import {
     GET_PROJECTS_FAILURE,
     GET_PROJECTS_SUCCESS,
     GET_PROJECTS_REQUEST,
+    GET_RECOMMENDED_PROJECTS_REQUEST,
+    GET_RECOMMENDED_PROJECTS_SUCCESS,
+    GET_RECOMMENDED_PROJECTS_FAILURE,
+    GET_RECOMMENDED_PROJECTS_RESET,
+    SEARCH_PROJECTS_RESET,
+    SEARCH_PROJECTS_FAILURE,
+    SEARCH_PROJECTS_SUCCESS,
+    SEARCH_PROJECTS_REQUEST,
     GET_PROJECT_RESET,
     GET_PROJECT_FAILURE,
     GET_PROJECT_SUCCESS,
@@ -55,6 +63,7 @@ import {
 
 const initialState = {
     projects: {},
+    recom_projects: {},
     project: {},
     search: {},
     response: false,
@@ -63,6 +72,16 @@ const initialState = {
     getProjectsHasError: false,
     getProjectsCompleted: false,
     getProjectsError: "",
+
+    getRecommendedProjectsInProgress: false,
+    getRecommendedProjectsHasError: false,
+    getRecommendedProjectsCompleted: false,
+    getRecommendedProjectsError: "",
+
+    searchProjectsInProgress: false,
+    searchProjectsHasError: false,
+    searchProjectsCompleted: false,
+    searchProjectsError: "",
 
     getProjectInProgress: false,
     getProjectHasError: false,
@@ -157,6 +176,72 @@ export default function(state = initialState, action) {
             getProjectsInProgress: false,
             getProjectsHasError: false,
             getProjectsCompleted: false
+        };
+    }
+
+    if (action.type === GET_RECOMMENDED_PROJECTS_REQUEST) {
+        return {
+            ...state,
+            getRecommendedProjectsInProgress: true,
+            getRecommendedProjectsHasError: false,
+            getRecommendedProjectsCompleted: false
+        };
+    } else if (action.type === GET_RECOMMENDED_PROJECTS_SUCCESS) {
+        return {
+            ...state,
+            recom_projects: payload.recommendation,
+            response: payload.response,
+            getRecommendedProjectsInProgress: false,
+            getRecommendedProjectsHasError: false,
+            getRecommendedProjectsCompleted: true
+        };
+    } else if (action.type === GET_RECOMMENDED_PROJECTS_FAILURE) {
+        return {
+            ...state,
+            getRecommendedProjectsInProgress: false,
+            getRecommendedProjectsHasError: true,
+            getRecommendedProjectsCompleted: true,
+            getRecommendedProjectsError: payload.detail[0]
+        };
+    } else if (action.type === GET_RECOMMENDED_PROJECTS_RESET) {
+        return {
+            ...state,
+            getRecommendedProjectsInProgress: false,
+            getRecommendedProjectsHasError: false,
+            getRecommendedProjectsCompleted: false
+        };
+    }
+
+    if (action.type === SEARCH_PROJECTS_REQUEST) {
+        return {
+            ...state,
+            searchProjectsInProgress: true,
+            searchProjectsHasError: false,
+            searchProjectsCompleted: false
+        };
+    } else if (action.type === SEARCH_PROJECTS_SUCCESS) {
+        return {
+            ...state,
+            projects: payload.projects,
+            response: payload.response,
+            searchProjectsInProgress: false,
+            searchProjectsHasError: false,
+            searchProjectsCompleted: true
+        };
+    } else if (action.type === SEARCH_PROJECTS_FAILURE) {
+        return {
+            ...state,
+            searchProjectsInProgress: false,
+            searchProjectsHasError: true,
+            searchProjectsCompleted: true,
+            searchProjectsError: payload.detail[0]
+        };
+    } else if (action.type === SEARCH_PROJECTS_RESET) {
+        return {
+            ...state,
+            searchProjectsInProgress: false,
+            searchProjectsHasError: false,
+            searchProjectsCompleted: false
         };
     }
 
