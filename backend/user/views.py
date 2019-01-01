@@ -14,6 +14,7 @@ from django.core import validators
 from api.utils import *
 from .models import *
 from project.models import *
+from api.semantic_tags import create_tag
 
 
 def hash_password(password):
@@ -249,6 +250,11 @@ def portfolio_handler(request):
             if "project_id" in body:
                 new_portfolio.project_id = body['project_id']
             new_portfolio.user = User.objects.get(id=user_id)
+            new_portfolio.tags = []
+            for tag in body['tags']:
+                tag = str(tag)
+                create_tag(tag)
+                new_portfolio.tags.append(SemanticTag.objects.get(wikidata_id=tag))
             try:
                 new_portfolio.save()
                 return JsonResponse({"response": True, "portfolio": portfolio_json(new_portfolio)})
