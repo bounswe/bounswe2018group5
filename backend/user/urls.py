@@ -11,4 +11,5 @@ urlpatterns = [
     path('rating/', views.rating_handler, name="add_rating"),
     path('portfolio/', views.portfolio_handler, name="portfolio_handler"),
     path('wallet/', views.wallet_handler, name="wallet_handler"),
+    path('message/', views.message_handler, name="message_handler")
 ]
