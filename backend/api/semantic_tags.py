@@ -99,9 +99,9 @@ def tag_handler(request):
     tag = request.GET.get('wikidata_id', None)
     if request.method == 'GET':
         try:
-            body = json.loads(request.body.decode('utf-8'))
+            ids = request.GET.get('ids').split(',')
             ret = {}
-            for key in body['keys']:
+            for key in ids:
                 ret[str(key)] = wikidata_query(key)
         except Exception as e:
             return JsonResponse({"response": False, "error": str(e)})
