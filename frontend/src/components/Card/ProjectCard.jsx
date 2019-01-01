@@ -7,9 +7,10 @@ import Grid from '@material-ui/core/Grid';
 import Card from "material-kit-react/components/Card/Card";
 import CardBody from "material-kit-react/components/Card/CardBody";
 import CardHeader from "material-kit-react/components/Card/CardHeader";
-// import CardFooter from "material-kit-react/components/Card/CardFooter";
+import CardFooter from "material-kit-react/components/Card/CardFooter";
 import ProjectDropdown from "components/DropDown/ProjectDropdown"
 import Badge from 'components/Badge/Badge';
+import Tooltip from "@material-ui/core/Tooltip";
 import AddAlert from "@material-ui/icons/AddAlert";
 import Snackbar from "material-dashboard-react/dist/components/Snackbar/Snackbar";
 
@@ -129,7 +130,7 @@ class ProjectCard extends React.Component {
     }
 
     render() {
-        const { classes, project_id, title, description, project_deadline, budget, created_at, owner, is_freelancer, owned, status, milestones } = this.props;
+        const { classes, project_id, title, description, project_deadline, budget, created_at, owner, is_freelancer, owned, status, milestones, tags } = this.props;
         const project = {
             project_id,
             title,
@@ -145,6 +146,20 @@ class ProjectCard extends React.Component {
         if (descriptionText.length > 25) {
             descriptionText = descriptionText.substring(0, 200) + "...";
         }
+        let tagsList;
+        
+        tagsList = tags.map((prop, key) => {
+            return (
+                <Tooltip
+                    id="tooltip-left"
+                    title={prop.description}
+                    placement="top"
+                    classes={{ tooltip: classes.tooltip }}
+                >
+                    <Button fontSize={"16px"} color="success">{prop.label}</Button>
+                </Tooltip>
+            );
+        });
         let cardHeader, badgesStatus;;
         if (owned === true) {
             if (status === -1) {
@@ -219,7 +234,7 @@ class ProjectCard extends React.Component {
                             </p>
                         </Link>
                     </CardBody>
-                    {/* <CardFooter className={classes.textMuted}>tags</CardFooter> */}
+                    <CardFooter className={classes.textMuted}>{tagsList}</CardFooter>
                 </Card>
                 <Dialog
                     classes={{

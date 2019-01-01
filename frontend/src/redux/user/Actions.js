@@ -128,13 +128,14 @@ export const getPortfolioReset = () => ({
     type: GET_PORTFOLIO_RESET
 });
 
-export const tryPostPortfolio = (title, description, date, project_id) => ({
+export const tryPostPortfolio = (title, description, date, project_id, tags) => ({
     type: POST_PORTFOLIO_REQUEST,
     payload: {
         title, 
         description, 
         date, 
-        project_id
+        project_id,
+        tags
     }
 });
 export const postPortfolioSuccess = res => ({

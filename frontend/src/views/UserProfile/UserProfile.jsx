@@ -341,6 +341,7 @@ class UserProfile extends Component {
                                 attachments={prop.attachments}
                                 owned={true}
                                 handleToUpdate={this.handleToManagePortfolio.bind(this)}
+                                tags={prop.tags}
                             />
                         </GridItem>
                     );

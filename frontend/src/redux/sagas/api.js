@@ -106,7 +106,7 @@ class api {
         });
     };
 
-    createProject = (title, description, project_deadline, budget, milestones) => {
+    createProject = (title, description, project_deadline, budget, milestones, tags) => {
         return httpService.fetch({
             path: "api/project/",
             method: "POST",
@@ -115,7 +115,8 @@ class api {
                 description,
                 project_deadline,
                 budget,
-                milestones
+                milestones,
+                tags
             },
             sendToken: true
         });
@@ -230,7 +231,7 @@ class api {
         });
     };
 
-    postPortfolio = (title, description, date, project_id) => {
+    postPortfolio = (title, description, date, project_id, tags) => {
         return httpService.fetch({
             path: "api/user/portfolio/",
             method: "POST",
@@ -238,7 +239,8 @@ class api {
                 title,
                 description,
                 date,
-                project_id
+                project_id,
+                tags
             },
             sendToken: true
         });
@@ -277,6 +279,17 @@ class api {
             body: {
                 deposit,
                 withdraw,
+            },
+            sendToken: true
+        });
+    };
+
+    getTags = (tags) => {
+        return httpService.fetch({
+            path: "api/tag/",
+            method: "GET",
+            params: {
+                ids: tags
             },
             sendToken: true
         });
