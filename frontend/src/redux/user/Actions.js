@@ -35,6 +35,18 @@ import {
     PUT_WALLET_SUCCESS,
     PUT_WALLET_FAILURE,
     PUT_WALLET_RESET,
+    GET_CONVERSATIONS_REQUEST,
+    GET_CONVERSATIONS_SUCCESS,
+    GET_CONVERSATIONS_FAILURE,
+    GET_CONVERSATIONS_RESET,
+    GET_CONVERSATION_REQUEST,
+    GET_CONVERSATION_SUCCESS,
+    GET_CONVERSATION_FAILURE,
+    GET_CONVERSATION_RESET,
+    SEND_MESSAGE_REQUEST,
+    SEND_MESSAGE_SUCCESS,
+    SEND_MESSAGE_FAILURE,
+    SEND_MESSAGE_RESET,
 } from "./actionTypes";
 
 export const tryGetProfile = () => ({
@@ -207,4 +219,57 @@ export const putWalletFailure = errorData => ({
 });
 export const putWalletReset = () => ({
     type: PUT_WALLET_RESET
+});
+
+export const tryGetConversations = () => ({
+    type: GET_CONVERSATIONS_REQUEST,
+    payload: {}
+});
+export const conversationsSuccess = res => ({
+    type: GET_CONVERSATIONS_SUCCESS,
+    payload: res
+});
+export const conversationsFailure = errorData => ({
+    type: GET_CONVERSATIONS_FAILURE,
+    payload: errorData
+});
+export const conversationsReset = () => ({
+    type: GET_CONVERSATIONS_RESET
+});
+
+export const tryGetConversation = (user_id) => ({
+    type: GET_CONVERSATION_REQUEST,
+    payload: {
+        user_id
+    }
+});
+export const conversationSuccess = res => ({
+    type: GET_CONVERSATION_SUCCESS,
+    payload: res
+});
+export const conversationFailure = errorData => ({
+    type: GET_CONVERSATION_FAILURE,
+    payload: errorData
+});
+export const conversationReset = () => ({
+    type: GET_CONVERSATION_RESET
+});
+
+export const trySendMessage = (user_id, message) => ({
+    type: SEND_MESSAGE_REQUEST,
+    payload: {
+        user_id,
+        message
+    }
+});
+export const sendMessageSuccess = res => ({
+    type: SEND_MESSAGE_SUCCESS,
+    payload: res
+});
+export const sendMessageFailure = errorData => ({
+    type: SEND_MESSAGE_FAILURE,
+    payload: errorData
+});
+export const sendMessageReset = () => ({
+    type: SEND_MESSAGE_RESET
 });

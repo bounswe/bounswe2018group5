@@ -35,6 +35,18 @@ import {
     PUT_WALLET_SUCCESS,
     PUT_WALLET_FAILURE,
     PUT_WALLET_RESET,
+    GET_CONVERSATIONS_REQUEST,
+    GET_CONVERSATIONS_SUCCESS,
+    GET_CONVERSATIONS_FAILURE,
+    GET_CONVERSATIONS_RESET,
+    GET_CONVERSATION_REQUEST,
+    GET_CONVERSATION_SUCCESS,
+    GET_CONVERSATION_FAILURE,
+    GET_CONVERSATION_RESET,
+    SEND_MESSAGE_REQUEST,
+    SEND_MESSAGE_SUCCESS,
+    SEND_MESSAGE_FAILURE,
+    SEND_MESSAGE_RESET,
 } from "./actionTypes";
 
 const initialState = {
@@ -42,6 +54,8 @@ const initialState = {
     response: false,
     portfolio: "",
     wallet: "",
+    conversations: [],
+    conversation: {},
 
     getProfileInProgress: false,
     getProfileHasError: false,
@@ -87,6 +101,21 @@ const initialState = {
     putWalletHasError: false,
     putWalletCompleted: false,
     putWalletError: "",
+
+    getConversationsInProgress: false,
+    getConversationsHasError: false,
+    getConversationsCompleted: false,
+    getConversationsError: "",
+
+    getConversationInProgress: false,
+    getConversationHasError: false,
+    getConversationCompleted: false,
+    getConversationError: "",
+
+    sendMessageInProgress: false,
+    sendMessageHasError: false,
+    sendMessageCompleted: false,
+    sendMessageError: "",
 };
 
 export default function(state = initialState, action) {
@@ -389,6 +418,101 @@ export default function(state = initialState, action) {
             putWalletInProgress: false,
             putWalletHasError: false,
             putWalletCompleted: false
+        };
+    }
+
+    if (action.type === GET_CONVERSATIONS_REQUEST) {
+        return {
+            ...state,
+            getConversationsInProgress: true,
+            getConversationsHasError: false,
+            getConversationsCompleted: false
+        };
+    } else if (action.type === GET_CONVERSATIONS_SUCCESS) {
+        return {
+            ...state,
+            conversations: payload.conversations,
+            getConversationsInProgress: false,
+            getConversationsHasError: false,
+            getConversationsCompleted: true
+        };
+    } else if (action.type === GET_CONVERSATIONS_FAILURE) {
+        return {
+            ...state,
+            getConversationsInProgress: false,
+            getConversationsHasError: true,
+            getConversationsCompleted: true,
+            getConversationsError: payload.detail[0]
+        };
+    } else if (action.type === GET_CONVERSATIONS_RESET) {
+        return {
+            ...state,
+            getConversationsInProgress: false,
+            getConversationsHasError: false,
+            getConversationsCompleted: false
+        };
+    }
+
+    if (action.type === GET_CONVERSATION_REQUEST) {
+        return {
+            ...state,
+            getConversationInProgress: true,
+            getConversationHasError: false,
+            getConversationCompleted: false
+        };
+    } else if (action.type === GET_CONVERSATION_SUCCESS) {
+        return {
+            ...state,
+            conversation: payload.conversation,
+            getConversationInProgress: false,
+            getConversationHasError: false,
+            getConversationCompleted: true
+        };
+    } else if (action.type === GET_CONVERSATION_FAILURE) {
+        return {
+            ...state,
+            getConversationInProgress: false,
+            getConversationHasError: true,
+            getConversationCompleted: true,
+            getConversationError: payload.detail[0]
+        };
+    } else if (action.type === GET_CONVERSATION_RESET) {
+        return {
+            ...state,
+            getConversationInProgress: false,
+            getConversationHasError: false,
+            getConversationCompleted: false
+        };
+    }
+
+    if (action.type === SEND_MESSAGE_REQUEST) {
+        return {
+            ...state,
+            sendMessageInProgress: true,
+            sendMessageHasError: false,
+            sendMessageCompleted: false
+        };
+    } else if (action.type === SEND_MESSAGE_SUCCESS) {
+        return {
+            ...state,
+            sendMessageInProgress: false,
+            sendMessageHasError: false,
+            sendMessageCompleted: true
+        };
+    } else if (action.type === SEND_MESSAGE_FAILURE) {
+        return {
+            ...state,
+            sendMessageInProgress: false,
+            sendMessageHasError: true,
+            sendMessageCompleted: true,
+            sendMessageError: payload.detail[0]
+        };
+    } else if (action.type === SEND_MESSAGE_RESET) {
+        return {
+            ...state,
+            sendMessageInProgress: false,
+            sendMessageHasError: false,
+            sendMessageCompleted: false
         };
     }
 

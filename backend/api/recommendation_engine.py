@@ -76,5 +76,5 @@ def recommend(request):
         })
     return JsonResponse({
         "response": True,
-        "recommendation": ret
+        "recommendation": ret[:5]
     })

@@ -22,7 +22,7 @@ class PrivateRoute extends Component {
                 this.props.logout();
                 history.push("/");
             } else {
-                setCookie(LOGGEDIN_USERID_COOKIE, user.id, { path: "/" });
+                if (!getCookie(LOGGEDIN_USERID_COOKIE)) setCookie(LOGGEDIN_USERID_COOKIE, user.id, { path: "/" });
             }
         }
     }

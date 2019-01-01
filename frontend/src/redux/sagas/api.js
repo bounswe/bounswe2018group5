@@ -1,5 +1,7 @@
 import httpService from "services/HttpService";
 
+import { getCookie, TOKEN_COOKIE } from "services/cookies.js";
+
 class api {
     doLogin = (username, password) => {
         return httpService.fetch({
@@ -83,7 +85,29 @@ class api {
         return httpService.fetch({
             path: "api/project/",
             method: "GET",
-            sendToken: false
+            sendToken: getCookie(TOKEN_COOKIE) ? true : false,
+        });
+    };
+
+    getRecommendedProjects = (user_id) => {
+        return httpService.fetch({
+            path: "api/recommend/",
+            method: "GET",
+            params: {
+                id: user_id
+            },
+            sendToken: true
+        });
+    };
+
+    searchProjects = (query) => {
+        return httpService.fetch({
+            path: "api/project/search/",
+            method: "GET",
+            params: {
+                query
+            },
+            sendToken: true
         });
     };
 
@@ -94,7 +118,7 @@ class api {
             params: {
                 ids: project_id
             },
-            sendToken: false
+            sendToken: getCookie(TOKEN_COOKIE) ? true: false,
         });
     };
 
@@ -290,6 +314,37 @@ class api {
             method: "GET",
             params: {
                 ids: tags
+            },
+            sendToken: true
+        });
+    };
+
+    getConversations = () => {
+        return httpService.fetch({
+            path: "api/user/message/",
+            method: "GET",
+            sendToken: true
+        });
+    };
+
+    getConversation = (user_id) => {
+        return httpService.fetch({
+            path: "api/user/message/",
+            method: "GET",
+            params: {
+                id: user_id
+            },
+            sendToken: true
+        });
+    };
+
+    sendMessage = (user_id, message) => {
+        return httpService.fetch({
+            path: "api/user/message/",
+            method: "POST",
+            params: {
+                id: user_id,
+                message: message
             },
             sendToken: true
         });
