@@ -19,6 +19,7 @@ def find_freelancers(project):
                 match_score += relation.value
         temp.append([match_score, user])
     temp.sort(key=lambda tup: tup[0])
+    temp.reverse()
     if len(temp) == 0:
         return temp
     max_match = temp[0][0]
@@ -41,6 +42,7 @@ def find_projects(user, requester):
                 match_score += relation.value
         temp.append([match_score, project])
     temp.sort(key=lambda tup: tup[0])
+    temp.reverse()
     if len(temp) == 0:
         return temp
     max_match = temp[0][0]
