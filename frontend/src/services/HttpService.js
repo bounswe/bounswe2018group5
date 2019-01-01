@@ -13,19 +13,28 @@ class HttpService {
             const overriddenHeaders = requestOptions.headers || {};
             const sendToken = requestOptions.sendToken || false;
             const api_token = getCookie(TOKEN_COOKIE) ? getCookie(TOKEN_COOKIE)  : null;
-            const processedRequestOptions = {
-                ...requestOptions,
-                body: JSON.stringify(requestOptions.body),
-                headers: {
+            let headers;
+            if (sendToken) {
+                headers = {
                     "Content-Type": "application/json",
-                    Authorization:
-                        typeof sendToken === "undefined"
-                            ? api_token
-                            : sendToken === false
+                        Authorization:
+                    typeof sendToken === "undefined"
+                        ? api_token
+                        : sendToken === false
                             ? null
                             : api_token,
                     ...overriddenHeaders
-                },
+                };
+            } else {
+                headers = {
+                    "Content-Type": "application/json",
+                    ...overriddenHeaders
+                };
+            }
+            const processedRequestOptions = {
+                ...requestOptions,
+                body: JSON.stringify(requestOptions.body),
+                headers: headers,
                 timeout: Configuration.HTTP_TIMEOUT_MS,
             };
 
