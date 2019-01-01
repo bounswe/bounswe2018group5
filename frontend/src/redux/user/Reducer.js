@@ -495,6 +495,7 @@ export default function(state = initialState, action) {
     } else if (action.type === SEND_MESSAGE_SUCCESS) {
         return {
             ...state,
+            response: payload.response,
             sendMessageInProgress: false,
             sendMessageHasError: false,
             sendMessageCompleted: true
