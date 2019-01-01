@@ -103,6 +103,7 @@ class OtherUserProfile extends Component {
                                 attachments={prop.attachments}
                                 date={prop.date}
                                 project_id={prop.project_id}
+                                tags={prop.tags}
                             />
                         </GridItem>
                     );

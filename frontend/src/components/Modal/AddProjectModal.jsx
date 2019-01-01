@@ -11,6 +11,7 @@ import IconButton from "@material-ui/core/IconButton";
 // @material-ui/icons
 import { Close } from '@material-ui/icons';
 import AddIcon from '@material-ui/icons/Add';
+import SearchIcon from '@material-ui/icons/Search';
 // core components
 import Button from '@material-ui/core/Button';
 import OtherButton from "material-kit-react/components/CustomButtons/Button";
@@ -22,10 +23,18 @@ import GridItem from "material-dashboard-react/dist/components/Grid/GridItem";
 import CustomInput from "components/CustomInput/CustomInput";
 import DateTimePicker from "components/DateTimePicker/DateTimePicker";
 import connect from "react-redux/es/connect/connect";
-import { tryCreateProject, createProjectReset } from "redux/project/Actions.js";
+import { tryCreateProject, createProjectReset, tryGetTag, getTagReset } from "redux/project/Actions.js";
+
+import TagsInput from 'react-tagsinput'
+
+import 'react-tagsinput/react-tagsinput.css'; // If using WebPack and style-loader.
+
+import Select from 'react-select';
+
 function Transition(props) {
     return <Slide direction="down" {...props} />;
 }
+
 class AddProjectModal extends React.Component {
     constructor(props) {
         super(props);
@@ -36,7 +45,12 @@ class AddProjectModal extends React.Component {
             place: 'tr',
             notificationMessage: '',
             milestones: [{ name: "", detail: "", deadline: "" }],
+            tags: [],
+            options: [],
+            options_tags: [],
         };
+
+        this.handleTagsChange = this.handleTagsChange.bind(this);
     }
     handleClickOpen(modal) {
         var x = [];
@@ -49,8 +63,13 @@ class AddProjectModal extends React.Component {
         this.setState(x);
     }
     handleCreateProject(event) {
-        const { title, description, project_deadline, budget, milestones } = this.state;
-        this.props.tryCreateProject(title, description, project_deadline, parseFloat(budget), milestones);
+        const { title, description, project_deadline, budget, milestones, options_tags } = this.state;
+        let options = [];
+        options_tags.map((prop, key) => {
+            options.push(prop.value);
+            return null;
+        });     
+        this.props.tryCreateProject(title, description, project_deadline, parseFloat(budget), milestones, options);
         event.preventDefault();
     }
     componentDidUpdate(prevProps, prevState) {
@@ -79,6 +98,24 @@ class AddProjectModal extends React.Component {
             this.handleClose("modal");
             this.props.createProjectReset();
         }
+
+        const { getTagInProgress, getTagHasError, getTagCompleted, search } = this.props.project;
+        if (!getTagInProgress && !getTagHasError && getTagCompleted) {
+            if (response) {
+                let options = [];
+                Object.keys(search).forEach(function (key) {
+                    search[key].map((prop, key) => {
+                        options.push({
+                            label: prop.label + ": " + prop.description,
+                            value: prop.wikidata_id
+                        });
+                        return null;
+                    });
+                });                
+                this.setState({options});
+            }
+            this.props.getTagReset();
+        }
     }
     handleChange = (e) => {
         if (["name", "date", "descr"].includes(e.target.className)) {
@@ -106,7 +143,17 @@ class AddProjectModal extends React.Component {
         this.setState({ milestones })
         
     }
-    render() {
+
+    handleTagsChange(tags) {
+        this.setState({ tags })
+    }
+
+    searchTags = (e) => {
+        const { tags } = this.state;
+        this.props.tryGetTag(tags.join(','));
+    }
+
+    render() {       
         const { classes } = this.props;
         const { milestones } = this.state;
         return (
@@ -193,11 +240,29 @@ class AddProjectModal extends React.Component {
                                             }}
                                         />
                                     </GridItem>
+                                    <GridItem xs={12} sm={12} md={10}>
+                                        <TagsInput value={this.state.tags} onChange={this.handleTagsChange}/>
+                                    </GridItem>
+                                    <GridItem xs={12} sm={12} md={2}>
+                                        <Button variant="contained" color="primary" onClick={this.searchTags}>
+                                            <SearchIcon className={classes.rightIcon} />
+                                        </Button>
+                                    </GridItem>
+                                    <GridItem xs={12} sm={12} md={12}>
+                                        <Select
+                                            isMulti
+                                            name="tags"
+                                            options={this.state.options}
+                                            className="basic-multi-select"
+                                            classNamePrefix="select"
+                                            onChange={(val) => { this.setState({options_tags: val}) }}
+                                        />
+                                    </GridItem>
                                     <GridItem xs={12} sm={12} md={12}>
                                         <Divider style={{ margin: "16px" }} />
                                         <Button variant="contained" color="primary" onClick={this.addMilestones}>
                                             Add new milestone
-                                        <AddIcon className={classes.rightIcon} />
+                                            <AddIcon className={classes.rightIcon} />
                                         </Button>
                                         {
                                             milestones.map((val, idx) => {
@@ -274,8 +339,10 @@ class AddProjectModal extends React.Component {
 }
 function bindAction(dispatch) {
     return {
-        tryCreateProject: (title, description, project_deadline, budget, milestones) => dispatch(tryCreateProject(title, description, project_deadline, budget, milestones)),
-        createProjectReset: () => dispatch(createProjectReset())
+        tryCreateProject: (title, description, project_deadline, budget, milestones, tags) => dispatch(tryCreateProject(title, description, project_deadline, budget, milestones, tags)),
+        createProjectReset: () => dispatch(createProjectReset()),
+        tryGetTag: (tags) => dispatch(tryGetTag(tags)),
+        getTagReset: () => dispatch(getTagReset())
     };
 }
 const mapStateToProps = state => ({

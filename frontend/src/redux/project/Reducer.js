@@ -47,11 +47,16 @@ import {
     ACCEPT_BID_REQUEST,
     ACCEPT_BID_RESET,
     ACCEPT_BID_SUCCESS,
+    GET_TAG_RESET,
+    GET_TAG_FAILURE,
+    GET_TAG_SUCCESS,
+    GET_TAG_REQUEST,
 } from "./actionTypes";
 
 const initialState = {
     projects: {},
     project: {},
+    search: {},
     response: false,
 
     getProjectsInProgress: false,
@@ -113,6 +118,11 @@ const initialState = {
     acceptBidHasError: false,
     acceptBidCompleted: false,
     acceptBidError: "",
+
+    getTagInProgress: false,
+    getTagHasError: false,
+    getTagCompleted: false,
+    getTagError: "",
 };
 
 export default function(state = initialState, action) {
@@ -507,6 +517,39 @@ export default function(state = initialState, action) {
             deleteProjectInProgress: false,
             deleteProjectHasError: false,
             deleteProjectCompleted: false
+        };
+    }
+
+    if (action.type === GET_TAG_REQUEST) {
+        return {
+            ...state,
+            getTagInProgress: true,
+            getTagHasError: false,
+            getTagCompleted: false
+        };
+    } else if (action.type === GET_TAG_SUCCESS) {
+        return {
+            ...state,
+            search: payload.search,
+            response: payload.response,
+            getTagInProgress: false,
+            getTagHasError: false,
+            getTagCompleted: true
+        };
+    } else if (action.type === GET_TAG_FAILURE) {
+        return {
+            ...state,
+            getTagInProgress: false,
+            getTagHasError: true,
+            getTagCompleted: true,
+            getTagError: payload.detail[0]
+        };
+    } else if (action.type === GET_TAG_RESET) {
+        return {
+            ...state,
+            getTagInProgress: false,
+            getTagHasError: false,
+            getTagCompleted: false
         };
     }
 

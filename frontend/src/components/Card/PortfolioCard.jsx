@@ -2,6 +2,7 @@ import React from "react";
 // material-ui components
 import withStyles from "@material-ui/core/styles/withStyles";
 import Grid from '@material-ui/core/Grid';
+import Tooltip from "@material-ui/core/Tooltip";
 // core components
 import Card from "material-kit-react/components/Card/Card";
 import CardBody from "material-kit-react/components/Card/CardBody";
@@ -62,7 +63,7 @@ class PortfolioCard extends React.Component {
         this.props.handleToUpdate(portfolio, type);
     }
     render() {
-        const { classes, portfolio_id, title, description, date, project_id, attachments, owned } = this.props;
+        const { classes, portfolio_id, title, description, date, project_id, attachments, owned, tags } = this.props;
         const portfolio = {
             portfolio_id,
             title,
@@ -71,6 +72,21 @@ class PortfolioCard extends React.Component {
             project_id,
             attachments
         };
+        let tagsList;
+
+        tagsList = tags.map((prop, key) => {
+            return (
+                <Tooltip
+                    id="tooltip-left"
+                    title={prop.description}
+                    placement="top"
+                    classes={{ tooltip: classes.tooltip }}
+                >
+                    <Button fontSize={"16px"} color="success">{prop.label}</Button>
+                </Tooltip>
+                
+            );
+        });
         let cardHeader;
         if (owned === true) {
             cardHeader = <Grid item xs={3} style={{ textAlign: "right" }}>
@@ -162,6 +178,7 @@ class PortfolioCard extends React.Component {
                         </Grid>
                         {cardHeader}
                         <Grid item xs={12}>
+                            {tagsList}
                             <p>{description}</p>
                         </Grid>
                         {attachmentsBox}
