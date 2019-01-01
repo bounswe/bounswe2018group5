@@ -65,7 +65,7 @@ const newHeaderLinksStyle = theme => ({
 });
 
 function HeaderLinks({...props}) {
-    const {classes, rightButton} = props;
+    const {classes, rightButton, history} = props;
     return (
         <List className={classes.list}>
             <ListItem className={classes.listItem} alignself='center'>
@@ -82,6 +82,20 @@ function HeaderLinks({...props}) {
                     </div>
                     <InputBase
                         placeholder="Search Projects…"
+                        onKeyPress={(e) => {
+                            if (e.shiftKey && e.charCode === 13) {
+                                return true;
+                            }
+                            if (e.charCode === 13) {
+                                var value = e.target.value;
+                                if (value !== "") {
+                                    history.push("/browse/search/" + value);
+                                    window.location.reload();
+                                }
+                                e.preventDefault();
+                                return false;
+                            }
+                        }}
                         classes={{
                             root: classes.inputRoot,
                             input: classes.inputInput,

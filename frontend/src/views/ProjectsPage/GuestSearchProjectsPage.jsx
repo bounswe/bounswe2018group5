@@ -1,48 +1,53 @@
 import React from "react";
 import Helmet from "react-helmet";
 import classNames from "classnames";
+
 // @material-ui/core
 import withStyles from "@material-ui/core/styles/withStyles";
 // @material-ui/icons
-
-import HeaderLinks from "components/Header/HeaderLinks";
-import Footer from "components/Footer/Footer";
-import Parallax from "material-kit-react/components/Parallax/Parallax";
-import Header from "components/Header/Header";
 
 // core components
 import ProjectCard from "components/Card/ProjectCard";
 import GridItem from "material-dashboard-react/dist/components/Grid/GridItem";
 import GridContainer from "material-dashboard-react/dist/components/Grid/GridContainer";
 
+import HeaderLinks from "components/Header/HeaderLinks";
+import Footer from "components/Footer/Footer";
+import Parallax from "material-kit-react/components/Parallax/Parallax";
+import Header from "components/Header/Header";
+
 import landingPageStyle from "material-kit-react/assets/jss/material-kit-react/views/landingPage.js";
 import loginPageStyle from "material-kit-react/assets/jss/material-kit-react/views/loginPage";
 
-import connect from "react-redux/es/connect/connect";
 import combineStyles from "services/combineStyles";
-import { tryGetProjects, getProjectsReset } from "redux/project/Actions.js";
+
+import connect from "react-redux/es/connect/connect";
+import { trySearchProjects, searchProjectsReset } from "redux/project/Actions.js";
 
 const dashboardRoutes = [];
 
-class GuestProjectsPage extends React.Component {
+class GuestSearchProjectsPage extends React.Component {
     constructor(props) {
         super(props);
         // we use this to make the card to appear after the page has been rendered
         this.state = {
-            projects: [],
+            projects: []
         };
     }
 
     componentDidMount() {
-        this.props.tryGetProjects();
+        const { query } = this.props.match.params;
+        this.props.trySearchProjects(query);
     }
 
     componentDidUpdate(prevProps, prevState) {
-        const { getProjectsInProgress, getProjectsHasError, getProjectsCompleted, projects } = this.props.project;
+        const { searchProjectsInProgress, searchProjectsHasError, searchProjectsCompleted, projects, response } = this.props.project;
 
-        if (!getProjectsInProgress && !getProjectsHasError && getProjectsCompleted) {
-            this.setState({ projects: projects });
-            this.props.getProjectsReset();
+        if (!searchProjectsInProgress && !searchProjectsHasError && searchProjectsCompleted) {
+            if (response) {
+                this.setState({ projects: projects });
+                this.props.searchProjectsReset();
+            }
         }
     }
 
@@ -96,7 +101,7 @@ class GuestProjectsPage extends React.Component {
                     <div className={classes.container}>
                         <GridContainer>
                             <GridItem xs={12} sm={12} md={6}>
-                                <h1 className={classes.title}>Browse Projects</h1>
+                                <h1 className={classes.title}>Result Projects</h1>
                             </GridItem>
                         </GridContainer>
                     </div>
@@ -117,8 +122,8 @@ class GuestProjectsPage extends React.Component {
 
 function bindAction(dispatch) {
     return {
-        tryGetProjects: () => dispatch(tryGetProjects()),
-        getProjectsReset: () => dispatch(getProjectsReset())
+        trySearchProjects: (query) => dispatch(trySearchProjects(query)),
+        searchProjectsReset: () => dispatch(searchProjectsReset())
     };
 }
 
@@ -131,4 +136,4 @@ const combinedStyles = combineStyles(loginPageStyle, landingPageStyle);
 export default connect(
     mapStateToProps,
     bindAction
-)(withStyles(combinedStyles)(GuestProjectsPage));
+)(withStyles(combinedStyles)(GuestSearchProjectsPage));
