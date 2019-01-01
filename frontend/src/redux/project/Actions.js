@@ -3,6 +3,14 @@ import {
     GET_PROJECTS_SUCCESS,
     GET_PROJECTS_FAILURE,
     GET_PROJECTS_RESET,
+    GET_RECOMMENDED_PROJECTS_REQUEST,
+    GET_RECOMMENDED_PROJECTS_SUCCESS,
+    GET_RECOMMENDED_PROJECTS_FAILURE,
+    GET_RECOMMENDED_PROJECTS_RESET,
+    SEARCH_PROJECTS_REQUEST,
+    SEARCH_PROJECTS_SUCCESS,
+    SEARCH_PROJECTS_FAILURE,
+    SEARCH_PROJECTS_RESET,
     GET_PROJECT_REQUEST,
     GET_PROJECT_SUCCESS,
     GET_PROJECT_FAILURE,
@@ -68,6 +76,43 @@ export const getProjectsFailure = errorData => ({
 export const getProjectsReset = () => ({
     type: GET_PROJECTS_RESET
 });
+
+export const tryGetRecommendedProjects = (user_id) => ({
+    type: GET_RECOMMENDED_PROJECTS_REQUEST,
+    payload: {
+        user_id
+    }
+});
+export const getRecommendedProjectsSuccess = res => ({
+    type: GET_RECOMMENDED_PROJECTS_SUCCESS,
+    payload: res
+});
+export const getRecommendedProjectsFailure = errorData => ({
+    type: GET_RECOMMENDED_PROJECTS_FAILURE,
+    payload: errorData
+});
+export const getRecommendedProjectsReset = () => ({
+    type: GET_RECOMMENDED_PROJECTS_RESET
+});
+
+export const trySearchProjects = (query) => ({
+    type: SEARCH_PROJECTS_REQUEST,
+    payload: {
+        query
+    }
+});
+export const searchProjectsSuccess = res => ({
+    type: SEARCH_PROJECTS_SUCCESS,
+    payload: res
+});
+export const searchProjectsFailure = errorData => ({
+    type: SEARCH_PROJECTS_FAILURE,
+    payload: errorData
+});
+export const searchProjectsReset = () => ({
+    type: SEARCH_PROJECTS_RESET
+});
+
 
 export const tryGetProject = (project_id) => ({
     type: GET_PROJECT_REQUEST,
