@@ -23,6 +23,7 @@ class HeaderLinks extends React.Component {
         const { query } = this.state;
         if (query !== "") {
             history.push("/home/index/" + query);
+            window.location.reload();
         }
     }
 

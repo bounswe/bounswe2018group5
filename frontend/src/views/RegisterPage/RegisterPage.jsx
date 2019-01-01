@@ -29,7 +29,7 @@ class RegisterPage extends Component {
                     color="transparent"
                     routes={dashboardRoutes}
                     brand="Freelancer"
-                    rightLinks={<HeaderLinks rightButton='login' />}
+                    rightLinks={<HeaderLinks rightButton='login' history={this.props.history} />}
                     fixed
                     changeColorOnScroll={{
                         height: 400,

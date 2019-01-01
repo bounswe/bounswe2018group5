@@ -107,7 +107,7 @@ class api {
             params: {
                 query
             },
-            sendToken: true
+            sendToken: getCookie(TOKEN_COOKIE) ? true : false,
         });
     };
 

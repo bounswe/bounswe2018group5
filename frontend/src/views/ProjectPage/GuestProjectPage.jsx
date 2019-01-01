@@ -209,7 +209,7 @@ class GuestProjectPage extends Component {
                         color="transparent"
                         routes={dashboardRoutes}
                         brand="Freelancer"
-                        rightLinks={<HeaderLinks rightButton='register' />}
+                        rightLinks={<HeaderLinks rightButton='register' history={this.props.history} />}
                         fixed
                         changeColorOnScroll={{
                             height: 400,
