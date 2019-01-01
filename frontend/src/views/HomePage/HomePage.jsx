@@ -63,6 +63,7 @@ class HomePage extends React.Component {
                                 owner_id={prop.owner_id}
                                 project_id={prop.project_id}
                                 milestones={prop.milestones}
+                                tags={prop.tags}
                             />
                         </GridItem>
                     );

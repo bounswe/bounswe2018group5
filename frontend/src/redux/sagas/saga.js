@@ -19,6 +19,7 @@ import {
     FINISH_PROJECT_REQUEST, 
     GET_PROJECTS_REQUEST, 
     GET_PROJECT_REQUEST, 
+    GET_TAG_REQUEST, 
     DELETE_PROJECT_REQUEST, 
     GET_OWN_PROJECTS_REQUEST,
     CREATE_BID_REQUEST,
@@ -51,6 +52,8 @@ import {
     acceptBidFailure,
     discardBidSuccess,
     discardBidFailure,
+    getTagFailure,
+    getTagSuccess, 
 } from "../project/Actions";
 import {loginSuccess, loginFailure, registerFailure, registerSuccess} from "../auth/Actions";
 import {
@@ -339,9 +342,9 @@ const tryGetOwnProjectsSaga = function* () {
 
 const tryCreateProjectSaga = function* (action) {
     try {
-        const { title, description, project_deadline, budget, milestones } = action.payload;
+        const { title, description, project_deadline, budget, milestones, tags } = action.payload;
 
-        const createProjectResponse = yield call(api.createProject, title, description, project_deadline, budget, milestones);
+        const createProjectResponse = yield call(api.createProject, title, description, project_deadline, budget, milestones, tags);
 
         if (createProjectResponse) {
             console.log("createProjectResponse", createProjectResponse);
@@ -648,9 +651,9 @@ const tryDeletePortfolioSaga = function* (action) {
 
 const tryPostPortfolioSaga = function* (action) {
     try {
-        const { title, description, date, project_id } = action.payload;
+        const { title, description, date, project_id, tags } = action.payload;
 
-        const postPortfolioResponse = yield call(api.postPortfolio, title, description, date, project_id);
+        const postPortfolioResponse = yield call(api.postPortfolio, title, description, date, project_id, tags);
 
         if (postPortfolioResponse) {
             console.log("postPortfolioResponse", postPortfolioResponse);
@@ -730,6 +733,34 @@ const tryPutWalletSaga = function* (action) {
     }
 };
 
+const tryGetTagsSaga = function* (action) {
+    try {
+        const { tags } = action.payload;
+
+        const getTagsResponse = yield call(api.getTags, tags);
+
+        if (getTagsResponse) {
+            console.log("getTagsResponse", getTagsResponse);
+
+            if (getTagsResponse.status === 200) {
+                yield put(getTagSuccess(getTagsResponse.responseBody));
+            } else if (getTagsResponse.status === 400) {
+                console.log("Something wrong! Got a status 400", getTagsResponse.responseBody);
+                yield put(getTagFailure(getTagsResponse.responseBody));
+            } else {
+                console.log("Something wrong! Got an unknown status.", getTagsResponse);
+                yield put(getTagFailure({ detail: ["Unknown status. Check console!"] }));
+            }
+        } else {
+            console.log("Get Project failed by api. No response !");
+            yield put(getTagFailure({ detail: ["No response fetched. Please contact the API team!"] }));
+        }
+    } catch (err) {
+        console.log("Get Project failed by api. Error => ", err);
+        yield put(getTagFailure({ detail: [err.detail] }));
+    }
+};
+
 const saga = function* () {
     // AUTH
     yield takeLatest(LOGIN_REQUEST, tryLoginSaga);
@@ -753,6 +784,9 @@ const saga = function* () {
     yield takeLatest(FINISH_PROJECT_REQUEST, tryFinishProjectSaga);
     yield takeLatest(RATE_PROJECT_REQUEST, tryRateProjectSaga);
     yield takeLatest(DELETE_PROJECT_REQUEST, tryDeleteProjectSaga);
+
+    // TAGS
+    yield takeLatest(GET_TAG_REQUEST, tryGetTagsSaga);
 
     // BIDS
     yield takeLatest(CREATE_BID_REQUEST, tryCreateBidSaga);

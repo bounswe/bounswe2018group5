@@ -3,6 +3,7 @@ import withStyles from "@material-ui/core/styles/withStyles";
 import Chip from "@material-ui/core/Chip/Chip.js"
 
 import Helmet from 'react-helmet';
+import Badge from 'components/Badge/Badge';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import Divider from '@material-ui/core/Divider';
@@ -90,7 +91,8 @@ class ProjectPage extends Component {
                 owner: {},
                 bids: [],
                 attachments: [],
-                freelancer: {}
+                freelancer: {},
+                tags: []
             },
         };
     }
@@ -112,7 +114,8 @@ class ProjectPage extends Component {
             });
             const freelancer = project.freelancer || {};
             const attachments = project.attachments || [];
-            var current_project = { ...project, bids: bids, freelancer: freelancer, attachments: attachments };
+            const tags = project.tags || [];
+            var current_project = { ...project, bids: bids, freelancer: freelancer, attachments: attachments, tags: tags };
             this.setState({ project: current_project });
 
             this.props.getProjectReset();
@@ -457,6 +460,14 @@ class ProjectPage extends Component {
             </GridItem>;
         }
 
+        let tagsList;
+
+        tagsList = this.state.project.tags.map((prop, key) => {
+            return (
+                <Badge fontSize={"12px"} color="success">{prop.label}</Badge>
+            );
+        });
+
         return (
             <div>
                 <div>
@@ -472,6 +483,7 @@ class ProjectPage extends Component {
                             <GridItem xs={12} sm={12} md={12}>
                                 <h1 className={classes.title}>{this.state.project.title}</h1>
                                 <Paper className={classes.root} style={{ padding: "32px" }}>
+                                    {tagsList}
                                     <h4>
                                         {this.state.project.description}
                                     </h4>

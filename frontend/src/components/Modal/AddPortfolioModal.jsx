@@ -9,6 +9,7 @@ import DialogActions from "@material-ui/core/DialogActions";
 import IconButton from "@material-ui/core/IconButton";
 // @material-ui/icons
 import {Close} from '@material-ui/icons';
+import SearchIcon from '@material-ui/icons/Search';
 import AddIcon from '@material-ui/icons/Add';
 // core components
 import Button from '@material-ui/core/Button';
@@ -23,6 +24,14 @@ import CustomInput from "components/CustomInput/CustomInput";
 import DateTimePicker from "components/DateTimePicker/DateTimePicker";
 import connect from "react-redux/es/connect/connect";
 import {tryPostPortfolio, postPortfolioReset} from "redux/user/Actions.js";
+
+import { tryGetTag, getTagReset } from "redux/project/Actions.js";
+
+import TagsInput from 'react-tagsinput'
+
+import 'react-tagsinput/react-tagsinput.css'; // If using WebPack and style-loader.
+
+import Select from 'react-select';
 
 
 function Transition(props) {
@@ -42,7 +51,12 @@ class AddPortfolioModal extends React.Component {
             description: '', 
             date: null, 
             project_id: null,
+            tags: [],
+            options: [],
+            options_tags: [],
         };
+
+        this.handleTagsChange = this.handleTagsChange.bind(this);
     }
 
     handleClickOpen(modal) {
@@ -59,8 +73,13 @@ class AddPortfolioModal extends React.Component {
     }
 
     handleCreatePortfolio(event) {
-        const {title, description, date, project_id} = this.state;
-        this.props.tryPostPortfolio(title, description, date, project_id);
+        const { title, description, date, project_id, options_tags } = this.state;
+        let options = [];
+        options_tags.map((prop, key) => {
+            options.push(prop.value);
+            return null;
+        });     
+        this.props.tryPostPortfolio(title, description, date, project_id, options);
         event.preventDefault();
     }
 
@@ -90,6 +109,26 @@ class AddPortfolioModal extends React.Component {
             this.handleClose("modal");
             this.props.postPortfolioReset();
         }
+
+
+        const { getTagInProgress, getTagHasError, getTagCompleted, search } = this.props.project;
+        if (!getTagInProgress && !getTagHasError && getTagCompleted) {
+            if (response) {
+                let options = [];
+                Object.keys(search).forEach(function (key) {
+                    search[key].map((prop, key) => {
+                        options.push({
+                            label: prop.label + ": " + prop.description,
+                            value: prop.wikidata_id
+                        });
+                        return null;
+                    });
+                });
+                this.setState({ options });
+            }
+            this.props.getTagReset();
+        }
+
         let currentPosition = this.props.currentPosition;
 
         if (currentPosition) {
@@ -100,6 +139,15 @@ class AddPortfolioModal extends React.Component {
             });
             this.props.handleToLinkedIn();
         }
+    }
+
+    handleTagsChange(tags) {
+        this.setState({ tags })
+    }
+
+    searchTags = (e) => {
+        const { tags } = this.state;
+        this.props.tryGetTag(tags.join(','));
     }
 
     render() {
@@ -179,6 +227,24 @@ class AddPortfolioModal extends React.Component {
                                             onChange={event => this.setState({date: event.format("YYYY-MM-DD")})}
                                         />
                                     </GridItem>
+                                    <GridItem xs={12} sm={12} md={10}>
+                                        <TagsInput value={this.state.tags} onChange={this.handleTagsChange} />
+                                    </GridItem>
+                                    <GridItem xs={12} sm={12} md={2}>
+                                        <Button variant="contained" color="primary" onClick={this.searchTags}>
+                                            <SearchIcon className={classes.rightIcon} />
+                                        </Button>
+                                    </GridItem>
+                                    <GridItem xs={12} sm={12} md={12}>
+                                        <Select
+                                            isMulti
+                                            name="tags"
+                                            options={this.state.options}
+                                            className="basic-multi-select"
+                                            classNamePrefix="select"
+                                            onChange={(val) => { this.setState({ options_tags: val }) }}
+                                        />
+                                    </GridItem>
                                     {/* <GridItem xs={12} sm={12} md={6}>
                                         <CustomInput
                                             labelText="Budget"
@@ -222,13 +288,16 @@ class AddPortfolioModal extends React.Component {
 
 function bindAction(dispatch) {
     return {
-        tryPostPortfolio: (title, description, date, project_id) => dispatch(tryPostPortfolio(title, description, date, project_id)),
-        postPortfolioReset: () => dispatch(postPortfolioReset())
+        tryPostPortfolio: (title, description, date, project_id, tags) => dispatch(tryPostPortfolio(title, description, date, project_id, tags)),
+        postPortfolioReset: () => dispatch(postPortfolioReset()),
+        tryGetTag: (tags) => dispatch(tryGetTag(tags)),
+        getTagReset: () => dispatch(getTagReset())
     };
 }
 
 const mapStateToProps = state => ({
-    user: state.user
+    user: state.user,
+    project: state.project
 });
 
 export default connect(

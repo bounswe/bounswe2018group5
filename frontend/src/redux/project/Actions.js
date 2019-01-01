@@ -47,6 +47,10 @@ import {
     ACCEPT_BID_REQUEST,
     ACCEPT_BID_RESET,
     ACCEPT_BID_SUCCESS,
+    GET_TAG_REQUEST,
+    GET_TAG_SUCCESS,
+    GET_TAG_FAILURE,
+    GET_TAG_RESET,
 } from "./actionTypes";
 
 export const tryGetProjects = () => ({
@@ -99,14 +103,15 @@ export const getOwnProjectsReset = () => ({
     type: GET_OWN_PROJECTS_RESET
 });
 
-export const tryCreateProject = (title, description, project_deadline, budget, milestones) => ({
+export const tryCreateProject = (title, description, project_deadline, budget, milestones, tags) => ({
     type: CREATE_PROJECT_REQUEST,
     payload: {
         title,
         description,
         project_deadline,
         budget,
-        milestones
+        milestones,
+        tags
     }
 });
 export const createProjectSuccess = res => ({
@@ -274,3 +279,20 @@ export const discardBidReset = () => ({
     type: DISCARD_BID_RESET
 });
 
+export const tryGetTag = (tags) => ({
+    type: GET_TAG_REQUEST,
+    payload: {
+        tags
+    }
+});
+export const getTagSuccess = res => ({
+    type: GET_TAG_SUCCESS,
+    payload: res
+});
+export const getTagFailure = errorData => ({
+    type: GET_TAG_FAILURE,
+    payload: errorData
+});
+export const getTagReset = () => ({
+    type: GET_TAG_RESET
+});
