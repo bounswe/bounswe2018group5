@@ -78,3 +78,25 @@ class Wallet(BaseDocument):
     balance = FloatField(min_value=0)
 
     meta = {'collection': 'wallets'}
+
+
+class Message(BaseDocument):
+    def schema(self):
+        pass
+
+    sender = ReferenceField('User', required=True)
+    receiver = ReferenceField('User', required=True)
+    body = StringField(max_length=2000)
+
+    meta = {'collection': 'messages'}
+
+
+class Conversation(BaseDocument):
+    def schema(self):
+        pass
+
+    user1 = ReferenceField('User', required=True)
+    user2 = ReferenceField('User', required=True)
+    messages = ListField(ReferenceField('Message'), default=[])
+
+    meta = {'collection': 'conversations'}

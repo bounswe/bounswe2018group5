@@ -130,7 +130,7 @@ class ProjectCard extends React.Component {
     }
 
     render() {
-        const { classes, project_id, title, description, project_deadline, budget, created_at, owner, is_freelancer, owned, status, milestones, tags } = this.props;
+        const { classes, project_id, title, description, project_deadline, budget, created_at, owner, is_freelancer, owned, status, milestones, tags, link } = this.props;
         const project = {
             project_id,
             title,
@@ -224,7 +224,7 @@ class ProjectCard extends React.Component {
                         {cardHeader}
                     </CardHeader>
                     <CardBody>
-                        <Link to={"/home/projects/"+ project_id +"/"} style={{color: "black"}}>
+                        <Link to={link || "/home/projects/"+ project_id +"/"} style={{color: "black"}}>
                             <h4 className={classes.cardTitle}>{title}</h4>
                             <p>{descriptionText}</p>
                             <p align="right">
