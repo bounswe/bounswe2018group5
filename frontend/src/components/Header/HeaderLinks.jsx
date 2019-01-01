@@ -69,6 +69,13 @@ function HeaderLinks({...props}) {
     return (
         <List className={classes.list}>
             <ListItem className={classes.listItem} alignself='center'>
+                <Link to={"/browse"} className={classes.link}>
+                    <Button color="rose" round>
+                        Browse Projects
+                    </Button>
+                </Link>
+            </ListItem>
+            <ListItem className={classes.listItem} alignself='center'>
                 <div className={classes.search}>
                     <div className={classes.searchIcon}>
                         <SearchIcon/>
