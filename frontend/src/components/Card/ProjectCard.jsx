@@ -10,6 +10,7 @@ import CardHeader from "material-kit-react/components/Card/CardHeader";
 import CardFooter from "material-kit-react/components/Card/CardFooter";
 import ProjectDropdown from "components/DropDown/ProjectDropdown"
 import Badge from 'components/Badge/Badge';
+import Tooltip from "@material-ui/core/Tooltip";
 import AddAlert from "@material-ui/icons/AddAlert";
 import Snackbar from "material-dashboard-react/dist/components/Snackbar/Snackbar";
 
@@ -149,7 +150,14 @@ class ProjectCard extends React.Component {
         
         tagsList = tags.map((prop, key) => {
             return (
-                <Badge fontSize={"12px"} color="success">{prop.label}</Badge>
+                <Tooltip
+                    id="tooltip-left"
+                    title={prop.description}
+                    placement="top"
+                    classes={{ tooltip: classes.tooltip }}
+                >
+                    <Button fontSize={"16px"} color="success">{prop.label}</Button>
+                </Tooltip>
             );
         });
         let cardHeader, badgesStatus;;

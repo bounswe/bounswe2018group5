@@ -2,7 +2,7 @@ import React from "react";
 // material-ui components
 import withStyles from "@material-ui/core/styles/withStyles";
 import Grid from '@material-ui/core/Grid';
-import Badge from 'components/Badge/Badge';
+import Tooltip from "@material-ui/core/Tooltip";
 // core components
 import Card from "material-kit-react/components/Card/Card";
 import CardBody from "material-kit-react/components/Card/CardBody";
@@ -76,7 +76,15 @@ class PortfolioCard extends React.Component {
 
         tagsList = tags.map((prop, key) => {
             return (
-                <Badge fontSize={"12px"} color="success">{prop.label}</Badge>
+                <Tooltip
+                    id="tooltip-left"
+                    title={prop.description}
+                    placement="top"
+                    classes={{ tooltip: classes.tooltip }}
+                >
+                    <Button fontSize={"16px"} color="success">{prop.label}</Button>
+                </Tooltip>
+                
             );
         });
         let cardHeader;

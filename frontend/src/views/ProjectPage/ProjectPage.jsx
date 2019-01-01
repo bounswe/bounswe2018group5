@@ -3,7 +3,6 @@ import withStyles from "@material-ui/core/styles/withStyles";
 import Chip from "@material-ui/core/Chip/Chip.js"
 
 import Helmet from 'react-helmet';
-import Badge from 'components/Badge/Badge';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import Divider from '@material-ui/core/Divider';
@@ -464,7 +463,14 @@ class ProjectPage extends Component {
 
         tagsList = this.state.project.tags.map((prop, key) => {
             return (
-                <Badge fontSize={"12px"} color="success">{prop.label}</Badge>
+                <Tooltip
+                    id="tooltip-left"
+                    title={prop.description}
+                    placement="top"
+                    classes={{ tooltip: classes.tooltip }}
+                >
+                    <Button fontSize={"16px"} color="success">{prop.label}</Button>
+                </Tooltip>
             );
         });
 
