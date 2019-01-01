@@ -87,6 +87,28 @@ class api {
         });
     };
 
+    getRecommendedProjects = (user_id) => {
+        return httpService.fetch({
+            path: "api/recommend/",
+            method: "GET",
+            params: {
+                id: user_id
+            },
+            sendToken: true
+        });
+    };
+
+    searchProjects = (query) => {
+        return httpService.fetch({
+            path: "api/project/search/",
+            method: "GET",
+            params: {
+                query
+            },
+            sendToken: true
+        });
+    };
+
     getProject = (project_id) => {
         return httpService.fetch({
             path: "api/project/",

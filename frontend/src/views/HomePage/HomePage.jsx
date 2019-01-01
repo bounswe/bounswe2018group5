@@ -14,7 +14,9 @@ import GridContainer from "material-dashboard-react/dist/components/Grid/GridCon
 
 import homePageStyle from "material-dashboard-react/dist/assets/jss/material-dashboard-react/views/dashboardStyle";
 import connect from "react-redux/es/connect/connect";
-import {tryGetProjects, getProjectsReset} from "redux/project/Actions.js";
+import { tryGetProjects, getProjectsReset, tryGetRecommendedProjects, getRecommendedProjectsReset} from "redux/project/Actions.js";
+
+import { getCookie, LOGGEDIN_USERID_COOKIE } from "services/cookies";
 
 class HomePage extends React.Component {
     constructor(props) {
@@ -22,11 +24,14 @@ class HomePage extends React.Component {
         // we use this to make the card to appear after the page has been rendered
         this.state = {
             projects: [],
+            recom_projects: []
         };
     }
 
     componentDidMount() {
         this.props.tryGetProjects();
+        const user_id = getCookie(LOGGEDIN_USERID_COOKIE);
+        this.props.tryGetRecommendedProjects(user_id);
     }
 
     componentDidUpdate(prevProps, prevState) {
@@ -35,6 +40,15 @@ class HomePage extends React.Component {
         if (!getProjectsInProgress && !getProjectsHasError && getProjectsCompleted) {
             this.setState({projects: projects});
             this.props.getProjectsReset();
+        }
+
+        const { getRecommendedProjectsInProgress, getRecommendedProjectsHasError, getRecommendedProjectsCompleted, recom_projects, response} = this.props.project;
+
+        if (!getRecommendedProjectsInProgress && !getRecommendedProjectsHasError && getRecommendedProjectsCompleted) {
+            if(response) {
+                this.setState({ recom_projects: recom_projects });
+                this.props.getRecommendedProjectsReset();
+            }
         }
     }
 
@@ -47,10 +61,33 @@ class HomePage extends React.Component {
     }
 
     render() {
-        const {projects} = this.state;
+        const { projects, recom_projects } = this.state;
         var project_grid = (
             <GridContainer>
                 {projects.map((prop, key) => {
+                    return (
+                        <GridItem xs={12} sm={12} md={4} key={key}>
+                            <ProjectCard
+                                title={prop.title}
+                                description={prop.description}
+                                budget={prop.budget}
+                                project_deadline={prop.deadline}
+                                created_at={prop.created_at}
+                                owner={prop.owner}
+                                owner_id={prop.owner_id}
+                                project_id={prop.project_id}
+                                milestones={prop.milestones}
+                                tags={prop.tags}
+                            />
+                        </GridItem>
+                    );
+                })}
+            </GridContainer>
+        );
+
+        var recom_project_grid = (
+            <GridContainer>
+                {recom_projects.map((prop, key) => {
                     return (
                         <GridItem xs={12} sm={12} md={4} key={key}>
                             <ProjectCard
@@ -85,6 +122,9 @@ class HomePage extends React.Component {
                 }}>
                     <AddProjectModal handleToUpdate={this.handleToUpdate.bind(this)}/>
                 </div>
+                <h1>Recommended Projects</h1>
+                {recom_project_grid}
+                <h1>All Projects</h1>
                 {project_grid}
             </div>
         )
@@ -95,7 +135,9 @@ class HomePage extends React.Component {
 function bindAction(dispatch) {
     return {
         tryGetProjects: () => dispatch(tryGetProjects()),
-        getProjectsReset: () => dispatch(getProjectsReset())
+        getProjectsReset: () => dispatch(getProjectsReset()),
+        tryGetRecommendedProjects: (user_id) => dispatch(tryGetRecommendedProjects(user_id)),
+        getRecommendedProjectsReset: () => dispatch(getRecommendedProjectsReset())
     };
 }
 

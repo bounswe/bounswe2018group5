@@ -29,6 +29,7 @@
     "perfect-scrollbar": "1.4.0",
     "prop-types": "latest",
     "react": "16.5.2",
+    "react-annotated-paragraph": "^1.0.6",
     "react-datetime": "^2.16.2",
     "react-dom": "16.5.2",
     "react-filepond": "^5.0.0",

@@ -1,123 +1,51 @@
 import React from "react";
-import classNames from "classnames";
 // @material-ui/core components
 import withStyles from "@material-ui/core/styles/withStyles";
-import MenuItem from "@material-ui/core/MenuItem";
-import MenuList from "@material-ui/core/MenuList";
-import Grow from "@material-ui/core/Grow";
-import Paper from "@material-ui/core/Paper";
-import ClickAwayListener from "@material-ui/core/ClickAwayListener";
-import Hidden from "@material-ui/core/Hidden";
-import Poppers from "@material-ui/core/Popper";
-// @material-ui/icons
-import Notifications from "@material-ui/icons/Notifications";
-// core components
-import Button from "material-dashboard-react/dist/components/CustomButtons/Button";
+import Input from '@material-ui/core/Input';
+import SearchIcon from '@material-ui/icons/Search';
+import Button from '@material-ui/core/Button';
+import GridContainer from "material-dashboard-react/dist/components/Grid/GridContainer";
+import GridItem from "material-dashboard-react/dist/components/Grid/GridItem";
 
 import headerLinksStyle from "material-dashboard-react/dist/assets/jss/material-dashboard-react/components/headerLinksStyle";
 
 class HeaderLinks extends React.Component {
-    state = {
-        open: false
-    };
-    handleToggle = () => {
-        this.setState(state => ({ open: !state.open }));
-    };
+    constructor(props) {
+        super(props);
+        // we use this to make the card to appear after the page has been rendered
+        this.state = {
+            query: ""
+        };
+    }
 
-    handleClose = event => {
-        if (this.anchorEl.contains(event.target)) {
-            return;
+    searchProjects = (e) => {
+        const { history } = this.props;
+        const { query } = this.state;
+        if (query !== "") {
+            history.push("/home/index/" + query);
         }
-
-        this.setState({ open: false });
-    };
+    }
 
     render() {
         const { classes } = this.props;
-        const { open } = this.state;
         return (
-            <div>
-                <div className={classes.manager}>
-                    <Button
-                        buttonRef={node => {
-                            this.anchorEl = node;
-                        }}
-                        color={window.innerWidth > 959 ? "transparent" : "white"}
-                        justIcon={window.innerWidth > 959}
-                        simple={!(window.innerWidth > 959)}
-                        aria-owns={open ? "menu-list-grow" : null}
-                        aria-haspopup="true"
-                        onClick={this.handleToggle}
-                        className={classes.buttonLink}
-                    >
-                        <Notifications className={classes.icons} />
-                        <span className={classes.notifications}>5</span>
-                        <Hidden mdUp implementation="css">
-                            <p onClick={this.handleClick} className={classes.linkText}>
-                                Notification
-                            </p>
-                        </Hidden>
-                    </Button>
-                    <Poppers
-                        open={open}
-                        anchorEl={this.anchorEl}
-                        transition
-                        disablePortal
-                        className={
-                            classNames({ [classes.popperClose]: !open }) +
-                            " " +
-                            classes.pooperNav
-                        }
-                    >
-                        {({ TransitionProps, placement }) => (
-                            <Grow
-                                {...TransitionProps}
-                                id="menu-list-grow"
-                                style={{
-                                    transformOrigin:
-                                        placement === "bottom" ? "center top" : "center bottom"
-                                }}
-                            >
-                                <Paper>
-                                    <ClickAwayListener onClickAway={this.handleClose}>
-                                        <MenuList role="menu">
-                                            <MenuItem
-                                                onClick={this.handleClose}
-                                                className={classes.dropdownItem}
-                                            >
-                                                Mike John responded to your email
-                                            </MenuItem>
-                                            <MenuItem
-                                                onClick={this.handleClose}
-                                                className={classes.dropdownItem}
-                                            >
-                                                You have 5 new tasks
-                                            </MenuItem>
-                                            <MenuItem
-                                                onClick={this.handleClose}
-                                                className={classes.dropdownItem}
-                                            >
-                                                You're now friend with Andrew
-                                            </MenuItem>
-                                            <MenuItem
-                                                onClick={this.handleClose}
-                                                className={classes.dropdownItem}
-                                            >
-                                                Another Notification
-                                            </MenuItem>
-                                            <MenuItem
-                                                onClick={this.handleClose}
-                                                className={classes.dropdownItem}
-                                            >
-                                                Another One
-                                            </MenuItem>
-                                        </MenuList>
-                                    </ClickAwayListener>
-                                </Paper>
-                            </Grow>
-                        )}
-                    </Poppers>
-                </div>
+            <div style={{
+                position: "fixed",
+                right: "64px",
+            }}>
+                <GridContainer>
+                    <GridItem xs={12} sm={12} md={10}>
+                        <Input 
+                            placeholder={"Search Projects"}
+                            onChange={event => this.setState({query: event.target.value })}
+                    />
+                    </GridItem>
+                    <GridItem xs={12} sm={12} md={2}>
+                        <Button variant="contained" mini size="small" color="primary" onClick={this.searchProjects}>
+                            <SearchIcon className={classes.rightIcon} />
+                        </Button>
+                    </GridItem>
+                </GridContainer>
             </div>
         );
     }

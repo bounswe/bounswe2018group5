@@ -18,6 +18,8 @@ import {
     DISCARD_PROJECT_REQUEST, 
     FINISH_PROJECT_REQUEST, 
     GET_PROJECTS_REQUEST, 
+    GET_RECOMMENDED_PROJECTS_REQUEST, 
+    SEARCH_PROJECTS_REQUEST, 
     GET_PROJECT_REQUEST, 
     GET_TAG_REQUEST, 
     DELETE_PROJECT_REQUEST, 
@@ -30,6 +32,10 @@ import {
 import {
     getProjectsFailure, 
     getProjectsSuccess,
+    getRecommendedProjectsFailure,
+    getRecommendedProjectsSuccess,
+    searchProjectsFailure,
+    searchProjectsSuccess,
     getProjectFailure,
     getProjectSuccess, 
     createProjectSuccess, 
@@ -283,6 +289,62 @@ const tryGetProjectsSaga = function* () {
     } catch (err) {
         console.log("Get Projects failed by api. Error => ", err);
         yield put(getProjectsFailure({detail: [err.detail]}));
+    }
+};
+
+const tryGetRecommendedProjectsSaga = function* (action) {
+    try {
+        const { user_id } = action.payload;
+
+        const getRecommendedProjectsResponse = yield call(api.getRecommendedProjects, user_id);
+
+        if (getRecommendedProjectsResponse) {
+            console.log("getRecommendedProjectsResponse", getRecommendedProjectsResponse);
+
+            if (getRecommendedProjectsResponse.status === 200) {
+                yield put(getRecommendedProjectsSuccess(getRecommendedProjectsResponse.responseBody));
+            } else if (getRecommendedProjectsResponse.status === 400) {
+                console.log("Something wrong! Got a status 400", getRecommendedProjectsResponse.responseBody);
+                yield put(getRecommendedProjectsFailure(getRecommendedProjectsResponse.responseBody));
+            } else {
+                console.log("Something wrong! Got an unknown status.", getRecommendedProjectsResponse);
+                yield put(getRecommendedProjectsFailure({ detail: ["Unknown status. Check console!"] }));
+            }
+        } else {
+            console.log("Get Projects failed by api. No response !");
+            yield put(getRecommendedProjectsFailure({ detail: ["No response fetched. Please contact the API team!"] }));
+        }
+    } catch (err) {
+        console.log("Get Projects failed by api. Error => ", err);
+        yield put(getRecommendedProjectsFailure({ detail: [err.detail] }));
+    }
+};
+
+const trySearchProjectsSaga = function* (action) {
+    try {
+        const { query } = action.payload;
+
+        const searchProjectsResponse = yield call(api.searchProjects, query);
+
+        if (searchProjectsResponse) {
+            console.log("searchProjectsResponse", searchProjectsResponse);
+
+            if (searchProjectsResponse.status === 200) {
+                yield put(searchProjectsSuccess(searchProjectsResponse.responseBody));
+            } else if (searchProjectsResponse.status === 400) {
+                console.log("Something wrong! Got a status 400", searchProjectsResponse.responseBody);
+                yield put(searchProjectsFailure(searchProjectsResponse.responseBody));
+            } else {
+                console.log("Something wrong! Got an unknown status.", searchProjectsResponse);
+                yield put(searchProjectsFailure({ detail: ["Unknown status. Check console!"] }));
+            }
+        } else {
+            console.log("Get Projects failed by api. No response !");
+            yield put(searchProjectsFailure({ detail: ["No response fetched. Please contact the API team!"] }));
+        }
+    } catch (err) {
+        console.log("Get Projects failed by api. Error => ", err);
+        yield put(searchProjectsFailure({ detail: [err.detail] }));
     }
 };
 
@@ -776,6 +838,8 @@ const saga = function* () {
 
     // PROJECTS
     yield takeLatest(GET_PROJECTS_REQUEST, tryGetProjectsSaga);
+    yield takeLatest(GET_RECOMMENDED_PROJECTS_REQUEST, tryGetRecommendedProjectsSaga);
+    yield takeLatest(SEARCH_PROJECTS_REQUEST, trySearchProjectsSaga);
     yield takeLatest(GET_PROJECT_REQUEST, tryGetProjectSaga);
     yield takeLatest(GET_OWN_PROJECTS_REQUEST, tryGetOwnProjectsSaga);
     yield takeLatest(CREATE_PROJECT_REQUEST, tryCreateProjectSaga);
