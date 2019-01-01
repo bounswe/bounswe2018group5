@@ -9,15 +9,27 @@ import withStyles from "@material-ui/core/styles/withStyles";
 
 import imagesStyles from "material-kit-react/assets/jss/material-kit-react/imagesStyles";
 
+import connect from "react-redux/es/connect/connect";
+
+import { trySendMessage, sendMessageReset } from "redux/user/Actions.js";
+
+
 
 const style = {
   ...imagesStyles,
 
 };
 class MessageCard extends React.Component {
-  state = {
-    open: false,
-  };
+  constructor(props) {    
+    super(props);
+    // we use this to make the card to appear after the page has been rendered
+    this.state = {
+      open: false,
+      message: ""
+    };
+
+    this.onClick = this.onClick.bind(this);
+  }
 
   handleClickOpen = () => {
     this.setState({ open: true });
@@ -27,8 +39,23 @@ class MessageCard extends React.Component {
     this.setState({ open: false });
   };
 
+  onClick() {
+    this.props.trySendMessage(this.props.projectOwner, this.state.message);
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    const { sendMessageInProgress, sendMessageHasError, sendMessageCompleted, response } = this.props.user;
+
+    if (!sendMessageInProgress && !sendMessageHasError && sendMessageCompleted) {
+      if (response) {
+        this.handleClose();
+        this.props.sendMessageReset();
+      }
+    }
+  }
+
   render() {
-    const { classes, projectOwner } = this.props;
+    const { classes } = this.props;
     return (
       <div>
         <Button onClick={this.handleClickOpen}>Send Message</Button>
@@ -39,28 +66,6 @@ class MessageCard extends React.Component {
         >
           <DialogTitle id="form-dialog-title">Send Message</DialogTitle>
           <DialogContent>
-            <TextField
-              autoFocus
-              margin="dense"
-              id="standard-read-only-input"
-              label="Send to:"
-              defaultValue={projectOwner}
-              className={classes.textField}
-              fullWidth
-              InputProps={{
-                readOnly: true,
-              }}
-            />
-            <br />
-            <TextField
-              autoFocus
-              margin="dense"
-              id="standard-read-only-input"
-              label="Subject :"
-              className={classes.textField}
-              fullWidth
-            />
-            <br />
 
             <TextField
               id="standard-textarea"
@@ -70,10 +75,11 @@ class MessageCard extends React.Component {
               className={classes.textField}
               margin="normal"
               fullWidth
+              onChange={event => this.setState({ message: event.target.value })}
             />
           </DialogContent>
           <DialogActions>
-            <Button color="secondary" onClick={this.handleClose} variant="contained" size="small" className={classes.button}>
+            <Button color="secondary" onClick={this.onClick} variant="contained" size="small" className={classes.button}>
               Send
             </Button>
           </DialogActions>
@@ -83,4 +89,18 @@ class MessageCard extends React.Component {
   }
 }
 
-export default withStyles(style)(MessageCard);
+function bindAction(dispatch) {
+  return {
+    trySendMessage: (user_id, message) => dispatch(trySendMessage(user_id, message)),
+    sendMessageReset: () => dispatch(sendMessageReset()),
+  };
+}
+
+const mapStateToProps = state => ({
+  user: state.user
+});
+
+export default connect(
+  mapStateToProps,
+  bindAction
+)(withStyles(style)(MessageCard));

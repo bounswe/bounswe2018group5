@@ -130,7 +130,7 @@ class ProjectPage extends Component {
             createBid = sendMessage = '';
         } else {
             createBid = <CreateBidModal project_id={this.state.project.project_id}></CreateBidModal>;
-            sendMessage = <MessageCard projectOwner="Mete Kocaman"></MessageCard>;
+            sendMessage = <MessageCard projectOwner={this.state.project.owner.id}></MessageCard>;
         }
 
         let userBox, attachmentBox;
