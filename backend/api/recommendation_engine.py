@@ -9,6 +9,8 @@ from project.models import *
 def find_freelancers(project):
     temp = []
     for user in User.objects:
+        if project.owner == user:
+            continue
         match_score = 0.0
         for project_tag in project.tags:
             for user_tag in user.tags:
@@ -22,7 +24,6 @@ def find_freelancers(project):
     temp.reverse()
     if len(temp) == 0:
         return temp
-    max_match = temp[0][0]
     ret = []
     for score, user in temp:
         ret.append(utils.user_json(user))
@@ -32,6 +33,8 @@ def find_freelancers(project):
 def find_projects(user, requester):
     temp = []
     for project in Project.objects:
+        if project.owner == user:
+            continue
         match_score = 0.0
         for project_tag in project.tags:
             for user_tag in user.tags:
@@ -45,7 +48,6 @@ def find_projects(user, requester):
     temp.reverse()
     if len(temp) == 0:
         return temp
-    max_match = temp[0][0]
     ret = []
     for score, project in temp:
         ret.append(utils.project_json(project, requester))
