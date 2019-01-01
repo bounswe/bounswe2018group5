@@ -9,7 +9,7 @@ import Favorite from "@material-ui/icons/Favorite";
 function LoggedInFooter({ ...props }) {
     const { classes } = props;
     return (
-        <footer className={classes.footer}>
+        <footer className={classes.footer} style={{ marginTop: "100px" }}>
             <div className={classes.container}>
                 <div className={classes.left}>
                 </div>
