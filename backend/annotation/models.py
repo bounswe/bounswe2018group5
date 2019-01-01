@@ -35,6 +35,17 @@ class Annotation(BaseDocument):
     motivation = StringField(max_length=100)
     creator = URLField(null=True)
 
+    @property
+    def annotation_object(self):
+        obj = {}
+        obj['context'] = self.context
+        obj['IRI'] = self.IRI
+        obj['motivation'] = self.motivation
+        obj['creator'] = self.creator
+        obj['target'] = Target.objects.get(annotation=self)
+        obj['body'] = Body.objects.get(annotation=self)
+        return obj
+
 
 class Body(BaseDocument):
     def schema(self):
