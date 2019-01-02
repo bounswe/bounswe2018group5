@@ -2,10 +2,17 @@ import React, { Component} from "react";
 import {Route, Redirect} from "react-router-dom";
 import { getCookie, setCookie, removeCookie, LOGGEDIN_COOKIE, TOKEN_COOKIE, LOGGEDIN_USERID_COOKIE } from "services/cookies";
 import connect from "react-redux/es/connect/connect";
-import { tryGetProfile } from "redux/user/Actions.js";
+import { tryGetProfile, profileReset } from "redux/user/Actions.js";
 import { logout } from "redux/auth/Actions.js";
 
 class PrivateRoute extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            response: false
+        };
+    }
+
     componentDidMount() {
         this.props.tryGetProfile();
     }
@@ -18,12 +25,14 @@ class PrivateRoute extends Component {
             if(!response) {
                 removeCookie(TOKEN_COOKIE);
                 removeCookie(LOGGEDIN_COOKIE);
-                removeCookie(LOGGEDIN_USERID_COOKIE)
+                removeCookie(LOGGEDIN_USERID_COOKIE);
                 this.props.logout();
-                history.push("/");
+                history.push("/login");
             } else {
-                if (!getCookie(LOGGEDIN_USERID_COOKIE)) setCookie(LOGGEDIN_USERID_COOKIE, user.id, { path: "/" });
+                setCookie(LOGGEDIN_USERID_COOKIE, user.id, { path: "/" });
+                this.setState({ response: true });
             }
+            this.props.profileReset();
         }
     }
 
@@ -46,6 +55,7 @@ class PrivateRoute extends Component {
 function bindAction(dispatch) {
     return {
         tryGetProfile: () => dispatch(tryGetProfile()),
+        profileReset: () => dispatch(profileReset()),
         logout: () => dispatch(logout()),
     };
 }
