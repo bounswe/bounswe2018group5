@@ -12,7 +12,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.karpuz.karpuz.Activity.ProfileActivity
+import com.karpuz.karpuz.Activity.ProjectActivity
 import com.karpuz.karpuz.Adapter.ProjectsAdapter
+import com.karpuz.karpuz.Extensions.shortToast
 import com.karpuz.karpuz.Network.KarpuzAPIModels
 import com.karpuz.karpuz.Network.KarpuzAPIService
 
@@ -76,18 +78,25 @@ class ProjectsFragment : Fragment() {
                         projectsUpdated(this.projects)
                     } else {
                         Log.e(TAG, "Error when getting projects")
+                        swipe_refresh_layout_projects.isRefreshing = false
+                        activity?.shortToast("Update error")
                     }
                 },
                 { error ->
                     Log.e(TAG, "Error when getting projects: {$error}")
+                    activity?.runOnUiThread {
+                        swipe_refresh_layout_projects.isRefreshing = false
+                        activity?.shortToast("Update error")
+                    }
                 }
             )
         )
     }
 
     private fun projectSelected(project: KarpuzAPIModels.Project) {
-        //TODO open single project view
-        Log.v(TAG, "Project selected")
+        val intent = Intent(context, ProjectActivity::class.java)
+        intent.putExtra("PROJECT_ID", project.project_id)
+        startActivity(intent)
     }
 
     private fun userSelected(userId: String?) {

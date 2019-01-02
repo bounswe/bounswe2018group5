@@ -39,7 +39,8 @@
                 android:text="CmpE 451 dersimiz için Freelancer projesi yazılması gerekiyor. Web ve Android olarak 2 farklı platform tercihimiz."
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" android:id="@+id/project_cell_description"
-                android:textAppearance="@android:style/TextAppearance.Material.Medium"/>
+                android:textAppearance="@android:style/TextAppearance.Material.Medium" android:maxLines="4"
+                android:ellipsize="end"/>
     </LinearLayout>
     <LinearLayout
             android:orientation="vertical"

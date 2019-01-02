@@ -33,7 +33,7 @@ def find_freelancers(project):
 def find_projects(user, requester):
     temp = []
     for project in Project.objects:
-        if project.owner == user or project.status in [-1, 2]:
+        if project.owner == user or project.status in [-1, 1, 2]:
             continue
         match_score = 0.0
         for project_tag in project.tags:

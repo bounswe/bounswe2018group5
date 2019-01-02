@@ -153,10 +153,11 @@ def project_handler(request):
                 new_project.status = 0  # default
                 new_project.location = body['location'] if 'location' in body else None
                 new_project.tags = []
-                for tag in body['tags']:
-                    tag = str(tag)
-                    create_tag(tag)
-                    new_project.tags.append(SemanticTag.objects.get(wikidata_id=tag))
+                if 'tags' in body:
+                    for tag in body['tags']:
+                        tag = str(tag)
+                        create_tag(tag)
+                        new_project.tags.append(SemanticTag.objects.get(wikidata_id=tag))
                 new_project.save()
                 if "milestones" in body:
                     for milestone in body['milestones']:

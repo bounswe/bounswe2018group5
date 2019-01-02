@@ -34,8 +34,6 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         private const val TAG = "HomeActivity"
     }
 
-    private val disposeBag = CompositeDisposable()
-
     private lateinit var userViewModel: UserViewModel
     private val fragments = HashMap<Int, Fragment>()
     private val titles = HashMap<Int, String>()
@@ -84,11 +82,6 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         toggle.syncState()
 
         nav_view.setNavigationItemSelectedListener(this)
-    }
-
-    override fun onPause() {
-        super.onPause()
-        disposeBag.clear()
     }
 
     override fun onBackPressed() {
