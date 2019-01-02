@@ -19,7 +19,8 @@ def find_freelancers(project):
                 else:
                     relation = TagRelation.objects.get(tag1=user_tag, tag2=project_tag)
                 match_score += relation.value
-        temp.append([match_score, user])
+        if match_score > 0:
+            temp.append([match_score, user])
     temp.sort(key=lambda tup: tup[0])
     temp.reverse()
     if len(temp) == 0:
@@ -43,7 +44,8 @@ def find_projects(user, requester):
                 else:
                     relation = TagRelation.objects.get(tag1=user_tag, tag2=project_tag)
                 match_score += relation.value
-        temp.append([match_score, project])
+        if match_score > 0:
+            temp.append([match_score, project])
     temp.sort(key=lambda tup: tup[0])
     temp.reverse()
     if len(temp) == 0:
@@ -76,5 +78,5 @@ def recommend(request):
         })
     return JsonResponse({
         "response": True,
-        "recommendation": ret[:5]
+        "recommendation": ret[:6]
     })
