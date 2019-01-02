@@ -14,7 +14,7 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import include,path
+from django.urls import include, path
 from django.conf.urls import url
 from django.conf import settings
 from django.conf.urls.static import static
@@ -28,5 +28,6 @@ urlpatterns = [
     url(r'^api/project/', include('project.urls')),
     path('api/attachment/', attachment.attachment_handler, name="attachment"),
     path('api/tag/', semantic_tags.tag_handler, name="semantic_tags"),
-    path('api/recommend/', recommendation_engine.recommend, name="recommendation")
+    path('api/recommend/', recommendation_engine.recommend, name="recommendation"),
+    url(r'^api/annotation/', include('annotation.urls'))
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

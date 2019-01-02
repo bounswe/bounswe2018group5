@@ -169,7 +169,7 @@ def project_handler(request):
                 final_milestone = Milestone(name='Final', detail='This is the final delivery of the project.', deadline=body['project_deadline'], project=new_project, is_final=True)
                 final_milestone.save()
 
-                return JsonResponse({"response": True, "project": project_json(new_project,user_id)})
+                return JsonResponse({"response": True, "project": project_json(new_project, user_id)})
             except Exception as e:
                 return JsonResponse({'response': False, 'error': str(e)})
         else:
@@ -194,7 +194,7 @@ def project_handler(request):
             user_id = authentication.get_user_id(token)
             try:
                 project = Project.objects.get(id=project_id)
-                milestones = Milestone.objects.filter(project = project)
+                milestones = Milestone.objects.filter(project=project)
                 if str(project.owner.id) == user_id:
                     project.delete()
                     milestones.delete()
