@@ -46,8 +46,8 @@ class LoginForm extends Component {
     componentDidMount() {
         const { history } = this.props;
 
-        const loggedIn = getCookie(LOGGEDIN_COOKIE);
-        if (loggedIn === true) return history.push("/home");
+        const loggedIn = getCookie(LOGGEDIN_COOKIE);        
+        if (loggedIn === "true") return history.push("/home");
         // we add a hidden class to the card and after 700 ms we delete it and the transition appears
         setTimeout(
             function () {

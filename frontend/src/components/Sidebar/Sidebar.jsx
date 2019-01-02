@@ -40,10 +40,10 @@ class Sidebar extends Component {
         const { logout } = this.props.auth;
 
         if (logout) {
-            removeCookie(TOKEN_COOKIE);
-            removeCookie(LOGGEDIN_COOKIE);
-            removeCookie(LOGGEDIN_USERID_COOKIE);
-            history.push("/");
+            removeCookie(TOKEN_COOKIE, { path: "/", domain: "karpuz.ml" });
+            removeCookie(LOGGEDIN_COOKIE, { path: "/", domain: "karpuz.ml" });
+            removeCookie(LOGGEDIN_USERID_COOKIE, { path: "/", domain: "karpuz.ml" });
+            history.push("/login");
         }
     }
 

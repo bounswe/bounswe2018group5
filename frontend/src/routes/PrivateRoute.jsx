@@ -39,7 +39,7 @@ class PrivateRoute extends Component {
 
     render() {
         const loggedIn = getCookie(LOGGEDIN_COOKIE);
-        if (!loggedIn) {
+        if (loggedIn !== "true") {
             return <Redirect to={'/login'} />
         } else {
             return (
