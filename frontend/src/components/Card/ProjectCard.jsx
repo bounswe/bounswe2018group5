@@ -234,7 +234,7 @@ class ProjectCard extends React.Component {
                             </p>
                         </Link>
                     </CardBody>
-                    <CardFooter className={classes.textMuted}>{tagsList}</CardFooter>
+                    <CardFooter className={classes.textMuted} style={{flexWrap: "wrap"}}>{tagsList}</CardFooter>
                 </Card>
                 <Dialog
                     classes={{

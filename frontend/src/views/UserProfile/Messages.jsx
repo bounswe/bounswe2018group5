@@ -176,7 +176,7 @@ class Messages extends Component {
                         dataSource={messageList} />
 
                     <Input
-                        placeholder="Mesajınızı buraya yazınız."
+                        placeholder="Type..."
                         defaultValue={this.state.message}
                         ref='input'
                         multiline={true}
@@ -194,7 +194,7 @@ class Messages extends Component {
                         }}
                         rightButtons={
                             <Button
-                                text='Gönder'
+                                text='SEND'
                                 onClick={this.addMessage.bind(this)} />
                         } />
                 </div>

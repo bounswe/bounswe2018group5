@@ -14,6 +14,7 @@ import {
     GET_CONVERSATIONS_REQUEST,
     GET_CONVERSATION_REQUEST,
     SEND_MESSAGE_REQUEST,
+    GET_RECOMMENDED_USERS_REQUEST, 
 } from "../user/actionTypes";
 import { 
     CREATE_PROJECT_REQUEST, 
@@ -31,6 +32,8 @@ import {
     ACCEPT_BID_REQUEST,
     DISCARD_BID_REQUEST, 
     RATE_PROJECT_REQUEST,
+    CREATE_ANNOTATION_REQUEST, 
+    GET_ANNOTATIONS_REQUEST, 
 } from "../project/actionTypes";
 import {
     getProjectsFailure, 
@@ -63,6 +66,10 @@ import {
     discardBidFailure,
     getTagFailure,
     getTagSuccess, 
+    createAnnotationSuccess,
+    createAnnotationFailure,
+    getAnnotationsSuccess,
+    getAnnotationsFailure,
 } from "../project/Actions";
 import {loginSuccess, loginFailure, registerFailure, registerSuccess} from "../auth/Actions";
 import {
@@ -90,6 +97,8 @@ import {
     conversationSuccess,
     sendMessageFailure,
     sendMessageSuccess,
+    getRecommendedUsersFailure,
+    getRecommendedUsersSuccess,
 } from "../user/Actions";
 
 
@@ -914,6 +923,91 @@ const trySendMessageSaga = function* (action) {
     }
 };
 
+const tryCreateAnnotationSaga = function* (action) {
+    try {
+        const { url, motivation, targets, body } = action.payload;
+
+        const createAnnotationResponse = yield call(api.createAnnotation, url, motivation, targets, body);
+
+        if (createAnnotationResponse) {
+            console.log("createAnnotationResponse", createAnnotationResponse);
+
+            if (createAnnotationResponse.status === 200) {
+                yield put(createAnnotationSuccess(createAnnotationResponse.responseBody));
+            } else if (createAnnotationResponse.status === 400) {
+                console.log("Something wrong! Got a status 400", createAnnotationResponse.responseBody);
+                yield put(createAnnotationFailure(createAnnotationResponse.responseBody));
+            } else {
+                console.log("Something wrong! Got an unknown status.", createAnnotationResponse);
+                yield put(createAnnotationFailure({ detail: ["Unknown status. Check console!"] }));
+            }
+        } else {
+            console.log("Create Project failed by api. No response !");
+            yield put(createAnnotationFailure({ detail: ["No response fetched. Please contact the API team!"] }));
+        }
+    } catch (err) {
+        console.log("Create Project failed by api. Error => ", err);
+        yield put(createAnnotationFailure({ detail: [err.detail] }));
+    }
+};
+
+const tryGetRecommendedUsersSaga = function* (action) {
+    try {
+        const { project_id } = action.payload;
+
+        const getRecommendedUsersResponse = yield call(api.getRecommendedUsers, project_id);
+
+        if (getRecommendedUsersResponse) {
+            console.log("getRecommendedUsersResponse", getRecommendedUsersResponse);
+
+            if (getRecommendedUsersResponse.status === 200) {
+                yield put(getRecommendedUsersSuccess(getRecommendedUsersResponse.responseBody));
+            } else if (getRecommendedUsersResponse.status === 400) {
+                console.log("Something wrong! Got a status 400", getRecommendedUsersResponse.responseBody);
+                yield put(getRecommendedUsersFailure(getRecommendedUsersResponse.responseBody));
+            } else {
+                console.log("Something wrong! Got an unknown status.", getRecommendedUsersResponse);
+                yield put(getRecommendedUsersFailure({ detail: ["Unknown status. Check console!"] }));
+            }
+        } else {
+            console.log("Get Projects failed by api. No response !");
+            yield put(getRecommendedUsersFailure({ detail: ["No response fetched. Please contact the API team!"] }));
+        }
+    } catch (err) {
+        console.log("Get Projects failed by api. Error => ", err);
+        yield put(getRecommendedUsersFailure({ detail: [err.detail] }));
+    }
+};
+
+const tryGetAnnotationsSaga = function* (action) {
+    try {
+        const { url } = action.payload;
+
+        const getAnnotationsResponse = yield call(api.getAnnotations, url);
+
+        if (getAnnotationsResponse) {
+            console.log("getAnnotationsResponse", getAnnotationsResponse);
+
+            if (getAnnotationsResponse.status === 200) {
+                yield put(getAnnotationsSuccess(getAnnotationsResponse.responseBody));
+            } else if (getAnnotationsResponse.status === 400) {
+                console.log("Something wrong! Got a status 400", getAnnotationsResponse.responseBody);
+                yield put(getAnnotationsFailure(getAnnotationsResponse.responseBody));
+            } else {
+                console.log("Something wrong! Got an unknown status.", getAnnotationsResponse);
+                yield put(getAnnotationsFailure({ detail: ["Unknown status. Check console!"] }));
+            }
+        } else {
+            console.log("Create Project failed by api. No response !");
+            yield put(getAnnotationsFailure({ detail: ["No response fetched. Please contact the API team!"] }));
+        }
+    } catch (err) {
+        console.log("Create Project failed by api. Error => ", err);
+        yield put(getAnnotationsFailure({ detail: [err.detail] }));
+    }
+};
+
+
 const saga = function* () {
     // AUTH
     yield takeLatest(LOGIN_REQUEST, tryLoginSaga);
@@ -942,6 +1036,9 @@ const saga = function* () {
     yield takeLatest(FINISH_PROJECT_REQUEST, tryFinishProjectSaga);
     yield takeLatest(RATE_PROJECT_REQUEST, tryRateProjectSaga);
     yield takeLatest(DELETE_PROJECT_REQUEST, tryDeleteProjectSaga);
+    yield takeLatest(CREATE_ANNOTATION_REQUEST, tryCreateAnnotationSaga);
+    yield takeLatest(GET_ANNOTATIONS_REQUEST, tryGetAnnotationsSaga);
+    yield takeLatest(GET_RECOMMENDED_USERS_REQUEST, tryGetRecommendedUsersSaga);
 
     // TAGS
     yield takeLatest(GET_TAG_REQUEST, tryGetTagsSaga);

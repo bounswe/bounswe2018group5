@@ -59,6 +59,14 @@ import {
     GET_TAG_FAILURE,
     GET_TAG_SUCCESS,
     GET_TAG_REQUEST,
+    CREATE_ANNOTATION_RESET,
+    CREATE_ANNOTATION_FAILURE,
+    CREATE_ANNOTATION_SUCCESS,
+    CREATE_ANNOTATION_REQUEST,
+    GET_ANNOTATIONS_FAILURE,
+    GET_ANNOTATIONS_REQUEST,
+    GET_ANNOTATIONS_RESET,
+    GET_ANNOTATIONS_SUCCESS,
 } from "./actionTypes";
 
 const initialState = {
@@ -67,6 +75,8 @@ const initialState = {
     project: {},
     search: {},
     response: false,
+    annotations: [],
+    annotation: {},
 
     getProjectsInProgress: false,
     getProjectsHasError: false,
@@ -142,6 +152,16 @@ const initialState = {
     getTagHasError: false,
     getTagCompleted: false,
     getTagError: "",
+
+    createAnnotationInProgress: false,
+    createAnnotationHasError: false,
+    createAnnotationCompleted: false,
+    createAnnotationError: "",
+
+    getAnnotationsInProgress: false,
+    getAnnotationsHasError: false,
+    getAnnotationsCompleted: false,
+    getAnnotationsError: "",
 };
 
 export default function(state = initialState, action) {
@@ -635,6 +655,72 @@ export default function(state = initialState, action) {
             getTagInProgress: false,
             getTagHasError: false,
             getTagCompleted: false
+        };
+    }
+
+    if (action.type === CREATE_ANNOTATION_REQUEST) {
+        return {
+            ...state,
+            createAnnotationInProgress: true,
+            createAnnotationHasError: false,
+            createAnnotationCompleted: false
+        };
+    } else if (action.type === CREATE_ANNOTATION_SUCCESS) {
+        return {
+            ...state,
+            response: payload.response,
+            annotation: payload.annotation,
+            createAnnotationInProgress: false,
+            createAnnotationHasError: false,
+            createAnnotationCompleted: true
+        };
+    } else if (action.type === CREATE_ANNOTATION_FAILURE) {
+        return {
+            ...state,
+            createAnnotationInProgress: false,
+            createAnnotationHasError: true,
+            createAnnotationCompleted: true,
+            createAnnotationError: payload.detail[0]
+        };
+    } else if (action.type === CREATE_ANNOTATION_RESET) {
+        return {
+            ...state,
+            createAnnotationInProgress: false,
+            createAnnotationHasError: false,
+            createAnnotationCompleted: false
+        };
+    }
+
+    if (action.type === GET_ANNOTATIONS_REQUEST) {
+        return {
+            ...state,
+            getAnnotationsInProgress: true,
+            getAnnotationsHasError: false,
+            getAnnotationsCompleted: false
+        };
+    } else if (action.type === GET_ANNOTATIONS_SUCCESS) {
+        return {
+            ...state,
+            response: payload.response,
+            annotations: payload.annotations,
+            getAnnotationsInProgress: false,
+            getAnnotationsHasError: false,
+            getAnnotationsCompleted: true
+        };
+    } else if (action.type === GET_ANNOTATIONS_FAILURE) {
+        return {
+            ...state,
+            getAnnotationsInProgress: false,
+            getAnnotationsHasError: true,
+            getAnnotationsCompleted: true,
+            getAnnotationsError: payload.detail[0]
+        };
+    } else if (action.type === GET_ANNOTATIONS_RESET) {
+        return {
+            ...state,
+            getAnnotationsInProgress: false,
+            getAnnotationsHasError: false,
+            getAnnotationsCompleted: false
         };
     }
 

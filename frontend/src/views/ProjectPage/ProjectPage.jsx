@@ -15,6 +15,7 @@ import CallMade from "@material-ui/icons/CallMade";
 import Card from "material-dashboard-react/dist/components/Card/Card";
 import CardFooter from "material-dashboard-react/dist/components/Card/CardFooter";
 import Button from "material-kit-react/components/CustomButtons/Button";
+import Avatar from '@material-ui/core/Avatar';
 
 import BidDropdown from "components/DropDown/BidDropdown"
 import combineStyles from "services/combineStyles";
@@ -34,11 +35,18 @@ import { Link } from "react-router-dom";
 
 import {
     tryGetProject,
-    getProjectReset
+    getProjectReset,
+    tryGetAnnotations,
+    getAnnotationsReset
 } from "redux/project/Actions.js";
+
+import { tryGetRecommendedUsers, getRecommendedUsersReset } from "redux/user/Actions.js";
 
 import connect from "react-redux/es/connect/connect";
 import default_image from "assets/img/faces/default_image.png";
+
+import AnnotatedText from 'components/Annotation/AnnotatedText';
+import AnnotatedImage from 'components/Annotation/AnnotatedImage';
 
 // Import React FilePond
 import { FilePond, registerPlugin, File } from 'react-filepond';
@@ -93,6 +101,8 @@ class ProjectPage extends Component {
                 freelancer: {},
                 tags: []
             },
+            annotations: [],
+            recom_users: []
         };
     }
     handleExpandClick = () => {
@@ -102,6 +112,8 @@ class ProjectPage extends Component {
     componentDidMount() {
         const { project_id } = this.props.match.params;
         this.props.tryGetProject(project_id);
+        this.props.tryGetRecommendedUsers(project_id);
+        this.props.tryGetAnnotations("https://karpuz.ml/home/project/" + project_id + "/");
     }
 
     componentDidUpdate(prevProps, prevState) {
@@ -119,15 +131,70 @@ class ProjectPage extends Component {
 
             this.props.getProjectReset();
         }
+
+        const { getRecommendedUsersInProgress, getRecommendedUsersHasError, getRecommendedUsersCompleted, recom_users } = this.props.user;
+
+        if (!getRecommendedUsersInProgress && !getRecommendedUsersHasError && getRecommendedUsersCompleted) {
+            if (this.props.user.response) {                
+                this.setState({ recom_users: recom_users });
+                this.props.getRecommendedUsersReset();
+            }
+        }
+
+        const { getAnnotationsInProgress, getAnnotationsHasError, getAnnotationsCompleted, annotations } = this.props.project;
+
+        if (!getAnnotationsInProgress && !getAnnotationsHasError && getAnnotationsCompleted) {
+            if (this.props.project.response) this.setState({ annotations });
+            this.props.getAnnotationsReset();
+        }
+    }
+
+    handleToUpdate(annotation) {
+        var { annotations } = this.state;
+        annotations.push(annotation);
+        this.setState({
+            annotations: annotations,
+        });
     }
 
     render() {
         const { classes } = this.props;
         const user_id = getCookie(LOGGEDIN_USERID_COOKIE);
 
+        const { recom_users } = this.state;
+
+        let recommendedBox = '';
+
         let createBid, sendMessage;
         if (user_id === this.state.project.owner.id) {
             createBid = sendMessage = '';
+            recommendedBox = (<GridItem xs={12} sm={12} md={12}>
+                <h1 className={classes.title}>{"Recommended Users"}</h1>
+                <Paper className={classes.root} style={{ padding: "32px" }}>
+                    <GridContainer>
+                        {recom_users.slice(0, 4).map((prop, key) => {
+                            return (
+                                <GridItem xs={12} sm={12} md={3} key={key}>
+                                    <Link to={"/home/users/" + prop.id + "/"} style={{ color: "black" }}>
+                                        <div style={{
+                                            display: 'flex',
+                                        }}>
+                                            <Avatar style={{ marginRight: 10 }}
+                                                src={process.env.REACT_APP_API_STATIC_URL + "profile_images/" + prop.profile_image}
+                                                onError={(e) => {
+                                                    e.target.onerror = null;
+                                                    e.target.src = default_image
+                                                }} alt="..." />
+                                            <h5><b>{prop.full_name}</b></h5>
+                                        </div>
+                                    </Link>
+                            </GridItem>
+                            )
+                        })}
+                    </GridContainer>
+                </Paper>
+            </GridItem>
+            );
         } else {
             createBid = <CreateBidModal project_id={this.state.project.project_id}></CreateBidModal>;
             sendMessage = <MessageCard projectOwner={this.state.project.owner.id}></MessageCard>;
@@ -474,6 +541,11 @@ class ProjectPage extends Component {
             );
         });
 
+        const { annotations } = this.state;        
+
+        const imageAnnotations = annotations.filter(a => a.target.type === "image");
+        const textAnnotations = annotations.filter(a => a.target.type === "text");
+
         return (
             <div>
                 <div>
@@ -491,7 +563,13 @@ class ProjectPage extends Component {
                                 <Paper className={classes.root} style={{ padding: "32px" }}>
                                     {tagsList}
                                     <h4>
-                                        {this.state.project.description}
+                                        <AnnotatedText
+                                            text={this.state.project.description}
+                                            project_id={this.state.project.project_id}
+                                            showAnnotations={true}
+                                            annotations={textAnnotations}
+                                            handleToUpdate={this.handleToUpdate.bind(this)}
+                                        />
                                     </h4>
                                     <br />
                                     <div style={{ display: 'flex', justifyContent: 'left', alignItems: 'center', width: '100%' }}>
@@ -512,11 +590,15 @@ class ProjectPage extends Component {
                             </GridItem>
                             <GridItem xs={12} sm={12} md={12}>
                                 <GridContainer>
+                                    
                                     {attachmentBox}
                                 </GridContainer>
                             </GridItem>
                         </GridContainer>
                     </GridItem>
+
+                    {recommendedBox}
+
                 </GridContainer>
             </div>
         );
@@ -529,11 +611,16 @@ function bindAction(dispatch) {
     return {
         tryGetProject: (project_id) => dispatch(tryGetProject(project_id)),
         getProjectReset: () => dispatch(getProjectReset()),
+        tryGetRecommendedUsers: (project_id) => dispatch(tryGetRecommendedUsers(project_id)),
+        getRecommendedUsersReset: () => dispatch(getRecommendedUsersReset()),
+        tryGetAnnotations: (url) => dispatch(tryGetAnnotations(url)),
+        getAnnotationsReset: () => dispatch(getAnnotationsReset()),
     };
 }
 
 const mapStateToProps = state => ({
-    project: state.project
+    project: state.project,
+    user: state.user
 });
 
 export default connect(

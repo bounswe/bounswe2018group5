@@ -18,6 +18,8 @@ import {
     userProfileReset
 } from "redux/user/Actions.js";
 
+import MessageCard from "components/Card/MessageCard";
+
 import default_image from "assets/img/faces/default_image.png";
 import connect from "react-redux/es/connect/connect";
 
@@ -156,6 +158,7 @@ class OtherUserProfile extends Component {
                                 <p className={classes.description}>
                                     {user.bio ? user.bio : ""}
                                 </p>
+                                <MessageCard projectOwner={user.id}></MessageCard>
                             </CardBody>
                         </Card>
                     </GridItem>

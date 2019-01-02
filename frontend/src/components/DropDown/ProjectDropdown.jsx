@@ -131,7 +131,6 @@ class ProjectDropdown extends React.Component {
 
   handleMilestoneChange = (value, idx, type) => {
     let milestones = [...this.state.milestones]
-    console.log(milestones)
     milestones[idx][type] = value;
     this.setState({ milestones })
   
