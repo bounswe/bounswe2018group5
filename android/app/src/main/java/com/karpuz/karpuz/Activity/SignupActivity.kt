@@ -17,6 +17,7 @@ import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.activity_signup.*
 import java.util.concurrent.TimeUnit
 
+
 class SignupActivity : AppCompatActivity() {
 
     companion object {
