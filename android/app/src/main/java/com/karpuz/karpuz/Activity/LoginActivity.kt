@@ -18,11 +18,6 @@ import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.activity_login.*
 import java.util.concurrent.TimeUnit
 
-
-
-
-
-
 class LoginActivity : AccountAuthenticatorActivity() {
 
     companion object {
