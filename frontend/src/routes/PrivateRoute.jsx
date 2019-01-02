@@ -22,10 +22,11 @@ class PrivateRoute extends Component {
         const { getProfileInProgress, getProfileHasError, getProfileCompleted, response, user} = this.props.user;
 
         if (!getProfileInProgress && !getProfileHasError && getProfileCompleted) {
-            if(!response) {
-                removeCookie(TOKEN_COOKIE);
-                removeCookie(LOGGEDIN_COOKIE);
-                removeCookie(LOGGEDIN_USERID_COOKIE);
+            if(!response) {                
+                removeCookie(TOKEN_COOKIE, {path: "/", domain: "karpuz.ml"});
+                removeCookie(LOGGEDIN_COOKIE, {path: "/", domain: "karpuz.ml"});
+                removeCookie(LOGGEDIN_USERID_COOKIE, {path: "/", domain: "karpuz.ml"});
+
                 this.props.logout();
                 history.push("/login");
             } else {
