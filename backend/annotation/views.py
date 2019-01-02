@@ -34,7 +34,8 @@ def annotation_handler(request):
                     targets = request_data['targets']
                 body = request_data['body'] if 'body' in request_data else None
                 annotation = Annotation()
-                annotation.context = request_data['context'] if 'context' in request_data else None
+                if 'context' in request_data:
+                    annotation.context = request_data['context']
                 annotation.IRI = request_data['url']
                 annotation.motivation = request_data['motivation']
                 annotation.creator = 'https://karpuz.ml/' + user_id
