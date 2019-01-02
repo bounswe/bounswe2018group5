@@ -6,9 +6,6 @@ import android.os.Bundle
 import android.view.View
 import com.karpuz.karpuz.R
 
-
-
-
 class WelcomeActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
