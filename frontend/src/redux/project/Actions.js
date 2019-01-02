@@ -59,6 +59,14 @@ import {
     GET_TAG_SUCCESS,
     GET_TAG_FAILURE,
     GET_TAG_RESET,
+    CREATE_ANNOTATION_FAILURE,
+    CREATE_ANNOTATION_REQUEST,
+    CREATE_ANNOTATION_RESET,
+    CREATE_ANNOTATION_SUCCESS,
+    GET_ANNOTATIONS_FAILURE,
+    GET_ANNOTATIONS_REQUEST,
+    GET_ANNOTATIONS_RESET,
+    GET_ANNOTATIONS_SUCCESS,
 } from "./actionTypes";
 
 export const tryGetProjects = () => ({
@@ -340,4 +348,44 @@ export const getTagFailure = errorData => ({
 });
 export const getTagReset = () => ({
     type: GET_TAG_RESET
+});
+
+export const tryCreateAnnotation = (url, motivation, targets, body) => ({
+    type: CREATE_ANNOTATION_REQUEST,
+    payload: {
+        url,
+        motivation,
+        targets,
+        body
+    }
+});
+export const createAnnotationSuccess = res => ({
+    type: CREATE_ANNOTATION_SUCCESS,
+    payload: res
+});
+export const createAnnotationFailure = errorData => ({
+    type: CREATE_ANNOTATION_FAILURE,
+    payload: errorData
+});
+export const createAnnotationReset = () => ({
+    type: CREATE_ANNOTATION_RESET
+});
+
+
+export const tryGetAnnotations = (url) => ({
+    type: GET_ANNOTATIONS_REQUEST,
+    payload: {
+        url
+    }
+});
+export const getAnnotationsSuccess = res => ({
+    type: GET_ANNOTATIONS_SUCCESS,
+    payload: res
+});
+export const getAnnotationsFailure = errorData => ({
+    type: GET_ANNOTATIONS_FAILURE,
+    payload: errorData
+});
+export const getAnnotationsReset = () => ({
+    type: GET_ANNOTATIONS_RESET
 });

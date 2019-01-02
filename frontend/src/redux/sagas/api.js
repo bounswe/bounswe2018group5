@@ -100,6 +100,17 @@ class api {
         });
     };
 
+    getRecommendedUsers = (project_id) => {
+        return httpService.fetch({
+            path: "api/recommend/",
+            method: "GET",
+            params: {
+                id: project_id
+            },
+            sendToken: true
+        });
+    };
+
     searchProjects = (query) => {
         return httpService.fetch({
             path: "api/project/search/",
@@ -345,6 +356,31 @@ class api {
             params: {
                 id: user_id,
                 message: message
+            },
+            sendToken: true
+        });
+    };
+
+    createAnnotation = (url, motivation, targets, body ) => {
+        return httpService.fetch({
+            path: "api/annotation/",
+            method: "POST",
+            body: {
+                url,
+                motivation, 
+                targets, 
+                body 
+            },
+            sendToken: true
+        });
+    };
+
+    getAnnotations = (url) => {
+        return httpService.fetch({
+            path: "api/annotation/",
+            method: "GET",
+            params: {
+                query: url
             },
             sendToken: true
         });
