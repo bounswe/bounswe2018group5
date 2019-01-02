@@ -48,8 +48,10 @@ class AddPortfolioModal extends React.Component {
             place: 'tr',
             notificationMessage: '',
             title: '',
+            titleError: false,
+            selectHidden: true,
             description: '', 
-            date: null, 
+            date: '', 
             project_id: null,
             tags: [],
             options: [],
@@ -74,12 +76,18 @@ class AddPortfolioModal extends React.Component {
 
     handleCreatePortfolio(event) {
         const { title, description, date, project_id, options_tags } = this.state;
-        let options = [];
-        options_tags.map((prop, key) => {
-            options.push(prop.value);
-            return null;
-        });     
-        this.props.tryPostPortfolio(title, description, date, project_id, options);
+        if (title === ''){
+            this.setState({
+                titleError: true,
+            });
+        } else {
+            let options = [];
+            options_tags.map((prop, key) => {
+                options.push(prop.value);
+                return null;
+            });
+            this.props.tryPostPortfolio(title, description, date, project_id, options);
+        }
         event.preventDefault();
     }
 
@@ -124,7 +132,7 @@ class AddPortfolioModal extends React.Component {
                         return null;
                     });
                 });
-                this.setState({ options });
+                this.setState({ options, selectHidden: false, });
             }
             this.props.getTagReset();
         }
@@ -147,7 +155,12 @@ class AddPortfolioModal extends React.Component {
 
     searchTags = (e) => {
         const { tags } = this.state;
-        this.props.tryGetTag(tags.join(','));
+        if (tags.length > 0) {
+            this.props.tryGetTag(tags.join(','));
+            this.setState({
+                selectHidden: true,
+            });
+        }
     }
 
     render() {
@@ -200,7 +213,9 @@ class AddPortfolioModal extends React.Component {
                                             }}
                                             inputProps={{
                                                 type: "text",
+                                                error: this.state.titleError,
                                                 value: this.state.title,
+                                                onFocus: event => this.setState({ titleError: false }),
                                                 onChange: event => this.setState({title: event.target.value})
                                             }}
                                         />
@@ -220,22 +235,29 @@ class AddPortfolioModal extends React.Component {
                                             }}
                                         />
                                     </GridItem>
-                                    <GridItem xs={12} sm={12} md={6}>
+                                    <GridItem xs={12} sm={12} md={12}>
+                                        Portfolio Finish Date
                                         <DateTimePicker
                                             before={true}
-                                            placeholder={"Portfolio Finish Date"}
-                                            onChange={event => this.setState({date: event.format("YYYY-MM-DD")})}
+                                            onChange={event => this.setState({date: event})}
                                         />
                                     </GridItem>
-                                    <GridItem xs={12} sm={12} md={10}>
-                                        <TagsInput value={this.state.tags} onChange={this.handleTagsChange} />
+                                    <GridItem xs={12} sm={12} md={12} style={{marginTop: "16px", marginBottom: "16px"}}>
+                                        Search Semantic Tags
+                                    </GridItem >
+                                    <GridItem xs={12} sm={12} md={10} >
+                                        <TagsInput inputProps={{ placeholder: "Search tags" }} value={this.state.tags} onChange={this.handleTagsChange} />
+                                        Hint: Press enter or tab to add a tag
                                     </GridItem>
                                     <GridItem xs={12} sm={12} md={2}>
-                                        <Button variant="contained" color="primary" onClick={this.searchTags}>
+                                        <Button variant="contained" color="primary" onClick={this.searchTags} disabled={this.state.tags.length === 0}>
                                             <SearchIcon className={classes.rightIcon} />
                                         </Button>
                                     </GridItem>
-                                    <GridItem xs={12} sm={12} md={12}>
+                                    <GridItem xs={12} sm={12} md={12} hidden={this.state.selectHidden} style={{ marginTop: "16px", marginBottom: "16px" }}>
+                                        Result Semantic Tags
+                                    </GridItem >
+                                    <GridItem xs={12} sm={12} md={12} hidden={this.state.selectHidden}>
                                         <Select
                                             isMulti
                                             name="tags"
@@ -245,19 +267,6 @@ class AddPortfolioModal extends React.Component {
                                             onChange={(val) => { this.setState({ options_tags: val }) }}
                                         />
                                     </GridItem>
-                                    {/* <GridItem xs={12} sm={12} md={6}>
-                                        <CustomInput
-                                            labelText="Budget"
-                                            id="budget"
-                                            formControlProps={{
-                                                fullWidth: true
-                                            }}
-                                            inputProps={{
-                                                type: 'number',
-                                                onChange: event => this.setState({budget: event.target.value})
-                                            }}
-                                        />
-                                    </GridItem> */}
                                 </GridContainer>
                             </GridItem>
                         </GridContainer>

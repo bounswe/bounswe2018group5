@@ -44,7 +44,14 @@ class AddProjectModal extends React.Component {
             open: false,
             place: 'tr',
             notificationMessage: '',
-            milestones: [{ name: "", detail: "", deadline: "" }],
+            selectHidden: true,
+            description: '',
+            descriptionError: false,
+            project_deadline: '',
+            projectDeadlineError: false,
+            title: '',
+            titleError: false,
+            milestones: [],
             tags: [],
             options: [],
             options_tags: [],
@@ -64,12 +71,31 @@ class AddProjectModal extends React.Component {
     }
     handleCreateProject(event) {
         const { title, description, project_deadline, budget, milestones, options_tags } = this.state;
-        let options = [];
-        options_tags.map((prop, key) => {
-            options.push(prop.value);
-            return null;
-        });     
-        this.props.tryCreateProject(title, description, project_deadline, parseFloat(budget), milestones, options);
+        if (description === '') {
+            this.setState({
+                descriptionError: true,
+            });
+        } else if (title === '') {
+            this.setState({
+                titleError: true,
+            });
+        } else if (project_deadline === '') {
+            this.setState({
+                open: true,
+                color: 'danger',
+                notificationMessage: 'Please, enter project deadline!'
+            });
+            setTimeout(function () {
+                this.setState({ open: false });
+            }.bind(this), 6000);
+        } else {
+            let options = [];
+            options_tags.map((prop, key) => {
+                options.push(prop.value);
+                return null;
+            });     
+            this.props.tryCreateProject(title, description, project_deadline, parseFloat(budget), milestones, options);
+        }
         event.preventDefault();
     }
     componentDidUpdate(prevProps, prevState) {
@@ -112,7 +138,7 @@ class AddProjectModal extends React.Component {
                         return null;
                     });
                 });                
-                this.setState({options});
+                this.setState({ selectHidden: false, options });
             }
             this.props.getTagReset();
         }
@@ -150,7 +176,12 @@ class AddProjectModal extends React.Component {
 
     searchTags = (e) => {
         const { tags } = this.state;
-        this.props.tryGetTag(tags.join(','));
+        if (tags.length > 0) {
+            this.props.tryGetTag(tags.join(','));
+            this.setState({
+                selectHidden: true,
+            });
+        }
     }
 
     render() {       
@@ -203,6 +234,8 @@ class AddProjectModal extends React.Component {
                                             }}
                                             inputProps={{
                                                 type: "text",
+                                                error: this.state.titleError,
+                                                onFocus: event => this.setState({ titleError: false }),
                                                 onChange: event => this.setState({ title: event.target.value })
                                             }}
                                         />
@@ -216,16 +249,19 @@ class AddProjectModal extends React.Component {
                                             }}
                                             inputProps={{
                                                 multiline: true,
+                                                error: this.state.descriptionError,
+                                                onFocus: event => this.setState({ descriptionError: false }),
                                                 rows: 3,
                                                 onChange: event => this.setState({ description: event.target.value })
                                             }}
                                         />
                                     </GridItem>
                                     <GridItem xs={12} sm={12} md={6}>
+                                        Project Deadline
                                         <DateTimePicker
-                                            placeholder={"Project Deadline"}
-                                            onChange={event => this.setState({ project_deadline: event.format("YYYY-MM-DD") })}
-                                        />
+                                            onChange={event => this.setState({ project_deadline: event })}
+                                            error={this.state.projectDeadlineError}
+                                    />
                                     </GridItem>
                                     <GridItem xs={12} sm={12} md={6}>
                                         <CustomInput
@@ -240,15 +276,22 @@ class AddProjectModal extends React.Component {
                                             }}
                                         />
                                     </GridItem>
+                                    <GridItem xs={12} sm={12} md={12} style={{ marginTop: "16px", marginBottom: "16px" }}>
+                                        Search Semantic Tags
+                                    </GridItem >
                                     <GridItem xs={12} sm={12} md={10}>
-                                        <TagsInput inputProps={{placeholder: "Search a tag"}} value={this.state.tags} onChange={this.handleTagsChange}/>
+                                        <TagsInput inputProps={{placeholder: "Search tags"}} value={this.state.tags} onChange={this.handleTagsChange}/>
+                                        Hint: Press enter or tab to add a tag
                                     </GridItem>
                                     <GridItem xs={12} sm={12} md={2}>
-                                        <Button variant="contained" color="primary" onClick={this.searchTags}>
+                                        <Button variant="contained" color="primary" onClick={this.searchTags} disabled={this.state.tags.length === 0}>
                                             <SearchIcon className={classes.rightIcon} />
                                         </Button>
                                     </GridItem>
-                                    <GridItem xs={12} sm={12} md={12}>
+                                    <GridItem xs={12} sm={12} md={12} hidden={this.state.selectHidden} style={{ marginTop: "16px", marginBottom: "16px" }}>
+                                        Result Semantic Tags
+                                    </GridItem >
+                                    <GridItem xs={12} sm={12} md={12} hidden={this.state.selectHidden}>
                                         <Select
                                             isMulti
                                             name="tags"
@@ -282,7 +325,6 @@ class AddProjectModal extends React.Component {
                                                         </GridItem>
                                                         <GridItem xs={12} sm={12} md={5}>
                                                             <DateTimePicker
-                                                                placeholder={"Date"}
                                                                 onChange={event => this.handleMilestoneChange(event.format("YYYY-MM-DD"), idx, 'deadline')}
                                                         />
                                                         </GridItem>
