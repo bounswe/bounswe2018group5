@@ -11,12 +11,13 @@ class UserViewModel: ViewModel() {
 
     private val disposeBag = CompositeDisposable()
 
-    val user = MutableLiveData<KarpuzAPIModels.User?>()
+    //val user = MutableLiveData<KarpuzAPIModels.User?>()
 
     private var userId: String? = null
 
     fun setUser(userId: String?) {
         this.userId = userId
+        //user.value = null
     }
 
     fun refreshUser(onUserReadyCallback: ((KarpuzAPIModels.User?, Error?) -> Unit)) {
@@ -25,7 +26,7 @@ class UserViewModel: ViewModel() {
                 .subscribe(
                     { result ->
                         if (result.response && result.user != null) {
-                            user.value = result.user
+                            //user.value = result.user
                             onUserReadyCallback(result.user, null)
                         } else {
                             onUserReadyCallback(null, Error("Invalid server response!"))

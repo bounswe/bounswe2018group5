@@ -72,10 +72,12 @@ class LoginActivity : AccountAuthenticatorActivity() {
     }
 
     private fun loginSuccessful(username: String, password: String, token: String) {
-        val accounts = AccountManager.get(this).getAccountsByType(Config.accountType)
+        val accountManager = AccountManager.get(this)
+        val accounts = accountManager.getAccountsByType(Config.accountType)
         if (accounts.isEmpty()) {
             val account = Account(username, Config.accountType)
-            AccountManager.get(this).addAccountExplicitly(account, password, null)
+            accountManager.addAccountExplicitly(account, password, null)
+            accountManager.setAuthToken(account, "JWT", token)
         }
         KarpuzAPIService.create(token)
         val homeIntent = Intent(this, HomeActivity::class.java)
