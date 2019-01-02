@@ -78,8 +78,8 @@ class AnnotatedText extends Component {
 
     }
 
-    mySimpleRenderer (text, annotation) {
-        let explanation = annotation.tooltip;
+    mySimpleRenderer (text, annotation){
+        let explanation = annotation.tooltip
         let highlighted = text.substr(annotation.offset, annotation.length);
         return {
             explanation,
@@ -127,7 +127,7 @@ class AnnotatedText extends Component {
 
     render() {
         const { text, showAnnotations, annotations } = this.props;
-        const { annotationInput } = this.state;
+        const { annotationInput } = this.state;     
         
         return (
             <div onMouseUp={this.showSelectedText}>

@@ -149,7 +149,7 @@ class ProjectPage extends Component {
         }
     }
 
-    handleToUpdate(annotation) {
+    handleToUpdate(annotation) {        
         var { annotations } = this.state;
         annotations.push(annotation);
         this.setState({
@@ -164,7 +164,9 @@ class ProjectPage extends Component {
         const { recom_users, annotations } = this.state;        
 
         const imageAnnotations = annotations.filter(a => a.target.type === "image");
-        const textAnnotations = annotations.filter(a => a.target.type === "text");
+        const textAnnotations = annotations.filter(a => a.target.type === "text").sort(function (a, b) {
+            return parseFloat(a.target.start) - parseFloat(b.target.start);
+        });
 
         let recommendedBox = '';
 
