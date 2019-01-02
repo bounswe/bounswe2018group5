@@ -62,6 +62,10 @@ class TestUser(TestCase):
             'HTTP_AUTHORIZATION': token
         }
 
+    # workaround to not to raise settings.DATABASE error
+    def _post_teardown(self):
+        return
+
     def test_register(self):
 
         url = reverse('register')
