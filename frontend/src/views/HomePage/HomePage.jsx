@@ -123,7 +123,7 @@ class HomePage extends React.Component {
                     <AddProjectModal handleToUpdate={this.handleToUpdate.bind(this)}/>
                 </div>
                 <h1>Recommended Projects</h1>
-                {recom_project_grid}
+                {recom_projects.length > 0 ? recom_project_grid : 'Fill your portfolio and show recommended projects' }
                 <h1>All Projects</h1>
                 {project_grid}
             </div>

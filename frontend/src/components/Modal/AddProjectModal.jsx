@@ -241,7 +241,7 @@ class AddProjectModal extends React.Component {
                                         />
                                     </GridItem>
                                     <GridItem xs={12} sm={12} md={10}>
-                                        <TagsInput value={this.state.tags} onChange={this.handleTagsChange}/>
+                                        <TagsInput inputProps={{placeholder: "Search a tag"}} value={this.state.tags} onChange={this.handleTagsChange}/>
                                     </GridItem>
                                     <GridItem xs={12} sm={12} md={2}>
                                         <Button variant="contained" color="primary" onClick={this.searchTags}>

@@ -149,7 +149,7 @@ class ProjectPage extends Component {
         }
     }
 
-    handleToUpdate(annotation) {
+    handleToUpdate(annotation) {        
         var { annotations } = this.state;
         annotations.push(annotation);
         this.setState({
@@ -161,11 +161,16 @@ class ProjectPage extends Component {
         const { classes } = this.props;
         const user_id = getCookie(LOGGEDIN_USERID_COOKIE);
 
-        const { recom_users } = this.state;
+        const { recom_users, annotations } = this.state;        
+
+        const imageAnnotations = annotations.filter(a => a.target.type === "image");
+        const textAnnotations = annotations.filter(a => a.target.type === "text").sort(function (a, b) {
+            return parseFloat(a.target.start) - parseFloat(b.target.start);
+        });
 
         let recommendedBox = '';
 
-        let createBid, sendMessage;
+        let createBid, sendMessage, headImage;
         if (user_id === this.state.project.owner.id) {
             createBid = sendMessage = '';
             recommendedBox = (<GridItem xs={12} sm={12} md={12}>
@@ -203,6 +208,7 @@ class ProjectPage extends Component {
         let userBox, attachmentBox;
 
         if (this.state.project.owner.id === user_id) {
+            headImage = '';
             userBox = <GridItem xs={12} sm={12} md={12}>
                 <h2 className={classes.title} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%', color: "black" }}>Project Freelancer</h2>
                 <br />
@@ -264,6 +270,25 @@ class ProjectPage extends Component {
                 </FilePond>
             </GridItem>;
         } else {
+            var attachments = this.state.project.attachments.filter(a => a.includes('.jpg') || a.includes('.jpeg') || a.includes('.png'));
+            if (attachments.length > 0) {
+                headImage = <GridItem xs={12} sm={12} md={8}>
+                    <GridContainer>
+                        <GridItem xs={12} sm={12} md={12}>
+                            <h1 className={classes.title}>{"Head Image"}</h1>
+                            <Paper className={classes.root} style={{ padding: "32px" }}>
+                                <AnnotatedImage
+                                    src={process.env.REACT_APP_API_STATIC_URL + "attachments/" + this.state.project.project_id + "/" + attachments[0]}
+                                    project_id={this.state.project.project_id}
+                                    showAnnotations={true}
+                                    annotations={imageAnnotations}
+                                    handleToUpdate={this.handleToUpdate.bind(this)}
+                                />
+                            </Paper>
+                        </GridItem>
+                    </GridContainer>
+                </GridItem>;
+            }
             attachmentBox = <GridItem xs={12} sm={12} md={12}>
                 <Paper className={classes.root}>
                     <Table className={classes.table}>
@@ -541,11 +566,6 @@ class ProjectPage extends Component {
             );
         });
 
-        const { annotations } = this.state;        
-
-        const imageAnnotations = annotations.filter(a => a.target.type === "image");
-        const textAnnotations = annotations.filter(a => a.target.type === "text");
-
         return (
             <div>
                 <div>
@@ -590,15 +610,13 @@ class ProjectPage extends Component {
                             </GridItem>
                             <GridItem xs={12} sm={12} md={12}>
                                 <GridContainer>
-                                    
                                     {attachmentBox}
                                 </GridContainer>
                             </GridItem>
                         </GridContainer>
                     </GridItem>
-
+                    {headImage}
                     {recommendedBox}
-
                 </GridContainer>
             </div>
         );
