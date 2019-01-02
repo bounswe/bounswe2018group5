@@ -244,3 +244,28 @@ def handle_uploaded_file(app_name, file, filename):
     with open(cumulative + '/' + filename, 'wb+') as destination:
         for chunk in file.chunks():
             destination.write(chunk)
+
+
+def target_json(target):
+    if target is None:
+        return None
+    obj = {}
+    obj['context'] = target.context
+    obj['type'] = target.type
+    obj['IRI'] = target.IRI
+    obj['x'] = target.x
+    obj['y'] = target.y
+    obj['start'] = target.start
+    obj['end'] = target.end
+    obj['selector'] = target.selector
+    return obj
+
+
+def body_json(body):
+    if body is None:
+        return None
+    obj = {}
+    obj['IRI'] = body.IRI
+    obj['type'] = body.type
+    obj['text'] = body.text
+    return obj
