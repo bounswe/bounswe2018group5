@@ -1,6 +1,6 @@
 from mongoengine import *
 from datetime import datetime
-
+from api.utils import *
 
 class BaseDocument(Document):
     meta = {
@@ -42,8 +42,10 @@ class Annotation(BaseDocument):
         obj['IRI'] = self.IRI
         obj['motivation'] = self.motivation
         obj['creator'] = self.creator
-        obj['target'] = Target.objects.get(annotation=self)
-        obj['body'] = Body.objects.get(annotation=self)
+        target = Target.objects.get(annotation=self)
+        obj['target'] = target_json(target)
+        body = Body.objects.get(annotation=self)
+        obj['body'] = body_json(body)
         return obj
 
 

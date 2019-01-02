@@ -25,16 +25,16 @@ def annotation_handler(request):
         if token and authentication.is_authenticated(token):
             try:
                 user_id = authentication.get_user_id(token)
-                request_data = request.data
+                request_data = json.loads(request.body.decode('utf-8'))
                 targets = []
                 if 'targets' in request_data:
                     targets = request_data['targets']
                 body = request_data['body'] if 'body' in request_data else None
                 annotation = Annotation()
-                annotation.context = request_data['context']
+                annotation.context = request_data['context'] if 'context' in request_data else None
                 annotation.IRI = request_data['url']
                 annotation.motivation = request_data['motivation']
-                annotation.creator = request_data['creator']
+                annotation.creator = request_data['creator'] if 'creator' in request_data else None
                 annotation.save()
 
                 if body:
@@ -56,10 +56,10 @@ def annotation_handler(request):
                         new_target.y = target['y'] if 'y' in target else None
                         new_target.start = target['start'] if 'start' in target else None
                         new_target.end = target['end'] if 'end' in target else None
-                        target.save()
-
-                return JsonResponse({"response": True, "annotation": annotation.annotation_object})
+                        new_target.save()
             except Exception as e:
                 return JsonResponse({'response': False, 'error': str(e)})
+            return JsonResponse({"response": True, "annotation": annotation.annotation_object})
+
         else:
             return JsonResponse({"response": False, "error": "Unauthorized"})
