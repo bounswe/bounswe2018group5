@@ -11,11 +11,6 @@ import com.karpuz.karpuz.R
 import io.reactivex.disposables.CompositeDisposable
 import java.util.concurrent.TimeUnit
 
-
-
-
-
-
 class LaunchActivity : AccountAuthenticatorActivity() {
 
     companion object {
