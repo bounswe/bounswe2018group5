@@ -246,20 +246,10 @@ def handle_uploaded_file(app_name, file, filename):
             destination.write(chunk)
 
 
-def annotation_json(annotation):
-    obj = {}
-    obj['context'] = annotation.context
-    obj['IRI'] = annotation.IRI
-    obj['motivation'] = annotation.motivation
-    obj['creator'] = annotation.creator
-    return obj
-
-
 def target_json(target):
     if target is None:
         return None
     obj = {}
-    obj['annotation'] = annotation_json(target.annotation)
     obj['context'] = target.context
     obj['type'] = target.type
     obj['IRI'] = target.IRI
@@ -275,7 +265,6 @@ def body_json(body):
     if body is None:
         return None
     obj = {}
-    obj['annotation'] = annotation_json(body.annotation)
     obj['IRI'] = body.IRI
     obj['type'] = body.type
     obj['text'] = body.text

@@ -30,7 +30,7 @@ class Annotation(BaseDocument):
     def schema(self):
         pass
 
-    context = StringField(max_length=100)
+    context = URLField(default='http://www.w3.org/ns/anno.jsonld', max_length=100)
     IRI = URLField(null=True, max_length=200)
     motivation = StringField(max_length=100)
     creator = URLField(null=True)
@@ -42,8 +42,11 @@ class Annotation(BaseDocument):
         obj['IRI'] = self.IRI
         obj['motivation'] = self.motivation
         obj['creator'] = self.creator
-        target = Target.objects.get(annotation=self)
-        obj['target'] = target_json(target)
+        targets = Target.objects.filter(IRI=self.IRI)
+        target_list = []
+        for target in targets:
+            target_list.append(target_json(target))
+        obj['targets'] = target_list
         body = Body.objects.get(annotation=self)
         obj['body'] = body_json(body)
         return obj

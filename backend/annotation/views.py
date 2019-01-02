@@ -15,12 +15,15 @@ from user.models import *
 def annotation_handler(request):
     token = request.META.get('HTTP_AUTHORIZATION', None)
     if request.method == 'GET':
-        try:
-            query = request.GET.get('query')
-            annotations = Annotation.objects.filter(annotation_object__IRI=query)
-            return JsonResponse({"response": True, "annotations": annotations})
-        except Exception as e:
-            return JsonResponse({'response': False, 'error': str(e)})
+        #try:
+        query = request.GET.get('query')
+        annotations = Annotation.objects.filter(IRI=query)
+        response = []
+        for annotation in annotations:
+            response.append(annotation.annotation_object)
+        return JsonResponse({"response": True, "annotations": response})
+        #except Exception as e:
+        #    return JsonResponse({'response': False, 'error': str(e)})
     elif request.method == 'POST':
         if token and authentication.is_authenticated(token):
             try:
@@ -34,7 +37,7 @@ def annotation_handler(request):
                 annotation.context = request_data['context'] if 'context' in request_data else None
                 annotation.IRI = request_data['url']
                 annotation.motivation = request_data['motivation']
-                annotation.creator = request_data['creator'] if 'creator' in request_data else None
+                annotation.creator = 'https://karpuz.ml/' + user_id
                 annotation.save()
 
                 if body:
@@ -49,7 +52,8 @@ def annotation_handler(request):
                     for target in targets:
                         new_target = Target()
                         new_target.annotation = annotation
-                        new_target.context = target['context'] if 'context' in target else None
+                        if 'context' in target:
+                            new_target.context = target['context']
                         new_target.type = target['type']
                         new_target.IRI = target['IRI']
                         new_target.x = target['x'] if 'x' in target else None
