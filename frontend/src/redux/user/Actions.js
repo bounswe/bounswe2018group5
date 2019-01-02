@@ -3,6 +3,10 @@ import {
     GET_PROFILE_SUCCESS,
     GET_PROFILE_FAILURE,
     GET_PROFILE_RESET,
+    GET_RECOMMENDED_USERS_REQUEST,
+    GET_RECOMMENDED_USERS_SUCCESS,
+    GET_RECOMMENDED_USERS_FAILURE,
+    GET_RECOMMENDED_USERS_RESET,
     GET_USER_PROFILE_REQUEST,
     GET_USER_PROFILE_SUCCESS,
     GET_USER_PROFILE_FAILURE,
@@ -272,4 +276,22 @@ export const sendMessageFailure = errorData => ({
 });
 export const sendMessageReset = () => ({
     type: SEND_MESSAGE_RESET
+});
+
+export const tryGetRecommendedUsers = (project_id) => ({
+    type: GET_RECOMMENDED_USERS_REQUEST,
+    payload: {
+        project_id
+    }
+});
+export const getRecommendedUsersSuccess = res => ({
+    type: GET_RECOMMENDED_USERS_SUCCESS,
+    payload: res
+});
+export const getRecommendedUsersFailure = errorData => ({
+    type: GET_RECOMMENDED_USERS_FAILURE,
+    payload: errorData
+});
+export const getRecommendedUsersReset = () => ({
+    type: GET_RECOMMENDED_USERS_RESET
 });

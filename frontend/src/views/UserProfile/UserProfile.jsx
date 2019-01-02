@@ -309,11 +309,9 @@ class UserProfile extends Component {
     }
 
     responseLinkedin(response) {
-        console.log(this);
         let currentPosition;
         if (response.positions.values) {
             currentPosition = response.positions.values[0];
-            console.log(currentPosition);
             this.setState({ currentPosition });
         }
     }

@@ -86,7 +86,6 @@ function circleSelector(svg) {
         var dist = distance(circleCenter, circleOuter);
         var myDist = calcCrow(circleCenter.lat, circleCenter.lng, circleOuter.lat, circleOuter.lng);
         $('input[name=geocode]').val("{0},{1},{2}km".format(circleCenter.lat, circleCenter.lng, myDist));
-        console.log(circleCenter.lat);
         var circleLasso = container.selectAll("circle.lasso").data([dist]);
         circleLasso.enter().append("circle").classed("lasso", true)
             .on("click", function () {

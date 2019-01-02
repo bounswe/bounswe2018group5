@@ -7,6 +7,10 @@ import {
     GET_USER_PROFILE_SUCCESS,
     GET_USER_PROFILE_FAILURE,
     GET_USER_PROFILE_RESET,
+    GET_RECOMMENDED_USERS_REQUEST,
+    GET_RECOMMENDED_USERS_SUCCESS,
+    GET_RECOMMENDED_USERS_FAILURE,
+    GET_RECOMMENDED_USERS_RESET,
     CHANGE_PASSWORD_REQUEST,
     CHANGE_PASSWORD_SUCCESS,
     CHANGE_PASSWORD_RESET,
@@ -56,6 +60,7 @@ const initialState = {
     wallet: "",
     conversations: [],
     conversation: {},
+    recom_users: [],
 
     getProfileInProgress: false,
     getProfileHasError: false,
@@ -116,6 +121,11 @@ const initialState = {
     sendMessageHasError: false,
     sendMessageCompleted: false,
     sendMessageError: "",
+
+    getRecommendedUsersInProgress: false,
+    getRecommendedUsersHasError: false,
+    getRecommendedUsersCompleted: false,
+    getRecommendedUsersError: "",
 };
 
 export default function(state = initialState, action) {
@@ -514,6 +524,39 @@ export default function(state = initialState, action) {
             sendMessageInProgress: false,
             sendMessageHasError: false,
             sendMessageCompleted: false
+        };
+    }
+
+    if (action.type === GET_RECOMMENDED_USERS_REQUEST) {
+        return {
+            ...state,
+            getRecommendedUsersInProgress: true,
+            getRecommendedUsersHasError: false,
+            getRecommendedUsersCompleted: false
+        };
+    } else if (action.type === GET_RECOMMENDED_USERS_SUCCESS) {
+        return {
+            ...state,
+            recom_users: payload.recommendation,
+            response: payload.response,
+            getRecommendedUsersInProgress: false,
+            getRecommendedUsersHasError: false,
+            getRecommendedUsersCompleted: true
+        };
+    } else if (action.type === GET_RECOMMENDED_USERS_FAILURE) {
+        return {
+            ...state,
+            getRecommendedUsersInProgress: false,
+            getRecommendedUsersHasError: true,
+            getRecommendedUsersCompleted: true,
+            getRecommendedUsersError: payload.detail[0]
+        };
+    } else if (action.type === GET_RECOMMENDED_USERS_RESET) {
+        return {
+            ...state,
+            getRecommendedUsersInProgress: false,
+            getRecommendedUsersHasError: false,
+            getRecommendedUsersCompleted: false
         };
     }
 
