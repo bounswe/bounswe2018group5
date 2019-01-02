@@ -17,7 +17,7 @@ def annotation_handler(request):
     if request.method == 'GET':
         try:
             query = request.GET.get('query')
-            annotations = Annotation.objects.filter(annotation_object__target__IRI=query)
+            annotations = Annotation.objects.filter(annotation_object__IRI=query)
             return JsonResponse({"response": True, "annotations": annotations})
         except Exception as e:
             return JsonResponse({'response': False, 'error': str(e)})
@@ -25,39 +25,37 @@ def annotation_handler(request):
         if token and authentication.is_authenticated(token):
             try:
                 user_id = authentication.get_user_id(token)
-                request_data = json.loads(request.body.decode('utf-8'))
+                request_data = request.data
                 targets = []
                 if 'targets' in request_data:
                     targets = request_data['targets']
                 body = request_data['body'] if 'body' in request_data else None
                 annotation = Annotation()
                 annotation.context = request_data['context']
-                annotation.IRI = request_data['id']
+                annotation.IRI = request_data['url']
                 annotation.motivation = request_data['motivation']
                 annotation.creator = request_data['creator']
                 annotation.save()
 
                 if body:
-                    body_annotation = Annotation.objects.filter(IRI=request_data['id'])
                     new_body = Body()
-                    new_body.annotation = body_annotation
-                    new_body.IRI = body['IRI']
+                    new_body.annotation = annotation
+                    new_body.IRI = request_data['url']
                     new_body.type = body['type']
-                    new_body.text = body['text']
+                    new_body.text = body['text'] if body['type'] == 'text' else None
                     new_body.save()
 
                 if len(targets) > 0:
-                    target_annotation = Annotation.objects.filter(IRI=request_data['id'])
                     for target in targets:
-                        target = Target()
-                        target.annotation = target_annotation
-                        target.context = target['context']
-                        target.type = target['type']
-                        target.IRI = target['IRI']
-                        target.x = target['x']
-                        target.y = target['y']
-                        target.start = target['start']
-                        target.end = target['end']
+                        new_target = Target()
+                        new_target.annotation = annotation
+                        new_target.context = target['context'] if 'context' in target else None
+                        new_target.type = target['type']
+                        new_target.IRI = target['IRI']
+                        new_target.x = target['x'] if 'x' in target else None
+                        new_target.y = target['y'] if 'y' in target else None
+                        new_target.start = target['start'] if 'start' in target else None
+                        new_target.end = target['end'] if 'end' in target else None
                         target.save()
 
                 return JsonResponse({"response": True, "annotation": annotation.annotation_object})
