@@ -42,11 +42,8 @@ class Annotation(BaseDocument):
         obj['IRI'] = self.IRI
         obj['motivation'] = self.motivation
         obj['creator'] = self.creator
-        targets = Target.objects.filter(IRI=self.IRI)
-        target_list = []
-        for target in targets:
-            target_list.append(target_json(target))
-        obj['targets'] = target_list
+        target = Target.objects.get(annotation=self)
+        obj['target'] = target_json(target)
         body = Body.objects.get(annotation=self)
         obj['body'] = body_json(body)
         return obj
