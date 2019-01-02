@@ -21,7 +21,7 @@ const styles = {
 
 class DateTimePicker extends React.Component{
     render(){
-        const { onChange, value, disabled, placeholder, before } = this.props;
+        const { onChange, value, disabled, before } = this.props;
         // Let's use the static moment reference in the Datetime component
         var today = Datetime.moment();
         var valid = function (current) {
@@ -38,7 +38,7 @@ class DateTimePicker extends React.Component{
                     <Datetime
                         onChange={onChange}
                         inputProps={{
-                            placeholder: placeholder,
+                            placeholder: "YYYY-MM-DD",
                             disabled
                         }}
                         isValidDate={valid}
