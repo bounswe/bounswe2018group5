@@ -151,7 +151,6 @@ class ProjectCard extends React.Component {
         tagsList = tags.map((prop, key) => {
             return (
                 <Tooltip
-                    id="tooltip-left"
                     title={prop.description}
                     placement="top"
                     classes={{ tooltip: classes.tooltip }}
