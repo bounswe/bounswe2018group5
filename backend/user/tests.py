@@ -17,7 +17,7 @@ def test_db_setup():
         db=config('MONGODB_TEST_DB'),
         username=config('MONGODB_USER'),
         password=config('MONGODB_PASSWORD'),
-        host='localhost',
+        host='mongodb',
         port=config('MONGODB_PORT', cast=int),
         authentication_source='admin',
         connect=False
