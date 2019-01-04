@@ -67,16 +67,12 @@ class TestProject(TestCase):
     def _post_teardown(self):
         return
 
-    def test_create_project(self):
+    def test_project(self):
         url = reverse('get_projects')
 
-        # GET call
+        # GET Guest call
         response = self.client.get(url)
-        exp_data = {
-            'projects': [], 
-            'response': True
-        }
-        self.assertEqual(exp_data, response.json())
+        self.assertTrue('projects' in response.json() and response.json()['response'] == True)
 
         # Token missing
         body = {
@@ -167,3 +163,127 @@ class TestProject(TestCase):
         }
         response = self.client.put(url, json.dumps(body), content_type='application/json', **self.headers)
         self.assertTrue(body['title'] == response.json()['project']['title'] and response.json()['response'] == True)
+
+    def test_bid_accept_and_finish(self):
+        # Create Freelancer 
+        body = {
+            'email': self.fake.first_name()+'@karpuz.ml',
+            'username': self.fake.first_name(),
+            'password': "karpuz123",
+            'full_name': self.fake.name()
+        }
+        response = self.client.post(reverse('register'), json.dumps(body), content_type='application/json')
+        token = response.json()['api_token']
+        headers = {
+            'HTTP_AUTHORIZATION': token
+        }
+
+        url = reverse('get_user')
+        response = self.client.get(url, **self.headers)
+        self.assertTrue('user' in response.json() and response.json()['response'] == True)
+        freelancer = response.json()['user']['id']
+
+        url = reverse('get_projects')
+        # Create Project
+        body = {
+            'title': "Project Title",
+        	'description': "Simple Desc",
+        	'project_deadline': "2018-10-10",
+        	'budget': 0
+        }
+        response = self.client.post(url, json.dumps(body), content_type='application/json', **self.headers)
+        self.assertTrue('project' in response.json() and response.json()['response'] == True)
+
+        project_id = response.json()['project']['project_id']
+
+        # Add Bid to the project from freelancer
+        url = reverse('add_bid')
+        body = {
+            'project_id': project_id,
+            'freelancer': freelancer,
+            'note': "I am the best for this job.",
+        	'offer': 0
+        }
+        response = self.client.post(url, json.dumps(body), content_type='application/json', **headers)
+        self.assertTrue(response.json()['response'] == True)
+        
+        # Get project
+        url = reverse('get_projects')
+
+        response = self.client.get(url, {'ids': project_id}, content_type='application/json')
+        self.assertTrue('projects' in response.json() and response.json()['response'] == True)
+        bid_id = response.json()['projects'][0]['bids'][0]['bid_id']
+
+        # Accept Bid from client
+        url = reverse('accept_bid')
+        body = {
+            'bid_id': bid_id,
+        }
+        response = self.client.post(url, json.dumps(body), content_type='application/json', **self.headers)
+        self.assertTrue(response.json()['response'] == True)
+
+        # Finish Project
+        url = reverse('finish_project')
+        body = {
+            'project_id': project_id,
+        }
+        response = self.client.put(url, json.dumps(body), content_type='application/json', **self.headers)
+        self.assertTrue(2 == response.json()['project']['status'] and response.json()['response'] == True)
+
+    def test_bid_discard(self):
+        # Create Freelancer 
+        body = {
+            'email': self.fake.first_name()+'@karpuz.ml',
+            'username': self.fake.first_name(),
+            'password': "karpuz123",
+            'full_name': self.fake.name()
+        }
+        response = self.client.post(reverse('register'), json.dumps(body), content_type='application/json')
+        token = response.json()['api_token']
+        headers = {
+            'HTTP_AUTHORIZATION': token
+        }
+
+        url = reverse('get_user')
+        response = self.client.get(url, **self.headers)
+        self.assertTrue('user' in response.json() and response.json()['response'] == True)
+        freelancer = response.json()['user']['id']
+
+        url = reverse('get_projects')
+        # Create Project
+        body = {
+            'title': "Project Title",
+        	'description': "Simple Desc",
+        	'project_deadline': "2018-10-10",
+        	'budget': 0
+        }
+        response = self.client.post(url, json.dumps(body), content_type='application/json', **self.headers)
+        self.assertTrue('project' in response.json() and response.json()['response'] == True)
+
+        project_id = response.json()['project']['project_id']
+
+        # Add Bid to the project from freelancer
+        url = reverse('add_bid')
+        body = {
+            'project_id': project_id,
+            'freelancer': freelancer,
+            'note': "I am the best for this job.",
+        	'offer': 0
+        }
+        response = self.client.post(url, json.dumps(body), content_type='application/json', **headers)
+        self.assertTrue(response.json()['response'] == True)
+        
+        # Get project
+        url = reverse('get_projects')
+
+        response = self.client.get(url, {'ids': project_id}, content_type='application/json')
+        self.assertTrue('projects' in response.json() and response.json()['response'] == True)
+        bid_id = response.json()['projects'][0]['bids'][0]['bid_id']
+
+        # Accept Bid from client
+        url = reverse('discard_bid')
+        body = {
+            'bid_id': bid_id,
+        }
+        response = self.client.post(url, json.dumps(body), content_type='application/json', **self.headers)
+        self.assertTrue(response.json()['response'] == True)
