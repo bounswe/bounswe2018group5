@@ -179,7 +179,7 @@ class TestProject(TestCase):
         }
 
         url = reverse('get_user')
-        response = self.client.get(url, **self.headers)
+        response = self.client.get(url, **headers)
         self.assertTrue('user' in response.json() and response.json()['response'] == True)
         freelancer = response.json()['user']['id']
 
@@ -280,7 +280,7 @@ class TestProject(TestCase):
         self.assertTrue('projects' in response.json() and response.json()['response'] == True)
         bid_id = response.json()['projects'][0]['bids'][0]['bid_id']
 
-        # Accept Bid from client
+        # Discard Bid from client
         url = reverse('discard_bid')
         body = {
             'bid_id': bid_id,
