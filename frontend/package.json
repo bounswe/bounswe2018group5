@@ -36,6 +36,7 @@
     "react-dom": "16.5.2",
     "react-filepond": "^5.0.0",
     "react-helmet": "latest",
+    "react-loader-spinner": "^2.3.0",
     "react-redux": "5.0.7",
     "react-router-dom": "latest",
     "react-scripts": "2.0.5",

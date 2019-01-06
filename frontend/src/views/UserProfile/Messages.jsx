@@ -77,7 +77,8 @@ class Messages extends Component {
                     receiver: {id: this.state.receiver_id},
                     sender: {id: this.state.user_id, profile_image: this.state.user_profile_image}
                 });
-                this.setState({message: ""});
+                this.setState({ message: "" });
+                this.refs.input.clear();
                 this.props.sendMessageReset();
             }            
         }
@@ -177,7 +178,7 @@ class Messages extends Component {
 
                     <Input
                         placeholder="Type..."
-                        defaultValue={this.state.message}
+                        defaultValue={''}
                         ref='input'
                         multiline={true}
                         onChange={event => this.setState({ message: event.target.value })}
