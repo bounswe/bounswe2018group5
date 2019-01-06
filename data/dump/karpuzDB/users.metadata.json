@@ -1,0 +1,1 @@
+{"options":{},"indexes":[{"v":2,"key":{"_id":1},"name":"_id_","ns":"karpuzDB.users"},{"v":2,"unique":true,"key":{"username":1},"name":"username_1","ns":"karpuzDB.users","sparse":false,"background":false},{"v":2,"unique":true,"key":{"email":1},"name":"email_1","ns":"karpuzDB.users","sparse":false,"background":false}],"uuid":"19ac9942582840ed82214c1f458b30c5"}
