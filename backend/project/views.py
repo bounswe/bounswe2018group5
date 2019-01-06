@@ -10,6 +10,8 @@ import json
 from .models import *
 from user.models import *
 
+def fix_date(date_):
+    return date_[:10] # 2019-01-02T00:00:000 first 10 is enough
 
 def modify_project(json, project):
     project.title = json['title'] if 'title' in json else project.title
@@ -33,12 +35,12 @@ def modify_project(json, project):
             if cur_milestone.status == 0:
                 cur_milestone.name = milestone['name']
                 cur_milestone.detail = milestone['detail'] if 'detail' in milestone else cur_milestone.detail
-                cur_milestone.deadline = milestone['deadline']
+                cur_milestone.deadline = fix_date(milestone['deadline'])
                 cur_milestone.save()
         Milestone.objects.filter(id__in=list(old_milestones_ids-new_milestones_ids), status=0).update(status=-1) # delete()
 
     final_milestone = Milestone.objects.get(project=project, is_final=True)
-    final_milestone.deadline = json['project_deadline'] if ('project_deadline' in json and final_milestone.status == 0) else final_milestone.deadline
+    final_milestone.deadline = fix_date(json['project_deadline']) if ('project_deadline' in json and final_milestone.status == 0) else final_milestone.deadline
     final_milestone.save()
 
     project.updated_at = datetime.now()
@@ -164,10 +166,10 @@ def project_handler(request):
                         new_milestone = Milestone()
                         new_milestone.name = milestone['name']
                         new_milestone.detail = milestone['detail'] if 'detail' in milestone else None
-                        new_milestone.deadline = milestone['deadline']
+                        new_milestone.deadline = fix_date(milestone['deadline'])
                         new_milestone.project = new_project
                         new_milestone.save()
-                final_milestone = Milestone(name='Final', detail='This is the final delivery of the project.', deadline=body['project_deadline'], project=new_project, is_final=True)
+                final_milestone = Milestone(name='Final', detail='This is the final delivery of the project.', deadline=fix_date(body['project_deadline']), project=new_project, is_final=True)
                 final_milestone.save()
 
                 return JsonResponse({"response": True, "project": project_json(new_project, user_id)})
