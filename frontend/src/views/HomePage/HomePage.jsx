@@ -18,20 +18,26 @@ import { tryGetProjects, getProjectsReset, tryGetRecommendedProjects, getRecomme
 
 import { getCookie, LOGGEDIN_USERID_COOKIE } from "services/cookies";
 
+import Loader from 'react-loader-spinner'
+
 class HomePage extends React.Component {
     constructor(props) {
         super(props);
         // we use this to make the card to appear after the page has been rendered
         this.state = {
             projects: [],
-            recom_projects: []
+            recom_projects: [],
+            project_spinner: false,
+            recom_spinner: false
         };
     }
 
     componentDidMount() {
         this.props.tryGetProjects();
         const user_id = getCookie(LOGGEDIN_USERID_COOKIE);
+        this.setState({ project_spinner: true });
         this.props.tryGetRecommendedProjects(user_id);
+        this.setState({ recom_spinner: true });
     }
 
     componentDidUpdate(prevProps, prevState) {
@@ -40,6 +46,7 @@ class HomePage extends React.Component {
         if (!getProjectsInProgress && !getProjectsHasError && getProjectsCompleted) {
             this.setState({projects: projects});
             this.props.getProjectsReset();
+            this.setState({ project_spinner: false });
         }
 
         const { getRecommendedProjectsInProgress, getRecommendedProjectsHasError, getRecommendedProjectsCompleted, recom_projects, response} = this.props.project;
@@ -48,6 +55,7 @@ class HomePage extends React.Component {
             if(response) {
                 this.setState({ recom_projects: recom_projects });
                 this.props.getRecommendedProjectsReset();
+                this.setState({ recom_spinner: false });
             }
         }
     }
@@ -123,8 +131,28 @@ class HomePage extends React.Component {
                     <AddProjectModal handleToUpdate={this.handleToUpdate.bind(this)}/>
                 </div>
                 <h1>Recommended Projects</h1>
-                {recom_projects.length > 0 ? recom_project_grid : 'Fill your portfolio and show recommended projects' }
+                {this.state.recom_spinner ? (
+                    <div style={{ display: 'flex', justifyContent: 'center' }}>
+                        <Loader
+                            type="Oval"
+                            color="#00BFFF"
+                            height="80"
+                            width="80"
+                        /> 
+                    </div>
+                ) : '' }
+                {recom_projects.length > 0 ? recom_project_grid : (!this.state.recom_spinner ? 'Fill your portfolio and show recommended projects' : '') }
                 <h1>All Projects</h1>
+                {this.state.project_spinner ? (
+                    <div style={{ display: 'flex', justifyContent: 'center' }}>
+                        <Loader
+                            type="Oval"
+                            color="#00BFFF"
+                            height="80"
+                            width="80"
+                        />
+                    </div>
+                ) : ''}
                 {project_grid}
             </div>
         )
