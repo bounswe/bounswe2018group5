@@ -46,6 +46,8 @@ REACT_APP_LINKEDIN_CLIENT=" > ${WORKSPACE}/frontend/.env
 echo "enter_your_sudo_password" | sudo -S bash ./deploy.sh
 ```
 
+you can reach our android app from [here](https://github.com/bounswe/bounswe2018group5/blob/master/karpuz-android-app.apk)
+
 *Check our [wiki](https://github.com/bounswe/bounswe2018group5/wiki) page for project updates.*
 
 ---
