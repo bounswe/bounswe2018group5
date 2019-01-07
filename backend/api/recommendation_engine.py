@@ -136,6 +136,9 @@ def memory_fixer(tagged, new_tag):
 
 @csrf_exempt
 def recommend(request):
+    global users_mem
+    global projects_mem
+    global tag_relations_mem
     token = request.META.get('HTTP_AUTHORIZATION', None)
     if not (token and authentication.is_authenticated(token)):
         return JsonResponse({
