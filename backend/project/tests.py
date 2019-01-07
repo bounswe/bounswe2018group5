@@ -164,6 +164,43 @@ class TestProject(TestCase):
         response = self.client.put(url, json.dumps(body), content_type='application/json', **self.headers)
         self.assertTrue(body['title'] == response.json()['project']['title'] and response.json()['response'] == True)
 
+    def test_project_own(self):
+        # Create Freelancer
+        body = {
+            'email': self.fake.first_name() + '@karpuz.ml',
+            'username': self.fake.first_name(),
+            'password': "karpuz123",
+            'full_name': self.fake.name()
+        }
+        response = self.client.post(reverse('register'), json.dumps(body), content_type='application/json')
+        token = response.json()['api_token']
+        headers = {
+            'HTTP_AUTHORIZATION': token
+        }
+
+        url = reverse('get_own_projects')
+        response = self.client.get(url, content_type='application/json', **self.headers)
+        self.assertTrue('projects' in response.json() and response.json()['response'] == True)
+
+    def test_project_search(self):
+        # Create Freelancer
+        body = {
+            'email': self.fake.first_name() + '@karpuz.ml',
+            'username': self.fake.first_name(),
+            'password': "karpuz123",
+            'full_name': self.fake.name()
+        }
+        response = self.client.post(reverse('register'), json.dumps(body), content_type='application/json')
+        token = response.json()['api_token']
+        headers = {
+            'HTTP_AUTHORIZATION': token
+        }
+
+        url = reverse('search_projects')
+        query = "test"
+        response = self.client.get(url, {'query': query}, content_type='application/json')
+        self.assertTrue('projects' in response.json() and response.json()['response'] == True)
+
     def test_bid_accept_and_finish(self):
         # Create Freelancer 
         body = {
