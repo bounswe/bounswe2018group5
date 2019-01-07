@@ -7,3 +7,4 @@ PyJWT
 django-cors-headers
 sentry_sdk
 faker
+threading

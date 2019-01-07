@@ -47,6 +47,8 @@ class AddProjectModal extends React.Component {
             selectHidden: true,
             description: '',
             descriptionError: false,
+            budget: '',
+            budgetError: false,
             project_deadline: '',
             projectDeadlineError: false,
             title: '',
@@ -88,6 +90,10 @@ class AddProjectModal extends React.Component {
             setTimeout(function () {
                 this.setState({ open: false });
             }.bind(this), 6000);
+        } else if (budget === '') {
+            this.setState({
+                budgetError: true,
+            });
         } else {
             let options = [];
             options_tags.map((prop, key) => {
@@ -272,6 +278,8 @@ class AddProjectModal extends React.Component {
                                             }}
                                             inputProps={{
                                                 type: 'number',
+                                                error: this.state.budgetError,
+                                                onFocus: event => this.setState({ budgetError: false }),
                                                 onChange: event => this.setState({ budget: event.target.value })
                                             }}
                                         />

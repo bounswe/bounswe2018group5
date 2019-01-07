@@ -5,10 +5,20 @@ import requests
 import string
 
 from user import authentication
-from . import utils
+from . import recommendation_engine
 from user.models import *
 from project.models import *
 from difflib import SequenceMatcher
+from threading import Thread
+
+
+def start_new_thread(function):
+    def decorator(*args, **kwargs):
+        t = Thread(target=function, args=args, kwargs=kwargs)
+        t.daemon = True
+        t.start()
+
+    return decorator
 
 
 def wikidata_query(key):
@@ -53,6 +63,7 @@ def get_distance(new_tag, other_tag):
     return match_score
 
 
+@start_new_thread
 def calculate_similarities(new_tag):
     for other_tag in SemanticTag.objects:
         new_relation = TagRelation()
@@ -60,6 +71,18 @@ def calculate_similarities(new_tag):
         new_relation.tag2 = new_tag
         new_relation.value = get_distance(new_tag, other_tag)
         new_relation.save()
+    recommendation_engine.memory_fixer()
+
+
+@start_new_thread
+def find_relations(new_tag):
+    response = requests.get('http://api.conceptnet.io/related/c/en/' + new_tag.label + '?filter=/c/en&limit=1000')
+    obj = response.json()
+    for element in obj['related']:
+        related = element['@id'].rsplit('/')[-1]
+        new_tag.relations.append((related, element['weight']))
+    new_tag.save()
+    calculate_similarities(new_tag)
 
 
 def create_tag(tag):
@@ -70,13 +93,8 @@ def create_tag(tag):
     new_tag.wikidata_id = response[0]['wikidata_id']
     new_tag.label = response[0]['label'].lower().strip().replace(" ", "_")
     new_tag.description = response[0]['description']
-    response = requests.get('http://api.conceptnet.io/related/c/en/' + new_tag.label + '?filter=/c/en&limit=1000')
-    obj = response.json()
-    for element in obj['related']:
-        related = element['@id'].rsplit('/')[-1]
-        new_tag.relations.append((related, element['weight']))
     new_tag.save()
-    calculate_similarities(new_tag)
+    find_relations(new_tag)
 
 
 @csrf_exempt
