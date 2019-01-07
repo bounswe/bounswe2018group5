@@ -133,7 +133,7 @@ def project_handler(request):
             except Exception as e:
                 return JsonResponse({'response': False, 'error': str(e)})
         else:
-            projects = Project.objects.filter(status__in=[0,1])  # excludes discarded projects
+            projects = Project.objects.filter(status__in=[0,1]).order_by("-created_at")  # excludes discarded projects
             res = []
             for project in projects:
                 res.append(project_json(project, user_id))
