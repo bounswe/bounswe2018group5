@@ -143,28 +143,31 @@ def memory_fixer(tagged, new_tag):
     if new_tag:
         tag_relations_mem = {}
         for relation in TagRelation.objects:
-            id1 = str(relation.tag1.wikidata_id)
-            id2 = str(relation.tag2.wikidata_id)
-            if id2 < id1:
-                temp = id2
-                id2 = id1
-                id1 = temp
-            tag_relations_mem[Rel(id1, id2)] = relation.value
+            try:
+                id1 = str(relation.tag1.wikidata_id)
+                id2 = str(relation.tag2.wikidata_id)
+                if id2 < id1:
+                    temp = id2
+                    id2 = id1
+                    id1 = temp
+                tag_relations_mem[Rel(id1, id2)] = relation.value
+            except Exception:
+                pass
     for user in users_mem:
-        if user.user_id == str(tagged.id):
-            user.tags = []
+        if user['user_id'] == str(tagged.id):
+            user['tags'] = []
             for tag in tagged.tags:
                 try:
-                    user.tags.append(tag.wikidata_id)
+                    user['tags'].append(tag.wikidata_id)
                 except Exception:
                     print("tag error")
             break
     for project in projects_mem:
-        if project.project_id == str(tagged.id):
-            project.tags = []
+        if project['project_id'] == str(tagged.id):
+            project['tags'] = []
             for tag in tagged.tags:
                 try:
-                    project.tags.append(tag.wikidata_id)
+                    project['tags'].append(tag.wikidata_id)
                 except Exception:
                     print("tag error")
             break
