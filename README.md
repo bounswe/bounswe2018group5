@@ -23,7 +23,23 @@ You can check the code from [KarpuzTwitterApp](https://github.com/bounswe/bounsw
 
 ---
 
-*We're under development!* 👩‍💻👨‍💻
+### How to Deploy?
+
+```
+echo "# BACKEND SERVER
+BACKEND_SERVER_PORT=8000
+# DATABASE CONFIGURATIONS
+MONGODB_DB=karpuzDB
+MONGODB_PATH=./.data/mongodb
+MONGODB_USER=admin
+MONGODB_PASSWORD=karpuz123
+MONGODB_PORT=27017" > ${WORKSPACE}/backend/.env
+echo "# FRONTEND SERVER
+REACT_APP_API_URL=http://123.456.789.123:8000
+REACT_APP_API_STATIC_URL=http://123.456.789.123:8000/media/
+REACT_APP_LINKEDIN_CLIENT=" > ${WORKSPACE}/frontend/.env
+echo "enter_your_sudo_password" | sudo -S bash ./deploy.sh
+```
 
 *Check our [wiki](https://github.com/bounswe/bounswe2018group5/wiki) page for project updates.*
 
