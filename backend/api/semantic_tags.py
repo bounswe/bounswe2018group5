@@ -64,30 +64,29 @@ def get_distance(new_tag, other_tag):
 
 
 @start_new_thread
-def calculate_similarities(new_tag, tagged):
+def calculate_similarities(new_tag):
     for other_tag in SemanticTag.objects:
         new_relation = TagRelation()
         new_relation.tag1 = other_tag
         new_relation.tag2 = new_tag
         new_relation.value = get_distance(new_tag, other_tag)
         new_relation.save()
-    recommendation_engine.memory_fixer(tagged=tagged, new_tag=True)
+    recommendation_engine.memory_fixer()
 
 
 @start_new_thread
-def find_relations(new_tag, tagged):
+def find_relations(new_tag):
     response = requests.get('http://api.conceptnet.io/related/c/en/' + new_tag.label + '?filter=/c/en&limit=1000')
     obj = response.json()
     for element in obj['related']:
         related = element['@id'].rsplit('/')[-1]
         new_tag.relations.append((related, element['weight']))
     new_tag.save()
-    calculate_similarities(new_tag, tagged)
+    calculate_similarities(new_tag)
 
 
-def create_tag(tag, tagged):
+def create_tag(tag):
     if SemanticTag.objects(wikidata_id=tag):
-        recommendation_engine.memory_fixer(tagged=tagged, new_tag=False)
         return
     new_tag = SemanticTag()
     response = wikidata_query(tag)
@@ -95,7 +94,7 @@ def create_tag(tag, tagged):
     new_tag.label = response[0]['label'].lower().strip().replace(" ", "_")
     new_tag.description = response[0]['description']
     new_tag.save()
-    find_relations(new_tag, tagged)
+    find_relations(new_tag)
 
 
 @csrf_exempt
@@ -136,7 +135,7 @@ def tag_handler(request):
             })
         try:
             tag = str(tag)
-            create_tag(tag, tagged)
+            create_tag(tag)
             tagged.update(add_to_set__tags=SemanticTag.objects.get(wikidata_id=tag))
             if is_portfolio:
                 tagged.user.update(add_to_set__tags=SemanticTag.objects.get(wikidata_id=tag))
