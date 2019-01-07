@@ -254,7 +254,7 @@ def portfolio_handler(request):
                 new_portfolio.save()
                 for tag in body['tags']:
                     tag = str(tag)
-                    create_tag(tag)
+                    create_tag(tag, new_portfolio)
                     new_portfolio.update(add_to_set__tags=SemanticTag.objects.get(wikidata_id=tag))
                     new_portfolio.user.update(add_to_set__tags=SemanticTag.objects.get(wikidata_id=tag))
                 return JsonResponse({"response": True, "portfolio": portfolio_json(new_portfolio)})

@@ -158,7 +158,7 @@ def project_handler(request):
                 if 'tags' in body:
                     for tag in body['tags']:
                         tag = str(tag)
-                        create_tag(tag)
+                        create_tag(tag, new_project)
                         new_project.tags.append(SemanticTag.objects.get(wikidata_id=tag))
                 new_project.save()
                 if "milestones" in body:
