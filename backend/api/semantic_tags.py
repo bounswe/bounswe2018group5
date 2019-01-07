@@ -5,18 +5,21 @@ import requests
 import string
 
 from user import authentication
-from . import utils
+from . import recommendation_engine
 from user.models import *
 from project.models import *
 from difflib import SequenceMatcher
 from threading import Thread
 
+
 def start_new_thread(function):
     def decorator(*args, **kwargs):
-        t = Thread(target = function, args=args, kwargs=kwargs)
+        t = Thread(target=function, args=args, kwargs=kwargs)
         t.daemon = True
         t.start()
+
     return decorator
+
 
 def wikidata_query(key):
     address = "https://www.wikidata.org/w/api.php?action=wbsearchentities&search=" + key + "&language=en&format=json"
@@ -59,26 +62,32 @@ def get_distance(new_tag, other_tag):
         match_score += 50
     return match_score
 
+
 @start_new_thread
-def calculate_similarities(new_tag):
+def calculate_similarities(new_tag, tagged):
     for other_tag in SemanticTag.objects:
         new_relation = TagRelation()
         new_relation.tag1 = other_tag
         new_relation.tag2 = new_tag
         new_relation.value = get_distance(new_tag, other_tag)
         new_relation.save()
+    recommendation_engine.memory_fixer(tagged=tagged, new_tag=True)
+
 
 @start_new_thread
-def find_relations(new_tag):
+def find_relations(new_tag, tagged):
     response = requests.get('http://api.conceptnet.io/related/c/en/' + new_tag.label + '?filter=/c/en&limit=1000')
     obj = response.json()
     for element in obj['related']:
         related = element['@id'].rsplit('/')[-1]
         new_tag.relations.append((related, element['weight']))
     new_tag.save()
+    calculate_similarities(new_tag, tagged)
 
-def create_tag(tag):
+
+def create_tag(tag, tagged):
     if SemanticTag.objects(wikidata_id=tag):
+        recommendation_engine.memory_fixer(tagged=tagged, new_tag=False)
         return
     new_tag = SemanticTag()
     response = wikidata_query(tag)
@@ -86,8 +95,7 @@ def create_tag(tag):
     new_tag.label = response[0]['label'].lower().strip().replace(" ", "_")
     new_tag.description = response[0]['description']
     new_tag.save()
-    find_relations(new_tag)
-    calculate_similarities(new_tag)
+    find_relations(new_tag, tagged)
 
 
 @csrf_exempt
@@ -128,7 +136,7 @@ def tag_handler(request):
             })
         try:
             tag = str(tag)
-            create_tag(tag)
+            create_tag(tag, tagged)
             tagged.update(add_to_set__tags=SemanticTag.objects.get(wikidata_id=tag))
             if is_portfolio:
                 tagged.user.update(add_to_set__tags=SemanticTag.objects.get(wikidata_id=tag))
