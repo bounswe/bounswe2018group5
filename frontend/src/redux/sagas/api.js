@@ -93,9 +93,7 @@ class api {
         return httpService.fetch({
             path: "api/recommend/",
             method: "GET",
-            params: {
-                id: user_id
-            },
+            // params: { id: user_id },
             sendToken: true
         });
     };
