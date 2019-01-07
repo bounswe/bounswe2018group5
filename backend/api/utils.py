@@ -53,7 +53,10 @@ def project_json(project, user_id):
 
     obj['tags'] = []
     for tag in project.tags:
-        obj['tags'].append(tag_json(tag))
+        try:
+            obj['tags'].append(tag_json(tag))
+        except Exception:
+            pass
 
     obj['project_id'] = str(project.id)
     obj['title'] = project.title
@@ -167,7 +170,10 @@ def portfolio_json(portfolio, from_model=""):
         attachments.append(att)
     obj['tags'] = []
     for tag in portfolio.tags:
-        obj['tags'].append(tag_json(tag))
+        try:
+            obj['tags'].append(tag_json(tag))
+        except Exception:
+            pass
     obj['id'] = str(portfolio.id)
     obj['title'] = portfolio.title
     obj['description'] = portfolio.description

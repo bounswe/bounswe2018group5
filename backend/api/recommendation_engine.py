@@ -18,20 +18,26 @@ def find_freelancers(project):
     global tag_relations_mem
     temp = []
     for user in users_mem:
-        if str(project.owner.id) == user['user_id']:
-            continue
-        match_score = 0.0
-        for project_tag in project.tags:
-            for user_tag in user['tags']:
-                tag1 = project_tag.wikidata_id
-                tag2 = user_tag
-                if Rel(tag1, tag2) in tag_relations_mem:
-                    match_score += tag_relations_mem[Rel(tag1, tag2)]
-                elif Rel(tag2, tag1) in tag_relations_mem:
-                    match_score += tag_relations_mem[Rel(tag2, tag1)]
-                else:
-                    match_score += 0
-        temp.append([match_score, user['user_id']])
+        try:
+            if str(project.owner.id) == user['user_id']:
+                continue
+            match_score = 0.0
+            for project_tag in project.tags:
+                for user_tag in user['tags']:
+                    try:
+                        tag1 = project_tag.wikidata_id
+                        tag2 = user_tag
+                        if Rel(tag1, tag2) in tag_relations_mem:
+                            match_score += tag_relations_mem[Rel(tag1, tag2)]
+                        elif Rel(tag2, tag1) in tag_relations_mem:
+                            match_score += tag_relations_mem[Rel(tag2, tag1)]
+                        else:
+                            match_score += 0
+                    except Exception:
+                        pass
+            temp.append([match_score, user['user_id']])
+        except Exception:
+            pass
     temp.sort(key=lambda tup: tup[0])
     temp.reverse()
     if len(temp) == 0:
@@ -44,24 +50,28 @@ def find_freelancers(project):
 
 
 def find_projects(user, requester):
+    print("find projects")
     global users_mem
     global projects_mem
     global tag_relations_mem
     temp = []
     for project in projects_mem:
-        if project['project_id'] == str(user.id) or project['status'] in [-1, 1, 2]:
+        if project['owner'] == str(user.id) or project['status'] in [-1, 1, 2]:
             continue
         match_score = 0.0
         for project_tag in project['tags']:
             for user_tag in user.tags:
-                tag1 = project_tag
-                tag2 = user_tag.wikidata_id
-                if Rel(tag1, tag2) in tag_relations_mem:
-                    match_score += tag_relations_mem[Rel(tag1, tag2)]
-                elif Rel(tag2, tag1) in tag_relations_mem:
-                    match_score += tag_relations_mem[Rel(tag2, tag1)]
-                else:
-                    match_score += 0
+                try:
+                    tag1 = project_tag
+                    tag2 = user_tag.wikidata_id
+                    if Rel(tag1, tag2) in tag_relations_mem:
+                        match_score += tag_relations_mem[Rel(tag1, tag2)]
+                    elif Rel(tag2, tag1) in tag_relations_mem:
+                        match_score += tag_relations_mem[Rel(tag2, tag1)]
+                    else:
+                        match_score += 0
+                except Exception:
+                    print("wikidata_id error")
         temp.append([match_score, project['project_id']])
     temp.sort(key=lambda tup: tup[0])
     temp.reverse()
@@ -78,35 +88,55 @@ def initialize_memory():
     global users_mem
     global projects_mem
     global tag_relations_mem
+    print("initialize memory")
+    users_mem = []
+    projects_mem = []
+    tag_relations_mem = {}
     for user in User.objects:
         tags = []
         for tag in user.tags:
-            tags.append(tag.wikidata_id)
+            try:
+                tags.append(tag.wikidata_id)
+            except Exception:
+                print("tag error")
         users_mem.append({
             "user_id": str(user.id),
             "tags": tags
         })
+    print("users complete")
     for project in Project.objects:
         tags = []
         for tag in project.tags:
-            tags.append(tag.wikidata_id)
-        projects_mem.append({
-            "project_id": str(project.id),
-            "tags": tags,
-            "owner": str(project.owner.id),
-            "status": project.status
-        })
+            try:
+                tags.append(tag.wikidata_id)
+            except Exception:
+                print("tag error")
+        try:
+            projects_mem.append({
+                "project_id": str(project.id),
+                "tags": tags,
+                "owner": str(project.owner.id),
+                "status": project.status
+            })
+        except Exception:
+            print("owner exception")
+    print("projects complete")
     for relation in TagRelation.objects:
-        id1 = str(relation.tag1.wikidata_id)
-        id2 = str(relation.tag2.wikidata_id)
-        if id2 < id1:
-            temp = id2
-            id2 = id1
-            id1 = temp
-        tag_relations_mem[Rel(id1, id2)] = relation.value
+        # print("relation:" + str(relation.id))
+        try:
+            id1 = str(relation.tag1.wikidata_id)
+            id2 = str(relation.tag2.wikidata_id)
+            if id2 < id1:
+                temp = id2
+                id2 = id1
+                id1 = temp
+            tag_relations_mem[Rel(id1, id2)] = relation.value
+        except Exception:
+            print("relation error")
 
 
 def memory_fixer(tagged, new_tag):
+    print("memory fixer")
     global users_mem
     global projects_mem
     global tag_relations_mem
@@ -124,13 +154,19 @@ def memory_fixer(tagged, new_tag):
         if user.user_id == str(tagged.id):
             user.tags = []
             for tag in tagged.tags:
-                user.tags.append(tag.wikidata_id)
+                try:
+                    user.tags.append(tag.wikidata_id)
+                except Exception:
+                    print("tag error")
             break
     for project in projects_mem:
         if project.project_id == str(tagged.id):
             project.tags = []
             for tag in tagged.tags:
-                project.tags.append(tag.wikidata_id)
+                try:
+                    project.tags.append(tag.wikidata_id)
+                except Exception:
+                    print("tag error")
             break
 
 
@@ -145,7 +181,7 @@ def recommend(request):
             "response": False,
             "error": "Unauthorized"
         })
-    if len(users_mem) or len(projects_mem) or not tag_relations_mem:
+    if len(users_mem) == 0 or len(projects_mem) == 0 or not tag_relations_mem:
         initialize_memory()
     recommend_id = request.GET.get('id', None)
     if not recommend_id:
