@@ -25,6 +25,11 @@ You can check the code from [KarpuzTwitterApp](https://github.com/bounswe/bounsw
 
 ### How to Deploy?
 
+#### Prerequisites
+- Docker
+- Docker Compose
+
+Run in your terminal the following code snippet with editing information.
 ```
 echo "# BACKEND SERVER
 BACKEND_SERVER_PORT=8000
